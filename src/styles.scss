@@ -1,1 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
+/* Variables Globales de Color - ParkResidencial / Safe Flow */
+:root {
+    /* Fondos y Superficies */
+    --bg-main: #121826;
+    /* Fondo Principal (Azul Medianoche Profundo) */
+    --bg-card: #1E293B;
+    /* Superficies / Cards (Gris Azulado Oscuro) */
+
+    /* Tipografía */
+    --text-primary: #E2E8F0;
+    /* Texto Primario (Blanco Humo) */
+
+    /* Colores de Acción y Estado */
+    --color-accent: #38BDF8;
+    /* Acento / Acción (Azul Eléctrico Suave) */
+    --status-free: #22C55E;
+    /* Estado: Libre (Verde Esmeralda) */
+    --status-full: #F59E0B;
+    /* Estado: Lleno (Ámbar / Naranja) */
+}
+
+/* Aplicación global del fondo y texto base */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
