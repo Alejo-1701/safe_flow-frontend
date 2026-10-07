@@ -1,0 +1,53 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: var(--bg-card); /* Uso de variable global */
+  color: var(--text-primary); /* Uso de variable global */
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.icon-container {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+}
+
+.icon-container.success {
+  background: rgba(34, 197, 94, 0.2); /* Versión clara del color status-free */
+  color: var(--status-free); /* Uso de variable global */
+}
+
+.icon-container.error {
+  background: rgba(239, 68, 68, 0.2); /* Color de error, se podría definir en variables */
+  color: #ef4444; 
+}
+
+button {
+  background: var(--color-accent); /* Uso de variable global */
+  color: #121826; /* Texto oscuro sobre el botón */
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: bold;
+}
