@@ -1,9 +1,13 @@
-<div class="app-container" style="display: flex; min-height: 100vh;">
-    <app-sidebar></app-sidebar>
+<main style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #121826;">
+  <div style="background-color: #1e293b; padding: 32px; border-radius: 12px; text-align: center; width: 320px;">
+    <h1 style="color: #e2e8f0; margin-bottom: 8px; font-size: 1.8rem;">SafeFlow</h1>
+    <p style="color: #94a3b8; margin-bottom: 24px;">Sistema de gestión y control</p>
 
-    <div style="flex: 1; display: flex; flexDirection: column;">
-        <main class="content" style="flex: 1; padding: 20px;">
-            <router-outlet />
-        </main>
-    </div>
-</div>
+    <app-button
+      text="Iniciar Sesión"
+      [showArrow]="true"
+      colorVariant="primary"
+      (onClick)="manejarAccion()">
+    </app-button>
+  </div>
+</main>
