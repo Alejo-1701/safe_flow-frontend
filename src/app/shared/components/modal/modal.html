@@ -1,1 +1,12 @@
-<p>modal works!</p>
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="icon-container" [ngClass]="type">
+      <span class="icon">{{ type === 'success' ? '✓' : '!' }}</span>
+    </div>
+    
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+    
+    <button (click)="onClose()">{{ buttonText }}</button>
+  </div>
+</div>
