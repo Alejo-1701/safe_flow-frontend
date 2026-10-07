@@ -1,0 +1,51 @@
+<div class="form-field-container">
+  <!-- Cabecera de la sección (Icono y Título) -->
+  <div class="form-field-header" *ngIf="title">
+    <span class="header-icon" *ngIf="iconClass">
+      <i [class]="iconClass"></i>
+    </span>
+    <h2>{{ title }}</h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-field-grid">
+      <div class="form-field-group" *ngFor="let field of fields">
+        <label [for]="field.key">{{ field.label }}</label>
+
+        <!-- Inputs de texto, email, teléfono, contraseña, fecha con conversión a mayúsculas -->
+        <input
+          *ngIf="field.type !== 'select'"
+          [id]="field.key"
+          [type]="field.type"
+          [formControlName]="field.key"
+          [placeholder]="field.placeholder || ''"
+          (input)="onInputUppercase($event, field.key)"
+          class="form-field-control uppercase-input"
+        />
+
+        <!-- Selects dinámicos -->
+        <select
+          *ngIf="field.type === 'select'"
+          [id]="field.key"
+          [formControlName]="field.key"
+          class="form-field-control"
+        >
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option *ngFor="let option of field.options" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Botones de Acción (Cancelar / Guardar) -->
+    <div class="form-field-actions" *ngIf="submitLabel || cancelLabel">
+      <button type="button" class="btn-cancel" *ngIf="cancelLabel" (click)="onCancel()">
+        {{ cancelLabel }}
+      </button>
+      <button type="submit" class="btn-submit" *ngIf="submitLabel">
+        {{ submitLabel }}
+      </button>
+    </div>
+  </form>
+</div>
