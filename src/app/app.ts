@@ -1,12 +1,21 @@
-import { Component, signal } from '@angular/core';
+
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { ButtonComponent } from './shared/components/button/button';
 
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.scss',
-  templateUrl: './app.html',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, ButtonComponent],
+  templateUrl: './app.html',  // Asegúrate de que coincida con el nombre real de tu archivo HTML
+  styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('Safe_flow');
+  title = 'SafeFlow';
+
+  // Función que se ejecuta al hacer clic en el botón principal
+  manejarAccion() {
+    alert('¡Botón de SafeFlow presionado con éxito!');
+  }
 }
