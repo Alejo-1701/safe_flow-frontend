@@ -1,1 +1,35 @@
-<p>sidebar works!</p>
+<aside>
+  <div class="sidebar-header">
+    <h1>Safe Flow</h1>
+  </div>
+
+  <nav>
+    @for (item of navItems; track item.route) {
+      <a [routerLink]="item.route"
+         routerLinkActive="nav-item-active"
+         [routerLinkActiveOptions]="{exact: true}"
+         class="nav-item group">
+
+        <span class="material-symbols-outlined nav-icon" aria-hidden="true">{{ item.icon }}</span>
+
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-profile">
+      <div class="profile-avatar">
+        <span class="material-symbols-outlined footer-icon" aria-hidden="true">person</span>
+      </div>
+      <div class="profile-info">
+        <p class="profile-name">{{ currentUser.name }}</p>
+        <p class="profile-role">{{ currentUser.role }}</p>
+      </div>
+    </div>
+
+    <button (click)="logout()" title="Cerrar sesión">
+      <span class="material-symbols-outlined logout-icon" aria-hidden="true">logout</span>
+    </button>
+  </div>
+</aside>
