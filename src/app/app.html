@@ -1,14 +1,9 @@
-<!-- Coloca esto en cualquier parte de tu app.html para visualizarlo -->
-<div style="padding: 30px; background: #0b0f17; max-width: 600px; margin: 40px auto;">
-  <form-field
-    title="Prueba de Componente"
-    iconClass="fa-solid fa-user"
-    [form]="miFormulario"
-    [fields]="camposFormulario"
-    (formSubmitted)="guardarDatos($event)"
-    (formCancelled)="cancelarAccion()">
-  </form-field>
-</div>
+<div class="app-container" style="display: flex; min-height: 100vh;">
+  <app-sidebar></app-sidebar>
 
-<!-- Mantén el router-outlet abajo si ya estaba -->
-<router-outlet />
+  <div style="flex: 1; display: flex; flexDirection: column;">
+    <main class="content" style="flex: 1; padding: 20px;">
+      <router-outlet />
+    </main>
+  </div>
+</div>
