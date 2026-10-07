@@ -1,21 +1,28 @@
-
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { ButtonComponent } from './shared/components/button/button';
+import { SidebarComponent } from './shared/components/sidebar/sidebar';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+<<<<<<< HEAD
   imports: [CommonModule, RouterOutlet, ButtonComponent],
-  templateUrl: './app.html',  // Asegúrate de que coincida con el nombre real de tu archivo HTML
+  templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
   title = 'SafeFlow';
 
-  // Función que se ejecuta al hacer clic en el botón principal
+
   manejarAccion() {
     alert('¡Botón de SafeFlow presionado con éxito!');
   }
+=======
+  imports: [RouterOutlet, SidebarComponent],
+  templateUrl: './app.html',
+  styleUrl: './app.scss'
+})
+export class App {
+  title = 'safe-flow-frontend';
+>>>>>>> 346412151513f05502704a688f3244dcf12789ea
 }
