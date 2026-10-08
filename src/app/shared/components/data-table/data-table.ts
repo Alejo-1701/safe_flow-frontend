@@ -18,8 +18,8 @@ export class CellTemplateDirective {
   selector: 'app-data-table',
   standalone: true,
   imports: [CommonModule, CellTemplateDirective],
-  templateUrl: './data-table.component.html',
-  styleUrls: ['./data-table.component.scss']
+  templateUrl: './data-table.html',
+  styleUrls: ['./data-table.scss']
 })
 export class DataTableComponent<T> {
   @Input({ required: true }) columns: ColumnDefinition[] = [];
