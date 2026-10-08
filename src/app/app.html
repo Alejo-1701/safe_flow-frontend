@@ -3,11 +3,13 @@
     <h1 style="color: #e2e8f0; margin-bottom: 8px; font-size: 1.8rem;">SafeFlow</h1>
     <p style="color: #94a3b8; margin-bottom: 24px;">Sistema de gestión y control</p>
 
-    <app-button
-      text="Iniciar Sesión"
-      [showArrow]="true"
-      colorVariant="primary"
-      (onClick)="manejarAccion()">
-    </app-button>
-  </div>
-</main>
+    <div style="flex: 1; display: flex; flexDirection: column;">
+        <main class="content" style="flex: 1; padding: 20px;">
+            <router-outlet />
+        </main>
+        <form-field title="Prueba de Componente"
+    iconClass="fa-solid fa-user"
+    [form]="miFormulario" title="PRUEBA" [fields]="campos">
+        </form-field>
+    </div>
+</div>

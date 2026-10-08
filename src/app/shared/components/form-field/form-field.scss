@@ -1,3 +1,8 @@
+/* ================================================================= *
+ * ESTILOS DEL COMPONENTE REUTILIZABLE: FormFieldComponent
+ * Versión compacta, moderna y alineada con las variables del proyecto.
+ * ================================================================= */
+
 /* Mapeo de variables locales utilizando las variables globales del proyecto */
 $bg-card: var(--bg-card);
 $bg-input: #0f172a; // Fondo más profundo para los inputs dentro de la tarjeta
@@ -7,39 +12,49 @@ $text-secondary: #94a3b8;
 $accent-blue: var(--color-accent);
 $accent-blue-hover: #0ea5e9;
 
+:host {
+  display: block;
+  width: 100%;
+}
+
 .form-field-container {
   background-color: $bg-card;
   border-radius: 12px;
-  padding: 24px;
+  padding: 1.25rem 1.5rem; // Padding más compacto y estilizado tipo card
   color: $text-primary;
   font-family: inherit;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 
+  /* Cabecera de la sección compacta */
   .form-field-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 24px;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
     border-bottom: 1px solid $border-input;
-    padding-bottom: 12px;
+    padding-bottom: 0.6rem;
 
     .header-icon {
       color: $accent-blue;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
     }
 
     h2 {
-      font-size: 1.1rem;
+      font-size: 0.95rem; // Título más sutil y limpio
       font-weight: 600;
       color: $text-primary;
       margin: 0;
+      letter-spacing: 0.01em;
     }
   }
 
+  /* Grid de campos más ajustado (2 columnas compactas) */
   .form-field-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem 1rem; // Espacio vertical y horizontal reducido para ahorrar espacio
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
@@ -48,10 +63,10 @@ $accent-blue-hover: #0ea5e9;
     .form-field-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 0.3rem; // Espacio mínimo y ordenado entre label e input
 
       label {
-        font-size: 0.85rem;
+        font-size: 0.76rem; // Etiquetas más compactas estilo dashboard
         color: $text-secondary;
         font-weight: 500;
       }
@@ -60,10 +75,12 @@ $accent-blue-hover: #0ea5e9;
         background-color: $bg-input;
         border: 1px solid $border-input;
         border-radius: 8px;
-        padding: 12px 16px;
+        padding: 0.55rem 0.75rem; // Inputs más delgados y elegantes
         color: $text-primary;
-        font-size: 0.95rem;
+        font-size: 0.85rem; // Tipografía interna compacta
         outline: none;
+        width: 100%;
+        box-sizing: border-box;
         transition: border-color 0.2s, box-shadow 0.2s;
 
         &::placeholder {
@@ -72,7 +89,7 @@ $accent-blue-hover: #0ea5e9;
 
         &:focus {
           border-color: $accent-blue;
-          box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+          box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
         }
       }
 
@@ -80,34 +97,56 @@ $accent-blue-hover: #0ea5e9;
         appearance: none;
         background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
         background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 1rem;
-        padding-right: 2.5rem;
+        background-position: right 0.75rem center;
+        background-size: 0.9rem;
+        padding-right: 2.25rem;
+        cursor: pointer;
+
+        option {
+          background-color: $bg-input;
+          color: $text-primary;
+        }
       }
     }
   }
 
+  /* Mensaje de error de validación compacto */
+  .error-message {
+    font-size: 0.7rem;
+    color: #f87171;
+    margin-top: 0.1rem;
+  }
+
+  /* Botonera de acciones inferior alineada al diseño compacto */
   .form-field-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 16px;
-    margin-top: 32px;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid $border-input;
 
     button {
-      padding: 10px 24px;
+      padding: 0.5rem 1.15rem;
       border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 500;
+      font-size: 0.85rem;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: background-color 0.2s, transform 0.1s;
+
+      &:active {
+        transform: scale(0.98);
+      }
     }
 
     .btn-cancel {
       background: transparent;
-      border: none;
+      border: 1px solid $border-input;
       color: $text-secondary;
 
       &:hover {
+        background-color: rgba(255, 255, 255, 0.03);
         color: $text-primary;
       }
     }
@@ -116,7 +155,8 @@ $accent-blue-hover: #0ea5e9;
       background-color: $accent-blue;
       border: none;
       color: #0f172a;
-      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
 
       &:hover {
         background-color: $accent-blue-hover;
