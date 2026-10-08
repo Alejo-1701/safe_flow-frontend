@@ -1,1 +1,18 @@
-<p>navbar works!</p>
+<nav class="navbar">
+  <div class="left-section">
+    <input *ngIf="showSearch" type="text" placeholder="Buscar..." class="search-input">
+  </div>
+
+  <div class="right-section">
+    <button (click)="onProfile()">Actualizar Datos</button>
+    <button (click)="onLogout()">Cerrar Sesión</button>
+    
+    <div class="user-profile" (click)="onProfile()">
+      <img *ngIf="avatarUrl" [src]="avatarUrl" [alt]="userName" class="avatar">
+      <div class="user-info">
+        <span class="user-name">{{ userName }}</span>
+        <span class="user-role">{{ userRole }}</span>
+      </div>
+    </div>
+  </div>
+</nav>
