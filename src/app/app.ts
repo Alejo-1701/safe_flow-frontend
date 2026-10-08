@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, FormFieldComponent],
+
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -18,11 +18,4 @@ export class App {
     });
   }
   title = 'safe-flow-frontend';
-  miFormulario : FormGroup;
-  campos:FieldConfig[]=[{
-  key: "usuario",
-  label: "usuario",
-  type: 'text',
-  placeholder: "su nombre"
-  }];
-}
+
