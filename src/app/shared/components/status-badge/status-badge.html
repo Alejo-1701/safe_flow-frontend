@@ -1,1 +1,4 @@
-<p>status-badge works!</p>
+<span class="badge" [class]="statusType">
+  <span *ngIf="showDot" class="dot"></span>
+  <ng-content></ng-content>
+</span>
