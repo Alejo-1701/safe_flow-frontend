@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-root',
   standalone: true,
-
+  imports: [RouterOutlet, SidebarComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -18,4 +18,5 @@ export class App {
     });
   }
   title = 'safe-flow-frontend';
+}
 

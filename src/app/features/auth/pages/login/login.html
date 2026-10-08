@@ -1,1 +1,120 @@
-<p>login works!</p>
+<div class="login-container">
+  <!-- Panel Izquierdo: Imagen / Branding -->
+  <div class="login-left-panel">
+    <div class="image-wrapper">
+      <img src="assets/images/login-image.png" alt="SafeFlow Visual" class="login-banner-image" />
+    </div>
+    <div class="footer-copyright">
+      <span>© 2026 SAFE FLOW. PREMIUM RESIDENTIAL PARKING MANAGEMENT.</span>
+    </div>
+  </div>
+
+  <!-- Panel Derecho: Formulario de Login -->
+  <div class="login-right-panel">
+    <div class="top-nav">
+      <a routerLink="/" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Volver al Inicio
+      </a>
+    </div>
+
+    <div class="form-content-wrapper">
+      <div class="form-header">
+        <h2>Iniciar sesión</h2>
+        <p>Bienvenido de nuevo al sistema Safe Flow</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form" novalidate>
+        <!-- Campo Correo / Usuario -->
+        <div class="form-group">
+          <label for="identifier">CORREO ELECTRÓNICO O USUARIO</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="identifier"
+              name="identifier"
+              [(ngModel)]="credentials.identifier"
+              required
+              placeholder="nombre@empresa.com"
+              #identifier="ngModel"
+            />
+          </div>
+          @if (identifier.invalid && (identifier.touched || loginForm.submitted)) {
+            <span class="error-text">Ingresa tu correo o usuario.</span>
+          }
+        </div>
+
+        <!-- Campo Contraseña -->
+        <div class="form-group">
+          <div class="label-row">
+            <label for="password">CONTRASEÑA</label>
+            <a href="#" class="forgot-password" (click)="$event.preventDefault()">¿Olvidaste la contraseña?</a>
+          </div>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="credentials.password"
+              required
+              placeholder="••••••••"
+              #password="ngModel"
+            />
+            <button type="button" class="toggle-password-btn" (click)="togglePasswordVisibility()" aria-label="Mostrar u ocultar contraseña">
+              @if (!showPassword) {
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              }
+            </button>
+          </div>
+          @if (password.invalid && (password.touched || loginForm.submitted)) {
+            <span class="error-text">Ingresa tu contraseña.</span>
+          }
+        </div>
+
+        <!-- Checkbox Mantener sesión -->
+        <div class="form-checkbox-group">
+          <label class="checkbox-container">
+            <input type="checkbox" name="rememberMe" [(ngModel)]="credentials.rememberMe" />
+            <span class="checkmark"></span>
+            Mantener sesión iniciada
+          </label>
+        </div>
+
+        <!-- Sin (onClick): el envío lo maneja (ngSubmit) -->
+        <app-button
+          text="Iniciar sesión"
+          type="submit"
+          [showArrow]="true"
+          colorVariant="primary">
+        </app-button>
+      </form>
+
+      <div class="form-footer-support">
+        <span>¿Tienes problemas para acceder? <a href="#" class="support-link" (click)="$event.preventDefault()">Contactar Soporte</a></span>
+      </div>
+    </div>
+  </div>
+</div>
