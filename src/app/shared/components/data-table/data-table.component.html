@@ -1,0 +1,22 @@
+<div class="table-container">
+  <ng-content select="[table-header]"></ng-content>
+  
+  <table>
+    <thead>
+      <tr>
+        <th *ngFor="let col of columns">{{ col.label }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of data">
+        <td *ngFor="let col of columns">
+          <ng-container *ngTemplateOutlet="getCellTemplate(col.key); context: { $implicit: row[col.key], row: row }">
+          </ng-container>
+          <span *ngIf="!getCellTemplate(col.key)">{{ row[col.key] }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-content select="[table-footer]"></ng-content>
+</div>
