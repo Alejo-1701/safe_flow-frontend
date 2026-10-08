@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [],
   selector: 'app-status-badge',
-  styleUrl: './status-badge.scss',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './status-badge.html',
+  styleUrls: ['./status-badge.scss']
 })
-export class StatusBadge {}
+export class StatusBadgeComponent {
+  @Input() statusType: 'success' | 'warning' | 'danger' | 'info' | 'neutral' = 'info';
+  @Input() showDot: boolean = true;
+}
