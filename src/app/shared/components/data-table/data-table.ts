@@ -21,7 +21,7 @@ export class CellTemplateDirective {
   templateUrl: './data-table.html',
   styleUrls: ['./data-table.scss']
 })
-export class DataTableComponent<T> {
+export class DataTableComponent<T extends Record<string, any>> {
   @Input({ required: true }) columns: ColumnDefinition[] = [];
   @Input({ required: true }) data: T[] = [];
 

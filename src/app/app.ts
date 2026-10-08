@@ -13,6 +13,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './app.scss'
 })
 export class App {
+  miFormulario: FormGroup;
+
   constructor(private fb: FormBuilder) {
     this.miFormulario = this.fb.group({
     });
