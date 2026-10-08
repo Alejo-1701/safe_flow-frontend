@@ -1,0 +1,19 @@
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-group">
+      <i *ngIf="icon" [class]="icon"></i>
+      <h3>{{ title }}</h3>
+    </div>
+    <span *ngIf="badgeText" [class]="'badge ' + badgeType">{{ badgeText }}</span>
+  </div>
+  
+  <p *ngIf="subtitle" class="subtitle">{{ subtitle }}</p>
+
+  <div class="card-body">
+    <ng-content></ng-content>
+  </div>
+
+  <div class="card-footer" *ngIf="actionLabel">
+    <button (click)="onActionClick()">{{ actionLabel }}</button>
+  </div>
+</div>

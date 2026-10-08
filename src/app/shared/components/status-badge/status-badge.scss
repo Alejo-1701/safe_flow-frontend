@@ -1,0 +1,56 @@
+:host {
+  display: inline-flex;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+
+  &.success {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: var(--status-free, #22c55e);
+    border-color: rgba(34, 197, 94, 0.3);
+    .dot { background-color: var(--status-free, #22c55e); }
+  }
+
+  &.warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--status-full, #f59e0b);
+    border-color: rgba(245, 158, 11, 0.3);
+    .dot { background-color: var(--status-full, #f59e0b); }
+  }
+
+  &.danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+    .dot { background-color: #ef4444; }
+  }
+
+  &.info {
+    background-color: rgba(56, 189, 248, 0.15);
+    color: var(--color-accent, #38bdf8);
+    border-color: rgba(56, 189, 248, 0.3);
+    .dot { background-color: var(--color-accent, #38bdf8); }
+  }
+
+  &.neutral {
+    background-color: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.3);
+    .dot { background-color: #94a3b8; }
+  }
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}

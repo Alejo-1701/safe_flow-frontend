@@ -1,5 +1,6 @@
 <div class="form-field-container">
-  <!-- Cabecera de la sección (Icono y Título) -->
+
+  <!-- Cabecera de la sección (Icono y Título opcional) -->
   <div class="form-field-header" *ngIf="title">
     <span class="header-icon" *ngIf="iconClass">
       <i [class]="iconClass"></i>
@@ -7,12 +8,15 @@
     <h2>{{ title }}</h2>
   </div>
 
+  <!-- Formulario reactivo enlazado al FormGroup auto-generado -->
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form-field-grid">
+
+      <!-- Iteración de cada campo según la configuración FieldConfig -->
       <div class="form-field-group" *ngFor="let field of fields">
         <label [for]="field.key">{{ field.label }}</label>
 
-        <!-- Inputs de texto, email, teléfono, contraseña, fecha con conversión a mayúsculas -->
+        <!-- Inputs estándar (text, email, tel, password, date) con mayúsculas automáticas -->
         <input
           *ngIf="field.type !== 'select'"
           [id]="field.key"
@@ -23,7 +27,7 @@
           class="form-field-control uppercase-input"
         />
 
-        <!-- Selects dinámicos -->
+        <!-- Selects dinámicos basados en opciones -->
         <select
           *ngIf="field.type === 'select'"
           [id]="field.key"
@@ -35,10 +39,15 @@
             {{ option.label }}
           </option>
         </select>
+
+        <!-- Mensaje de error visual si el campo requerido está vacío y fue tocado -->
+        <div *ngIf="form.get(field.key)?.invalid && form.get(field.key)?.touched" class="error-message">
+          Este campo es obligatorio.
+        </div>
       </div>
     </div>
 
-    <!-- Botones de Acción (Cancelar / Guardar) -->
+    <!-- Botonera de acciones inferior (Cancelar / Guardar) -->
     <div class="form-field-actions" *ngIf="submitLabel || cancelLabel">
       <button type="button" class="btn-cancel" *ngIf="cancelLabel" (click)="onCancel()">
         {{ cancelLabel }}
