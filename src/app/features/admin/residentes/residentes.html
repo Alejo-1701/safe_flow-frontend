@@ -1,0 +1,120 @@
+<div class="app-layout">
+  <!-- Sidebar Reutilizable Global -->
+  <app-sidebar basePath="/admin"></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Encabezado -->
+    <header class="page-header">
+      <h1>Directorio de Residentes</h1>
+      <p>Gestión integral de habitantes del conjunto</p>
+    </header>
+
+    <!-- Toolbar de Búsqueda y Filtros -->
+    <section class="search-toolbar">
+      <div class="search-input-box">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input
+          type="text"
+          placeholder="Buscar residente por nombre o apto..."
+          [(ngModel)]="searchTerm"
+        />
+      </div>
+
+      <div class="filter-dropdown">
+        <select [(ngModel)]="selectedTorre">
+          <option value="TODAS">Todas las Torres</option>
+          <option value="Torre 1">Torre 1</option>
+          <option value="Torre 2">Torre 2</option>
+          <option value="Torre 3">Torre 3</option>
+        </select>
+        <span class="material-symbols-outlined chevron-icon">expand_more</span>
+      </div>
+
+      <div class="filter-dropdown">
+        <select [(ngModel)]="selectedApto">
+          <option value="TODOS">Apartamento</option>
+        </select>
+        <span class="material-symbols-outlined chevron-icon">expand_more</span>
+      </div>
+    </section>
+
+    <!-- Tabla con Residentes -->
+    <section class="directory-card">
+      <div class="table-wrapper">
+        <table class="directory-table">
+          <thead>
+            <tr>
+              <th>NOMBRE</th>
+              <th>TORRE</th>
+              <th>APTO</th>
+              <th>VEHÍCULOS</th>
+              <th>TELÉFONO</th>
+              <th class="text-right">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let resident of filteredResidents">
+              <!-- Nombre con Avatar de Iniciales -->
+              <td>
+                <div class="resident-cell">
+                  <div class="avatar">{{ resident.iniciales }}</div>
+                  <span class="resident-name">{{ resident.nombre }}</span>
+                </div>
+              </td>
+
+              <!-- Torre -->
+              <td class="text-secondary">{{ resident.torre }}</td>
+
+              <!-- Apto -->
+              <td class="text-secondary">{{ resident.apto }}</td>
+
+              <!-- Vehículos (Píldoras de placas o 'Sin vehículo') -->
+              <td>
+                <div class="vehicles-container" *ngIf="resident.vehiculos.length > 0; else noVehicle">
+                  <span class="plate-pill" *ngFor="let plate of resident.vehiculos">
+                    {{ plate }}
+                  </span>
+                </div>
+                <ng-template #noVehicle>
+                  <span class="no-vehicle-text">Sin vehículo</span>
+                </ng-template>
+              </td>
+
+              <!-- Teléfono -->
+              <td class="text-secondary">{{ resident.telefono }}</td>
+
+              <!-- Botón Ver Detalle -->
+              <td class="actions-cell">
+                <button type="button" class="btn-detail" (click)="viewDetail(resident)">
+                  <span>VER DETALLE</span>
+                  <span class="material-symbols-outlined icon-edit">edit</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pie de Tabla -->
+      <footer class="table-footer">
+        <span class="records-text">Mostrando {{ filteredResidents.length }} de 248 residentes</span>
+        <div class="pagination-controls">
+          <button type="button" class="btn-page" title="Anterior">&lt;</button>
+          <button type="button" class="btn-page" title="Siguiente">&gt;</button>
+        </div>
+      </footer>
+    </section>
+
+    <!-- Tarjeta Métrica Inferior de Total Residentes -->
+    <section class="total-card-section">
+      <app-stat-card
+        title="TOTAL RESIDENTES"
+        [value]="totalResidentesCount"
+        icon="material-symbols-outlined icon-blue icon-group">
+      </app-stat-card>
+    </section>
+
+  </main>
+</div>
