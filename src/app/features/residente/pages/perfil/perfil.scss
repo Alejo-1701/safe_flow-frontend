@@ -1,0 +1,216 @@
+/* ================================================================= *
+ * VISTA "MI PERFIL" (Editar Información Personal) - Residente
+ * Layout: menú lateral compartido + contenido con tarjetas.
+ * Replica los ajustes de layout de la pantalla del portal:
+ *  - Contenido CENTRADO (horizontal y verticalmente) con un ancho máximo
+ *    cómodo (no se estira a todo el ancho de la pantalla en monitores
+ *    grandes y queda centrado también en alto).
+ *  - Escritorio: alto de ventana (100vh) SIN scroll de página; el
+ *    scroll (si hace falta) queda dentro del contenido.
+ *  - Tablet / móvil: el menú pasa arriba y la página hace scroll normal.
+ * ================================================================= */
+
+:host {
+  display: block;
+  background-color: var(--bg-main);
+}
+
+.perfil-layout {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+}
+
+/* El sidebar compartido conserva su propio ancho; lo fijamos en el layout. */
+app-sidebar {
+  flex: 0 0 220px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+}
+
+.perfil-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+/*
+ * Bloque con el encabezado y las tarjetas.
+ * `margin: auto` lo centra HORIZONTAL y VERTICALMENTE dentro del
+ * contenido. Si el bloque es más alto que el área disponible, los
+ * márgenes automáticos se anulan solos y el scroll interno funciona
+ * sin recortar la parte de arriba.
+ */
+.perfil-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.page-header {
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    color: color-mix(in srgb, var(--text-primary) 62%, transparent);
+  }
+}
+
+/* Tarjetas centradas (ancho máximo definido arriba), sin límite del 90%. */
+.perfil-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+/* ----------------------------------------------------------------- *
+ * Iconos Material en las cabeceras de los form-field compartidos.
+ * El componente recibe `iconClass` pero no aplica la fuente Material
+ * Symbols, así que inyectamos el glifo desde la vista con `::ng-deep`.
+ * ----------------------------------------------------------------- */
+:host ::ng-deep form-field .header-icon i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-accent);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep .resident-card .header-icon i::before {
+  content: 'badge';
+}
+
+:host ::ng-deep .password-card .header-icon i::before {
+  content: 'lock';
+}
+
+/* Formulario limpio: sin mensajes de error estáticos. */
+:host ::ng-deep form-field .error-message {
+  display: none;
+}
+
+/* Los botones del pie nunca desbordan su tarjeta. */
+:host ::ng-deep form-field .form-field-actions button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+/* ----------------------------------------------------------------- *
+ * Banner informativo (reutiliza app-card-widget con acento lateral).
+ * ----------------------------------------------------------------- */
+:host ::ng-deep .security-note .card {
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--status-danger, #EF4444);
+  background-color: color-mix(in srgb, var(--status-danger, #EF4444) 10%, var(--bg-card));
+}
+
+:host ::ng-deep .security-note .card:hover {
+  border-color: transparent;
+  border-left-color: var(--status-danger, #EF4444);
+}
+
+:host ::ng-deep .security-note .card-title-group {
+  gap: 0.5rem;
+}
+
+:host ::ng-deep .security-note .card-title-group h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--status-danger, #EF4444);
+}
+
+:host ::ng-deep .security-note .card-title-group i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--status-danger, #EF4444);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep .security-note .card-title-group i::before {
+  content: 'info';
+}
+
+:host ::ng-deep .security-note .subtitle {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--text-primary) 80%, transparent);
+}
+
+/* ----------------------------------------------------------------- *
+ * Tablet / móvil: el menú pasa arriba del contenido.
+ * ----------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .perfil-layout {
+    flex-direction: column;
+  }
+
+  app-sidebar {
+    flex: 0 0 auto;
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .perfil-content {
+    padding: 1rem;
+  }
+
+  .perfil-inner {
+    gap: 1rem;
+  }
+
+  .perfil-cards {
+    gap: 1rem;
+  }
+}
+
+/* ----------------------------------------------------------------- *
+ * ESCRITORIO / PANTALLA COMPLETA:
+ * La vista ocupa exactamente el alto de la ventana y NO genera scroll
+ * de página. Si el contenido no cabe, el scroll queda dentro del
+ * contenido (nunca en toda la página).
+ * ----------------------------------------------------------------- */
+@media (min-width: 1025px) {
+  :host {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .perfil-layout {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .perfil-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}

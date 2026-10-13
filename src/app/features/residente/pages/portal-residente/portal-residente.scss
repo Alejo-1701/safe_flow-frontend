@@ -1,0 +1,333 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+}
+
+/*
+ * Personalización visual del `app-navbar` compartido (logo + botones con icono).
+ * Se hace con `::ng-deep` desde el módulo residente para NO modificar el
+ * código fuente del componente compartido.
+ */
+
+/* Logo + nombre de la marca a la izquierda de la barra. */
+app-navbar ::ng-deep .left-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+app-navbar ::ng-deep .left-section::before {
+  content: '';
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  background-image: url('/assets/images/logo.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+app-navbar ::ng-deep .left-section::after {
+  content: 'Safe_FLow';
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Botones de la barra: "Actualizar Datos" (blanco) y "Cerrar Sesión" (rojo),
+   ambos con apariencia de botón (borde + fondo en hover) e icono. */
+app-navbar ::ng-deep .right-section button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  &::before {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: normal;
+    font-feature-settings: 'liga';
+    -webkit-font-feature-settings: 'liga';
+  }
+}
+
+/* "Actualizar Datos": blanco. */
+app-navbar ::ng-deep .right-section button:first-of-type::before {
+  content: 'sync';
+}
+
+app-navbar ::ng-deep .right-section button:first-of-type:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* "Cerrar Sesión": rojo. */
+app-navbar ::ng-deep .right-section button:last-of-type {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.55);
+}
+
+app-navbar ::ng-deep .right-section button:last-of-type::before {
+  content: 'logout';
+}
+
+app-navbar ::ng-deep .right-section button:last-of-type:hover {
+  background-color: rgba(239, 68, 68, 0.12);
+  border-color: #ef4444;
+}
+
+/*
+ * Avatar del usuario en la barra.
+ * El `app-navbar` compartido solo dibuja la foto si recibe `avatarUrl`; como
+ * todavía no hay imagen, mostramos un icono Material como respaldo.
+ * Si más adelante se envía `avatarUrl`, el icono se oculta automáticamente.
+ */
+app-navbar ::ng-deep .user-profile::before {
+  content: 'account_circle';
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: normal;
+  color: var(--color-accent);
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  flex-shrink: 0;
+}
+
+app-navbar ::ng-deep .user-profile:has(img)::before {
+  content: none;
+}
+
+.portal {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.portal-content {
+  flex: 1;
+  width: 90%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.portal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  /* Las dos columnas de la parte superior quedan a la misma altura. */
+  align-items: stretch;
+}
+
+.portal-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+/*
+ * Las tarjetas de cada columna se reparten el alto disponible, de modo que las
+ * dos columnas queden parejas y sin huecos. Se estiliza desde el módulo
+ * residente con `::ng-deep`; los componentes compartidos no se modifican.
+ */
+.portal-col > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.portal-col app-parking-status,
+.portal-col app-preauthorize-guest,
+.portal-col app-my-vehicles,
+.portal-col app-my-requests,
+.portal-col app-quick-access {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.portal-col ::ng-deep app-card-widget,
+.portal-col ::ng-deep form-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.portal-col ::ng-deep app-card-widget .card,
+.portal-col ::ng-deep form-field .form-field-container {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/*
+ * Evita que los botones de acción de las tarjetas ("+ Registrar",
+ * "Nueva Solicitud", ...) se salgan cuando la tarjeta se comprime:
+ * la cabecera y el footer quedan fijos dentro de la tarjeta y solo el
+ * cuerpo hace scroll si el alto es insuficiente.
+ */
+.portal-col ::ng-deep app-card-widget .card {
+  overflow: hidden;
+}
+
+.portal-col ::ng-deep app-card-widget .card-header,
+.portal-col ::ng-deep app-card-widget .card-footer {
+  flex: 0 0 auto;
+}
+
+.portal-col ::ng-deep app-card-widget .card-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* El botón del footer nunca es más ancho que la tarjeta. */
+.portal-col ::ng-deep app-card-widget .card-footer button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+/*
+ * Normalizamos el título de la tarjeta: el `h3` compartido conserva los
+ * márgenes por defecto del navegador (~1em arriba/abajo), que inflan la
+ * cabecera y restan alto útil. Así las tarjetas aprovechan mejor el espacio
+ * y el footer (con su botón) siempre cabe.
+ */
+.portal-col ::ng-deep app-card-widget .card-title-group h3 {
+  margin: 0;
+}
+
+/* Tablet / móvil: una sola columna */
+@media (max-width: 1024px) {
+  .portal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .portal-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .portal-grid,
+  .portal-col {
+    gap: 1rem;
+  }
+
+  /*
+   * Barra superior responsiva: los botones y el perfil se acomodan (wrap) y
+   * reducen su tamaño para no salirse del contenedor en pantallas pequeñas.
+   */
+  app-navbar ::ng-deep .navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+  }
+
+  app-navbar ::ng-deep .left-section::after {
+    display: none;
+  }
+
+  app-navbar ::ng-deep .right-section {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  app-navbar ::ng-deep .right-section button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  app-navbar ::ng-deep .right-section button::before {
+    font-size: 18px;
+  }
+
+  app-navbar ::ng-deep .user-profile::before {
+    font-size: 32px;
+  }
+
+  app-navbar ::ng-deep .user-role {
+    display: none;
+  }
+}
+
+/*
+ * ESCRITORIO / PANTALLA COMPLETA:
+ * El portal ocupa exactamente el alto de la ventana y NO genera scroll de
+ * página. El contenido se reparte con flex (tarjetas y columnas se ajustan),
+ * y en caso extremo (pantallas muy bajas o mucha información) el scroll queda
+ * contenido dentro de cada columna, nunca en toda la página.
+ */
+@media (min-width: 1025px) {
+  :host {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .portal {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .portal-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .portal-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .portal-col {
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  /*
+   * En escritorio las tarjetas se reparten un alto limitado (100vh). Reducimos
+   * su padding y el espacio interno para que el botón de acción (Registrar,
+   * Nueva Solicitud) siempre quepa dentro de la tarjeta, incluso en pantallas
+   * de poca altura. Si aun así no cupiera, el cuerpo hace scroll y la columna
+   * también (nunca la página completa).
+   */
+  .portal-col ::ng-deep app-card-widget .card,
+  .portal-col ::ng-deep form-field .form-field-container {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  /* El historial conserva su alto natural; la grilla superior ocupa el resto.
+     Si llegara a crecer, se encoge y hace scroll interno (nunca la página). */
+  app-recent-visits {
+    flex: 0 1 auto;
+    min-height: 0;
+  }
+}

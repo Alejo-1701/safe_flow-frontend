@@ -1,6 +1,6 @@
 <aside>
   <div class="sidebar-header">
-    <h1>Safe Flow</h1>
+    <h1>{{ title }}</h1>
   </div>
 
   <nav>
@@ -22,13 +22,17 @@
       <div class="profile-avatar">
         <span class="material-symbols-outlined footer-icon" aria-hidden="true">person</span>
       </div>
-      <div class="profile-info">
+      <div class="profile-info" *ngIf="currentUser.name || currentUser.role">
         <p class="profile-name">{{ currentUser.name }}</p>
         <p class="profile-role">{{ currentUser.role }}</p>
       </div>
     </div>
 
-    <button (click)="logout()" title="Cerrar sesión">
+    <button *ngIf="showOptionsButton" type="button" (click)="onOptions()" title="Opciones">
+      <span class="material-symbols-outlined footer-icon" aria-hidden="true">more_vert</span>
+    </button>
+
+    <button type="button" (click)="logout()" title="Cerrar sesión">
       <span class="material-symbols-outlined logout-icon" aria-hidden="true">logout</span>
     </button>
   </div>

@@ -99,7 +99,6 @@ nav {
 .sidebar-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   margin-top: auto;
   padding: 10px 12px;
@@ -125,6 +124,7 @@ nav {
 .sidebar-profile {
   display: flex;
   align-items: center;
+  flex: 1 1 auto;
   gap: 10px;
   overflow: hidden;
   min-width: 0;

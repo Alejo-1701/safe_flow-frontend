@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+.visitor-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background-color: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.alert-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.alert-icon {
+  color: var(--color-accent);
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.alert-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.alert-title {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.alert-visitor {
+  color: var(--color-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.alert-message {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.alert-actions {
+  display: grid;
+  /* minmax(0, 1fr) evita que un texto largo ("Aprobar Ingreso") ensanche
+     una columna: ambas quedan siempre del mismo tamaño. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  flex: 0 0 auto;
+  width: 360px;
+  max-width: 100%;
+}
+
+.alert-actions app-button {
+  display: block;
+}
+
+/*
+ * Recoloreamos los botones compartidos (`app-button`) desde el módulo residente
+ * con `::ng-deep`, sin tocar el código fuente del componente compartido.
+ * Ambos usan `colorVariant="primary"` para que tengan exactamente el mismo
+ * tamaño; solo cambiamos color e icono.
+ */
+.alert-actions app-button ::ng-deep .btn {
+  gap: 0.5rem;
+}
+
+.alert-actions app-button ::ng-deep .btn::before {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+}
+
+/* Aprobar Ingreso: verde. */
+.alert-actions app-button.alert-btn--approve ::ng-deep .btn {
+  background-color: var(--status-free, #22c55e);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+}
+
+.alert-actions app-button.alert-btn--approve ::ng-deep .btn::before {
+  content: 'check_circle';
+}
+
+.alert-actions app-button.alert-btn--approve ::ng-deep .btn:hover:not(:disabled) {
+  background-color: #16a34a;
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+/* Rechazar: rojo. */
+.alert-actions app-button.alert-btn--reject ::ng-deep .btn {
+  background-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+}
+
+.alert-actions app-button.alert-btn--reject ::ng-deep .btn::before {
+  content: 'cancel';
+}
+
+.alert-actions app-button.alert-btn--reject ::ng-deep .btn:hover:not(:disabled) {
+  background-color: #dc2626;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* En pantallas pequeñas reducimos el padding/fuente de los botones para que
+   nunca se salgan del contenedor. */
+@media (max-width: 480px) {
+  .alert-actions {
+    width: 100%;
+  }
+
+  .alert-actions app-button ::ng-deep .btn {
+    padding: 0.65rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .alert-actions app-button ::ng-deep .btn::before {
+    font-size: 18px;
+  }
+}

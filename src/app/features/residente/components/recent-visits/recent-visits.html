@@ -1,0 +1,13 @@
+<app-data-table [columns]="columns" [data]="visits">
+
+  <!-- Cabecera de la tabla -->
+  <div table-header class="table-header">
+    <div class="header-title">
+      <span class="material-symbols-outlined header-icon" aria-hidden="true">history</span>
+      <h3>Historial de Visitas Recientes</h3>
+    </div>
+
+    <app-button text="Ver Todo" colorVariant="outline" (onClick)="onViewAll()"></app-button>
+  </div>
+
+</app-data-table>

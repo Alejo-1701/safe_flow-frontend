@@ -1,0 +1,26 @@
+<app-card-widget
+  title="Mis Vehículos"
+  icon="directions_car"
+  actionLabel="+ Registrar"
+  (actionClick)="onRegister()">
+
+  <ul class="vehicle-list">
+    @for (vehicle of vehicles; track vehicle.plate) {
+      <li class="vehicle-item">
+        <div class="vehicle-info">
+          <span class="material-symbols-outlined vehicle-icon" aria-hidden="true">directions_car</span>
+          <div class="vehicle-text">
+            <span class="vehicle-plate">{{ vehicle.plate }}</span>
+            <span class="vehicle-description">{{ vehicle.description }}</span>
+          </div>
+        </div>
+
+        <app-status-badge [statusType]="vehicle.isPrimary ? 'success' : 'neutral'">
+          {{ vehicle.isPrimary ? 'Principal' : 'Secundario' }}
+        </app-status-badge>
+      </li>
+    } @empty {
+      <li class="empty-state">Aún no has registrado vehículos.</li>
+    }
+  </ul>
+</app-card-widget>

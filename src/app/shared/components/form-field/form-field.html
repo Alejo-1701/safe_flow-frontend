@@ -16,29 +16,46 @@
       <div class="form-field-group" *ngFor="let field of fields">
         <label [for]="field.key">{{ field.label }}</label>
 
-        <!-- Inputs estándar (text, email, tel, password, date) con mayúsculas automáticas -->
-        <input
-          *ngIf="field.type !== 'select'"
-          [id]="field.key"
-          [type]="field.type"
-          [formControlName]="field.key"
-          [placeholder]="field.placeholder || ''"
-          (input)="onInputUppercase($event, field.key)"
-          class="form-field-control uppercase-input"
-        />
+        <div class="control-wrapper">
+          <!-- Inputs estándar (text, email, tel, password, date) -->
+          <input
+            *ngIf="field.type !== 'select'"
+            [id]="field.key"
+            [type]="inputType(field)"
+            [formControlName]="field.key"
+            [placeholder]="field.placeholder || ''"
+            [readonly]="field.readonly === true"
+            [class.uppercase-input]="field.uppercase !== false"
+            (input)="onInputUppercase($event, field)"
+            class="form-field-control"
+          />
 
-        <!-- Selects dinámicos basados en opciones -->
-        <select
-          *ngIf="field.type === 'select'"
-          [id]="field.key"
-          [formControlName]="field.key"
-          class="form-field-control"
-        >
-          <option value="" disabled selected>Seleccione una opción</option>
-          <option *ngFor="let option of field.options" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          <!-- Selects dinámicos basados en opciones -->
+          <select
+            *ngIf="field.type === 'select'"
+            [id]="field.key"
+            [formControlName]="field.key"
+            class="form-field-control"
+          >
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option *ngFor="let option of field.options" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+
+          <!-- Mostrar / ocultar contraseña -->
+          <button
+            *ngIf="field.type === 'password'"
+            type="button"
+            class="toggle-password"
+            (click)="togglePassword(field.key)"
+            [attr.aria-label]="isPasswordVisible(field.key) ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">
+              {{ isPasswordVisible(field.key) ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
 
         <!-- Mensaje de error visual si el campo requerido está vacío y fue tocado -->
         <div *ngIf="form.get(field.key)?.invalid && form.get(field.key)?.touched" class="error-message">
