@@ -1,0 +1,159 @@
+<div class="app-layout">
+  <!-- Sidebar Reutilizable Global -->
+  <app-sidebar basePath="/admin"></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="dashboard-main">
+
+    <!-- Cabecera -->
+    <header class="dashboard-header">
+      <div class="header-title">
+        <h1>Dashboard de Administración</h1>
+        <p>Control de acceso y estado del parqueo en tiempo real.</p>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn-action btn-export" (click)="exportData()">
+          <span class="material-symbols-outlined icon-download">download</span>
+          Exportar
+        </button>
+
+        <app-button
+          text="Registrar Residente"
+          colorVariant="primary"
+          (onClick)="registerResident()">
+        </app-button>
+      </div>
+    </header>
+
+    <!-- Tarjetas de Métricas -->
+    <section class="stats-grid">
+      <app-stat-card
+        title="% DE OCUPACIÓN"
+        [value]="metrics.ocupacion"
+        icon="material-symbols-outlined icon-green icon-trend-up">
+      </app-stat-card>
+
+      <app-stat-card
+        title="RECAUDO HOY"
+        [value]="metrics.recaudo"
+        icon="material-symbols-outlined icon-green icon-money">
+      </app-stat-card>
+
+      <app-stat-card
+        title="ALERTAS DE SEGURIDAD"
+        [value]="metrics.alertas"
+        trend="Requiere atención"
+        trendType="negative"
+        icon="material-symbols-outlined icon-red icon-alert">
+      </app-stat-card>
+
+      <app-stat-card
+        title="VISITANTES HOY"
+        [value]="metrics.visitantes"
+        trend="Promedio 72/día"
+        trendType="neutral"
+        icon="material-symbols-outlined icon-yellow icon-location">
+      </app-stat-card>
+    </section>
+
+    <!-- Sección Central -->
+    <section class="dashboard-content">
+
+      <!-- Panel Izquierdo: Última Actividad -->
+      <article class="activity-column">
+        <div class="activity-card">
+          <h2 class="activity-title">Última Actividad</h2>
+
+          <div class="activity-header-labels">
+            <span>PLACA</span>
+            <span>TIPO</span>
+            <span>HORA ENTRADA</span>
+          </div>
+
+          <ul class="activity-list">
+            <li *ngFor="let item of recentActivity" class="activity-item">
+              <span class="plate-number">{{ item.placa }}</span>
+
+              <app-status-badge
+                [statusType]="item.tipo === 'RESIDENTE' ? 'info' : 'warning'"
+                [showDot]="false">
+                {{ item.tipo }}
+              </app-status-badge>
+
+              <span class="entry-time">{{ item.horaEntrada }}</span>
+            </li>
+          </ul>
+
+          <div class="activity-footer">
+            <button type="button" class="btn-history-link" (click)="viewAllHistory()">
+              Ver todo el historial
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Panel Derecho: Gestión de Usuarios -->
+      <article class="users-column">
+        <div class="users-card">
+          <div class="users-card-header">
+            <h2>Gestión de Usuarios y Accesos</h2>
+
+            <div class="search-box">
+              <span class="material-symbols-outlined search-icon">search</span>
+              <input
+                type="text"
+                placeholder="Buscar residente o unidad..."
+                [(ngModel)]="searchTerm"
+              />
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="custom-data-table">
+              <thead>
+                <tr>
+                  <th>UNIDAD</th>
+                  <th>ESTADO</th>
+                  <th>ÚLTIMO ACCESO</th>
+                  <th>RESIDENTE</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of usersList">
+                  <td class="unit-cell">{{ user.unidad }}</td>
+                  <td>
+                    <app-status-badge
+                      [statusType]="user.estado === 'ACTIVO' ? 'success' : 'neutral'"
+                      [showDot]="false">
+                      {{ user.estado }}
+                    </app-status-badge>
+                  </td>
+                  <td class="access-cell">{{ user.ultimoAcceso }}</td>
+                  <td class="resident-cell">
+                    <div class="resident-info">
+                      <div class="avatar">{{ user.residenteIniciales }}</div>
+                      <div class="details">
+                        <span class="name">{{ user.residenteNombre }}</span>
+                        <span class="email">{{ user.residenteEmail }}</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <footer class="users-table-footer">
+            <span class="records-info">Mostrando 3 de 1,240 residentes</span>
+            <div class="pagination-controls">
+              <button type="button" class="btn-page" title="Página anterior">&lt;</button>
+              <button type="button" class="btn-page" title="Página siguiente">&gt;</button>
+            </div>
+          </footer>
+        </div>
+      </article>
+
+    </section>
+  </main>
+</div>
