@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SidebarComponent, SidebarNavItem, SidebarUser } from '../../../../shared/components/sidebar/sidebar';
+import { SidebarComponent, NavItem, UserProfile } from '../../../../shared/components/sidebar/sidebar';
 import { FormFieldComponent, FieldConfig } from '../../../../shared/components/form-field/form-field';
 import { CardWidgetComponent } from '../../../../shared/components/card-widget/card-widget.component';
 
@@ -18,8 +18,9 @@ export class Perfil {
    * Navegación del menú lateral.
    * Nota: las rutas son provisionales (placeholders). La navegación
    * definitiva se definirá cuando existan el resto de las pantallas.
+   * Se pasan con `[customNavItems]` (API del `app-sidebar` compartido).
    */
-  navItems: SidebarNavItem[] = [
+  navItems: NavItem[] = [
     { label: 'Dashboard', route: '/residente', icon: 'dashboard' },
     { label: 'Mi Perfil', route: '/residente/perfil', icon: 'person' },
     { label: 'Vehículos', route: '/residente/vehiculos', icon: 'directions_car' },
@@ -27,10 +28,9 @@ export class Perfil {
 
   /**
    * Datos del usuario en el pie del menú lateral.
-   * Se dejan vacíos: el nombre y el detalle no se muestran por ahora
-   * (el `app-sidebar` oculta el bloque de texto si no hay datos).
+   * Se dejan vacíos para no mostrar datos de ejemplo.
    */
-  currentUser: SidebarUser = {
+  currentUser: UserProfile = {
     name: '',
     role: ''
   };
@@ -93,16 +93,6 @@ export class Perfil {
 
   /** TODO: cancelar la edición / volver atrás (ruteo pendiente). */
   onCancel(): void {
-    // Lógica pendiente.
-  }
-
-  /** TODO: abrir el menú de opciones del usuario (ruteo pendiente). */
-  onOptions(): void {
-    // Lógica pendiente.
-  }
-
-  /** TODO: cerrar sesión (autenticación pendiente). */
-  onLogout(): void {
     // Lógica pendiente.
   }
 }

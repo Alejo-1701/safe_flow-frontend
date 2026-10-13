@@ -2,12 +2,9 @@
 
   <!-- Menú lateral (componente compartido app-sidebar) -->
   <app-sidebar
-    title="ParkResidencial"
-    [navItems]="navItems"
-    [currentUser]="currentUser"
-    [showOptionsButton]="true"
-    (optionsClick)="onOptions()"
-    (logoutClick)="onLogout()">
+    basePath="/residente"
+    [customNavItems]="navItems"
+    [currentUser]="currentUser">
   </app-sidebar>
 
   <main class="perfil-content">

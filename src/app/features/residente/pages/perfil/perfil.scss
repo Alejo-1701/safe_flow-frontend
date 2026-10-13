@@ -22,9 +22,10 @@
   background-color: var(--bg-main);
 }
 
-/* El sidebar compartido conserva su propio ancho; lo fijamos en el layout. */
+/* El sidebar compartido define su propio ancho (260px); el layout solo
+   controla su posición y que no se estire. */
 app-sidebar {
-  flex: 0 0 220px;
+  flex: 0 0 auto;
   position: sticky;
   top: 0;
   align-self: flex-start;
