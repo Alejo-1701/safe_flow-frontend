@@ -1,0 +1,119 @@
+  <aside class="side-col">
+
+    <!-- Manual de barreras -->
+    <app-card-widget title="Manual de Barreras" icon="gi gi-barrier">
+      <div class="barrier-actions">
+        <button type="button" class="ghost-btn" (click)="abrirBarrera.emit('entrada')">
+          <span class="material-symbols-outlined ok" aria-hidden="true">lock_open</span>
+          Abrir Entrada
+          <span class="material-symbols-outlined chev" aria-hidden="true">chevron_right</span>
+        </button>
+
+        <button type="button" class="ghost-btn" (click)="abrirBarrera.emit('salida')">
+          <span class="material-symbols-outlined ok" aria-hidden="true">lock_open</span>
+          Abrir Salida
+          <span class="material-symbols-outlined chev" aria-hidden="true">chevron_right</span>
+        </button>
+      </div>
+    </app-card-widget>
+
+    <!-- Alertas críticas -->
+    <app-card-widget
+      title="Alertas Críticas"
+      [badgeText]="alertas().length ? alertas().length.toString() : ''"
+      badgeType="danger">
+
+      <div class="alert-list">
+        @for (alerta of alertas(); track alerta.titulo) {
+          <div class="alert-item">
+            <strong>{{ alerta.titulo }}</strong>
+            <p>{{ alerta.detalle }}</p>
+          </div>
+        } @empty {
+          <p class="empty-note">Sin alertas activas.</p>
+        }
+      </div>
+    </app-card-widget>
+
+    <!-- Visitantes por autorizar -->
+    <app-card-widget title="Visitantes por Autorizar" icon="gi gi-pending">
+      <div class="card-divider"></div>
+
+      <div class="visit-list">
+        @for (visitante of porAutorizar(); track visitante.id) {
+          <article
+            class="visit-card"
+            [class.is-authorized]="visitante.estado === 'autorizado'">
+
+            <div class="visit-head">
+              <strong>{{ visitante.nombre }}</strong>
+
+              <span class="card-badge">
+                <app-status-badge
+                  [statusType]="tipoBadgeAutorizacion(visitante.estado)"
+                  [showDot]="false">
+                  {{ visitante.estado === 'autorizado' ? 'Autorizado' : 'Pendiente' }}
+                </app-status-badge>
+              </span>
+            </div>
+
+            <p class="visit-meta">
+              <span class="material-symbols-outlined" aria-hidden="true">home</span>
+              {{ visitante.ubicacion }}
+            </p>
+
+            @if (visitante.cita) {
+              <p class="visit-meta">
+                <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
+                {{ visitante.cita }}
+              </p>
+            }
+
+            @if (visitante.estado === 'autorizado') {
+              <div class="compact">
+                <app-button
+                  text="Permitir Paso"
+                  colorVariant="secondary"
+                  (onClick)="permitirPaso.emit(visitante)">
+                </app-button>
+              </div>
+            } @else {
+              <div class="btn-row">
+                <div class="compact call">
+                  <app-button
+                    text="Llamar"
+                    colorVariant="outline"
+                    (onClick)="llamar.emit(visitante)">
+                  </app-button>
+                </div>
+
+                <div class="compact">
+                  <app-button
+                    text="Denegar"
+                    colorVariant="secondary"
+                    (onClick)="denegar.emit(visitante)">
+                  </app-button>
+                </div>
+              </div>
+            }
+          </article>
+        } @empty {
+          <p class="empty-note">No hay visitantes por autorizar.</p>
+        }
+      </div>
+    </app-card-widget>
+
+    <!-- Historial de visitantes -->
+    <app-card-widget title="Historial de Visitantes" icon="gi gi-history">
+      <button
+        type="button"
+        class="history-btn"
+        (click)="verHistorial.emit()">
+
+        <span class="material-symbols-outlined accent" aria-hidden="true">receipt_long</span>
+        <span class="history-label">Ver Todos los Registros</span>
+        <span class="material-symbols-outlined chev" aria-hidden="true">chevron_right</span>
+      </button>
+    </app-card-widget>
+
+  </aside>

@@ -3,15 +3,16 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 // Componentes compartidos reutilizados (rutas inferidas de los templateUrl; ajústalas si tus archivos se llaman distinto)
-import { ButtonComponent } from '../../shared/components/button/button';
+import { PanelLateralComponent } from './panel-lateral';
+import { CierreTurnoComponent } from './cierre-turno';
 import { CardWidgetComponent } from '../../shared/components/card-widget/card-widget.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
 
 type EstadoVisita = 'aprobado' | 'pendiente' | 'rechazado';
-type TipoBadge = 'success' | 'warning' | 'danger';
+export type TipoBadge = 'success' | 'warning' | 'danger';
 
-interface AlertaCritica {
+export interface AlertaCritica {
   titulo: string;
   detalle: string;
 }
@@ -27,7 +28,7 @@ interface VisitanteActivo {
   valor: number;
 }
 
-interface VisitantePorAutorizar {
+export interface VisitantePorAutorizar {
   id: number;
   nombre: string;
   ubicacion: string;
@@ -46,7 +47,8 @@ interface Cobro {
   selector: 'app-guardia',
   standalone: true,
   imports: [
-    ButtonComponent,
+    PanelLateralComponent,
+    CierreTurnoComponent,
     CardWidgetComponent,
     StatusBadgeComponent,
     NavbarComponent

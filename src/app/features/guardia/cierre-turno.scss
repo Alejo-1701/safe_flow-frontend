@@ -1,0 +1,62 @@
+@use 'tokens' as *;
+
+:host {
+  display: contents;
+}
+
+/* ---------------- Cierre de turno ---------------- */
+.shift-end {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--bg-card, #1E293B);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+}
+.shift-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.shift-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $subtle;
+}
+.shift-hint {
+  font-size: 0.7rem;
+  color: $subtle;
+}
+.light-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--text-primary, #E2E8F0);
+  border: none;
+  border-radius: 10px;
+  color: var(--bg-main, #121826);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  &:hover {
+    background: var(--color-accent, #38BDF8);
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 3px;
+  }
+}
+
+/* Mismo breakpoint (600px) y mismo valor que tenía en el _responsive.scss del padre. */
+@media (max-width: 600px) {
+  .shift-end {
+    padding: 1rem;
+  }
+}

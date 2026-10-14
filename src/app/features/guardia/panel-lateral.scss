@@ -1,0 +1,181 @@
+@use 'tokens' as *;
+
+:host {
+  display: contents;
+}
+
+/* Este bloque venía agrupado con .main-col en el parent's _layout.scss.
+   `min-width: 0` es lo que impide que este grid item desborde .layout. */
+.side-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+/* ---------------- Panel izquierdo ---------------- */
+.barrier-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  padding: 0.65rem 0.9rem;
+  background: $surface;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: $text;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  &:hover {
+    border-color: $accent;
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+  .chev {
+    margin-left: -0.25rem;
+    font-size: 18px;
+  }
+}
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.alert-item {
+  padding: 0.6rem 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid $danger;
+  border-radius: 4px;
+  strong {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  p {
+    margin: 0.15rem 0 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: $muted;
+  }
+}
+.card-divider {
+  height: 1px;
+  margin: -0.25rem -1.5rem 0;
+  background: $line;
+}
+.visit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.visit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.85rem;
+  background: $surface;
+  border: 1px solid $line;
+  border-radius: 12px;
+  &.is-authorized {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+.visit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  strong {
+    font-size: 0.85rem;
+  }
+}
+.visit-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.75rem;
+  color: $muted;
+  .material-symbols-outlined {
+    font-size: 14px;
+  }
+}
+.btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+.btn-row .compact {
+  flex: 0 1 auto;
+  min-width: 70px;
+}
+app-button {
+  display: block;
+}
+/* Botones compactos: ajusta el tamaño del app-button solo dentro de esta vista */
+.compact {
+  width: 100%;
+  ::ng-deep .btn {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: 6px;
+  }
+}
+.compact.call ::ng-deep .btn-outline {
+  border-width: 1px;
+  background: rgba(56, 189, 248, 0.15);
+}
+/* Badges de estado (el componente fuerza mayúsculas y tamaño; se ajusta localmente) */
+.card-badge ::ng-deep .badge {
+  padding: 0.12rem 0.5rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.table-badge ::ng-deep .badge {
+  padding: 0.15rem 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: none;
+}
+.history-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.85rem;
+  background: $surface;
+  border: 1px solid $line;
+  border-radius: 10px;
+  color: $text;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  &:hover {
+    border-color: $accent;
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+  .history-label {
+    flex: 1;
+    text-align: center;
+  }
+  .chev {
+    font-size: 18px;
+  }
+}
