@@ -1,0 +1,63 @@
+@if (open) {
+  <!--
+    Capa de fondo: cierra el modal al hacer click fuera del panel.
+    `::ng-deep` alcanza el overlay de `form-field` porque este componente
+    contiene al compartido; no se modifica el fuente de `form-field`.
+  -->
+  <div class="solicitud-backdrop" (click)="onCancel()">
+    <section
+      class="solicitud-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="solicitud-title"
+      (click)="$event.stopPropagation()">
+
+      <!-- ===== Encabezado ===== -->
+      <button
+        type="button"
+        class="modal-close"
+        aria-label="Cerrar"
+        (click)="onCancel()">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+
+      <header class="solicitud-header">
+        <span class="header-icon material-symbols-outlined" aria-hidden="true">note_add</span>
+        <div class="header-text">
+          <h2 id="solicitud-title">Nueva Solicitud de Residente</h2>
+          <p>
+            Complete los detalles de su vehículo para ingresar a la lista de asignación.
+          </p>
+        </div>
+      </header>
+
+      <!-- ===== Formulario ===== -->
+      <form-field
+        [fields]="campos"
+        submitLabel="Enviar Solicitud"
+        cancelLabel="Cancelar"
+        (formSubmitted)="onSubmit($event)"
+        (formCancelled)="onCancel()">
+      </form-field>
+
+      <!-- ===== Banner: política de asignación ===== -->
+      <div class="policy-banner" role="note">
+        <span class="banner-icon material-symbols-outlined" aria-hidden="true">info</span>
+        <div>
+          <strong>Política de Asignación FIFO</strong>
+          <p>
+            Las solicitudes se procesan bajo el principio "First In, First Out".
+            Los cupos se asignan estrictamente en el orden cronológico en que se
+            reciben las solicitudes.
+          </p>
+        </div>
+      </div>
+
+      <!-- ===== Pie institucional ===== -->
+      <footer class="solicitud-footer">
+        ADMINISTRACIÓN DE PROPIEDAD HORIZONTAL - SOACHA
+      </footer>
+
+    </section>
+  </div>
+}

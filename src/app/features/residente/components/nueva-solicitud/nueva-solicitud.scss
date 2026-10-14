@@ -1,0 +1,248 @@
+@use 'tokens' as *;
+
+// El host no genera caja: el overlay es `position: fixed` y no debe depender
+// del contenedor donde se inserte el componente.
+:host {
+  display: contents;
+}
+
+/* ---------------- Overlay ---------------- */
+.solicitud-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+/* ---------------- Panel ---------------- */
+.solicitud-modal {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 26px;
+  border: 1px solid $line;
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: $muted;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* ---------------- Encabezado ---------------- */
+.solicitud-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-right: 40px;
+  margin-bottom: 20px;
+}
+
+.header-icon {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: 26px;
+}
+
+.header-text h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.header-text p {
+  margin: 6px 0 0;
+  color: $muted;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---------------- Banner de política ---------------- */
+.policy-banner {
+  display: flex;
+  gap: 11px;
+  margin-top: 18px;
+  padding: 13px 14px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 10px;
+  background: rgba(56, 189, 248, 0.09);
+}
+
+.banner-icon {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: 19px;
+}
+
+.policy-banner strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.policy-banner p {
+  margin: 0;
+  color: $muted;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+/* ---------------- Pie institucional ---------------- */
+.solicitud-footer {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid $line;
+  color: $subtle;
+  font-size: 9px;
+  letter-spacing: 1.1px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* =====================================================================
+   Inyección sobre `form-field` (componente compartido, no modificado).
+
+   Es el mismo patrón que ya usa features/residente/components/my-requests
+   sobre `app-card-widget`. Cada campo se localiza por el `id` que el
+   propio form-field le pone al control (`[id]="field.key"`).
+   ===================================================================== */
+
+:host ::ng-deep {
+  .form-field-container {
+    display: block;
+  }
+
+  // Los botones de form-field pasan a ser los de la vista: primario con
+  // glifo de envío, secundario en modo texto.
+  .form-field-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .btn-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 17px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--color-accent);
+    color: #082f49;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &::before {
+      content: 'send';
+      font-family: 'Material Symbols Outlined';
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+
+  .btn-cancel {
+    padding: 9px 15px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: $muted;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+
+  // Icono decorativo por campo, elegido por el id del control.
+  .form-field-group .control-wrapper {
+    position: relative;
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      right: 11px;
+      translate: 0 -50%;
+      color: $muted;
+      font-family: 'Material Symbols Outlined';
+      font-size: 17px;
+      font-weight: 400;
+      pointer-events: none;
+    }
+  }
+
+  // Deja espacio al glifo para que no pise el texto.
+  .form-field-group:has(#placa) .form-field-control {
+    padding-right: 36px;
+  }
+
+  .form-field-group:has(#placa) .control-wrapper::after {
+    content: 'pin';
+  }
+
+  .form-field-group:has(#marcaModelo) .form-field-control {
+    padding-right: 36px;
+  }
+
+  .form-field-group:has(#marcaModelo) .control-wrapper::after {
+    content: 'directions_car';
+  }
+
+  .form-field-group:has(#tipoVehiculo) .form-field-control {
+    padding-right: 36px;
+  }
+
+  .form-field-group:has(#tipoVehiculo) .control-wrapper::after {
+    content: 'local_gas_station';
+  }
+
+  // El campo de fecha NO lleva glifo propio: input[type=date] ya dibuja su
+  // indicador nativo en ese mismo borde (Chrome/Edge/Safari/Firefox), y dos
+  // iconos se superponen. El indicador nativo además es funcional —abre el
+  // calendario al clickear—, mientras que el decorativo no lo es.
+  //
+  // Con :has() sin soporte tampoco entran los iconos ni el padding de los otros
+  // campos: degrada a un input plano, funcional.
+}
+
+/* ---------------- Móvil ---------------- */
+@media (max-width: 560px) {
+  .solicitud-modal {
+    padding: 20px;
+  }
+
+  .solicitud-header {
+    padding-right: 34px;
+  }
+
+  .header-text h2 {
+    font-size: 17px;
+  }
+}

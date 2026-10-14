@@ -23,7 +23,7 @@
       <!-- Columna lateral -->
       <div class="portal-col portal-col--side">
         <app-my-vehicles></app-my-vehicles>
-        <app-my-requests></app-my-requests>
+        <app-my-requests (newRequest)="abrirSolicitud()"></app-my-requests>
         <app-quick-access></app-quick-access>
       </div>
     </div>
@@ -31,4 +31,14 @@
     <!-- Historial de visitas: a lo ancho, debajo de las dos columnas -->
     <app-recent-visits></app-recent-visits>
   </main>
+
+  <!--
+    Modal "Nueva Solicitud de Residente". Se controla con [open]; al enviar o
+    cancelar emite y el portal decide el cierre.
+  -->
+  <app-nueva-solicitud
+    [open]="solicitudAbierta"
+    (cerrado)="cerrarSolicitud()"
+    (enviada)="enviarSolicitud($event)">
+  </app-nueva-solicitud>
 </div>

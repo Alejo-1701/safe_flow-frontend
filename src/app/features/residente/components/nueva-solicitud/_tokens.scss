@@ -1,0 +1,13 @@
+// Tokens locales de la vista "Nueva Solicitud".
+//
+// El :root global solo expone 6 variables (--bg-main, --bg-card, --text-primary,
+// --color-accent, --status-free/full/danger). Faltan tres para esta pantalla:
+// texto secundario, texto sutil y linea divisoria.
+//
+// Estos valores son los mismos que ya usa features/guardia/_tokens.scss. Se
+// replican en vez de copiarse del global para no tener que tocar styles.scss
+// (afectaria a toda la app). Cuando se promotes al :root, este archivo puede
+// borrarse sin tocar el resto.
+$muted: #94a3b8;
+$subtle: #64748b;
+$line: rgba(255, 255, 255, 0.06);
