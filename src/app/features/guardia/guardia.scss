@@ -1,0 +1,9 @@
+// Styles for the guard (security) dashboard feature.
+// Split into partials to stay within the anyComponentStyle budget (8kB).
+// Cascade order matters: keep tokens -> base -> sections -> responsive.
+@use 'tokens';
+@use 'base';
+@use 'topbar';
+@use 'layout';
+@use 'content';
+@use 'responsive';

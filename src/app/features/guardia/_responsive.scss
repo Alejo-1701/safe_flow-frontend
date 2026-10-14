@@ -1,0 +1,86 @@
+/* ---------------- Responsive ---------------- */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .main-col {
+    order: -1;
+  }
+}
+@media (max-width: 600px) {
+  .topbar {
+    padding: 0.75rem 1rem;
+  }
+  .user-info {
+    display: none;
+  }
+  .layout {
+    padding: 1rem;
+  }
+  .panel,
+  .shift-end {
+    padding: 1rem;
+  }
+  .cta {
+    flex: 1 1 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Botones del navbar en la vista de Guardia */
+:host ::ng-deep app-navbar .right-section > button {
+  padding: 8px 12px;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Actualizar Datos */
+:host ::ng-deep app-navbar .right-section > button:first-of-type {
+  background-color: #334155;
+  color: #E2E8F0;
+  border: 1px solid #334155;
+}
+
+:host ::ng-deep app-navbar .right-section > button:first-of-type::before {
+  content: "edit";
+  font-family: "Material Symbols Outlined";
+  font-size: 14px;
+  vertical-align: -3px;
+  margin-right: 5px;
+}
+
+/* Cerrar Sesión */
+:host ::ng-deep app-navbar .right-section > button:nth-of-type(2) {
+  background-color: #29212B;
+  color: #F87171;
+  border: 1px solid #65323E;
+}
+
+:host ::ng-deep app-navbar .right-section > button:nth-of-type(2)::before {
+  content: "logout";
+  font-family: "Material Symbols Outlined";
+  font-size: 14px;
+  vertical-align: -3px;
+  margin-right: 5px;
+}
+
+/* Efectos al pasar el cursor */
+:host ::ng-deep app-navbar .right-section > button:first-of-type:hover {
+  background-color: #475569;
+}
+
+:host ::ng-deep app-navbar .right-section > button:nth-of-type(2):hover {
+  background-color: #3B2730;
+}

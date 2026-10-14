@@ -1,0 +1,34 @@
+<div class="portal">
+  <!-- Barra superior: logo, acciones y perfil del residente -->
+  <!-- Los valores de respaldo ("Usuario"/"Residente") se muestran mientras el
+       backend entrega el nombre/rol real del residente. -->
+  <app-navbar
+    [userName]="resident.name || 'Usuario'"
+    [userRole]="resident.role || 'Residente'"
+    (profileClick)="onProfile()"
+    (logoutClick)="onLogout()">
+  </app-navbar>
+
+  <main class="portal-content">
+    <!-- Notificación superior: visitante en portería -->
+    <app-visitor-alert></app-visitor-alert>
+
+    <div class="portal-grid">
+      <!-- Columna principal -->
+      <div class="portal-col portal-col--main">
+        <app-parking-status></app-parking-status>
+        <app-preauthorize-guest></app-preauthorize-guest>
+      </div>
+
+      <!-- Columna lateral -->
+      <div class="portal-col portal-col--side">
+        <app-my-vehicles></app-my-vehicles>
+        <app-my-requests></app-my-requests>
+        <app-quick-access></app-quick-access>
+      </div>
+    </div>
+
+    <!-- Historial de visitas: a lo ancho, debajo de las dos columnas -->
+    <app-recent-visits></app-recent-visits>
+  </main>
+</div>

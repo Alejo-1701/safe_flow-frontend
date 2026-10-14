@@ -1,0 +1,35 @@
+<app-card-widget title="Estado de Parqueadero" icon="local_parking">
+  <div class="parking">
+    <!-- Foto del vehículo. Se usa un marcador mientras no exista la imagen real. -->
+    <div class="parking-photo">
+      <img *ngIf="vehicle.photoUrl" [src]="vehicle.photoUrl" [alt]="'Vehículo ' + vehicle.plate" />
+      <span *ngIf="!vehicle.photoUrl" class="material-symbols-outlined photo-placeholder" aria-hidden="true">directions_car</span>
+    </div>
+
+    <div class="parking-details">
+      <div class="parking-location">
+        <span class="location-label">Ubicación actual</span>
+        <span class="location-value">{{ vehicle.location || '—' }}</span>
+      </div>
+
+      <dl class="vehicle-data">
+        <div class="data-row">
+          <dt>Placa</dt>
+          <dd>{{ vehicle.plate || '—' }}</dd>
+        </div>
+        <div class="data-row">
+          <dt>Marca</dt>
+          <dd>{{ vehicle.brand || '—' }}</dd>
+        </div>
+        <div class="data-row">
+          <dt>Modelo</dt>
+          <dd>{{ vehicle.model || '—' }}</dd>
+        </div>
+        <div class="data-row">
+          <dt>Color</dt>
+          <dd>{{ vehicle.color || '—' }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</app-card-widget>

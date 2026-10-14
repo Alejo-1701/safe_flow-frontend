@@ -1,0 +1,312 @@
+
+<!-- Navbar compartido -->
+<app-navbar
+  [userName]="guardia.nombre"
+  [userRole]="guardia.cargo"
+  [showSearch]="false"
+  [avatarUrl]="guardia.avatarUrl || undefined"
+  (logoutClick)="cerrarSesion()"
+  (profileClick)="actualizarDatos()">
+</app-navbar>
+
+<main class="layout">
+
+  <!-- ============ Columna izquierda ============ -->
+  <aside class="side-col">
+
+    <!-- Manual de barreras -->
+    <app-card-widget title="Manual de Barreras" icon="gi gi-barrier">
+      <div class="barrier-actions">
+        <button type="button" class="ghost-btn" (click)="abrirBarrera('entrada')">
+          <span class="material-symbols-outlined ok" aria-hidden="true">lock_open</span>
+          Abrir Entrada
+          <span class="material-symbols-outlined chev" aria-hidden="true">chevron_right</span>
+        </button>
+
+        <button type="button" class="ghost-btn" (click)="abrirBarrera('salida')">
+          <span class="material-symbols-outlined ok" aria-hidden="true">lock_open</span>
+          Abrir Salida
+          <span class="material-symbols-outlined chev" aria-hidden="true">chevron_right</span>
+        </button>
+      </div>
+    </app-card-widget>
+
+    <!-- Alertas críticas -->
+    <app-card-widget
+      title="Alertas Críticas"
+      [badgeText]="alertas().length ? alertas().length.toString() : ''"
+      badgeType="danger">
+
+      <div class="alert-list">
+        @for (alerta of alertas(); track alerta.titulo) {
+          <div class="alert-item">
+            <strong>{{ alerta.titulo }}</strong>
+            <p>{{ alerta.detalle }}</p>
+          </div>
+        } @empty {
+          <p class="empty-note">Sin alertas activas.</p>
+        }
+      </div>
+    </app-card-widget>
+
+    <!-- Visitantes por autorizar -->
+    <app-card-widget title="Visitantes por Autorizar" icon="gi gi-pending">
+      <div class="card-divider"></div>
+
+      <div class="visit-list">
+        @for (visitante of porAutorizar(); track visitante.id) {
+          <article
+            class="visit-card"
+            [class.is-authorized]="visitante.estado === 'autorizado'">
+
+            <div class="visit-head">
+              <strong>{{ visitante.nombre }}</strong>
+
+              <span class="card-badge">
+                <app-status-badge
+                  [statusType]="tipoBadgeAutorizacion(visitante.estado)"
+                  [showDot]="false">
+                  {{ visitante.estado === 'autorizado' ? 'Autorizado' : 'Pendiente' }}
+                </app-status-badge>
+              </span>
+            </div>
+
+            <p class="visit-meta">
+              <span class="material-symbols-outlined" aria-hidden="true">home</span>
+              {{ visitante.ubicacion }}
+            </p>
+
+            @if (visitante.cita) {
+              <p class="visit-meta">
+                <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
+                {{ visitante.cita }}
+              </p>
+            }
+
+            @if (visitante.estado === 'autorizado') {
+              <div class="compact">
+                <app-button
+                  text="Permitir Paso"
+                  colorVariant="secondary"
+                  (onClick)="permitirPaso(visitante)">
+                </app-button>
+              </div>
+            } @else {
+              <div class="btn-row">
+                <div class="compact call">
+                  <app-button
+                    text="Llamar"
+                    colorVariant="outline"
+                    (onClick)="llamar(visitante)">
+                  </app-button>
+                </div>
+
+                <div class="compact">
+                  <app-button
+                    text="Denegar"
+                    colorVariant="secondary"
+                    (onClick)="denegar(visitante)">
+                  </app-button>
+                </div>
+              </div>
+            }
+          </article>
+        } @empty {
+          <p class="empty-note">No hay visitantes por autorizar.</p>
+        }
+      </div>
+    </app-card-widget>
+
+    <!-- Historial de visitantes -->
+    <app-card-widget title="Historial de Visitantes" icon="gi gi-history">
+      <button
+        type="button"
+        class="history-btn"
+        (click)="verHistorialVisitantes()">
+
+        <span class="material-symbols-outlined accent" aria-hidden="true">receipt_long</span>
+        <span class="history-label">Ver Todos los Registros</span>
+        <span class="material-symbols-outlined chev" aria-hidden="true">chevron_right</span>
+      </button>
+    </app-card-widget>
+
+  </aside>
+
+  <!-- ============ Columna principal ============ -->
+  <section class="main-col">
+
+    <span class="sync-pill">
+      <span class="dot" aria-hidden="true"></span>
+      Sincronizado: {{ ultimaSync() }}
+    </span>
+
+    <!-- Módulo de acceso rápido -->
+    <app-card-widget class="quick" title="Módulo de Acceso Rápido">
+      <div class="quick-row">
+
+        <div class="search" [class.invalid]="busquedaInvalida()">
+          <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
+
+          <input
+            type="text"
+            placeholder="Buscar Placa (ej. KLM-987) o Documento..."
+            aria-label="Buscar placa o documento"
+            [value]="busqueda()"
+            (input)="onBuscar($event)"
+          />
+        </div>
+
+        <button type="button" class="cta cta-primary" (click)="registrarEntrada()">
+          <span class="material-symbols-outlined" aria-hidden="true">login</span>
+          Registrar Entrada
+        </button>
+
+        <button type="button" class="cta cta-outline" (click)="registrarSalida()">
+          <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+          Registrar Salida
+        </button>
+
+      </div>
+    </app-card-widget>
+
+    <!-- Monitor de visitantes -->
+    <section class="panel">
+      <div class="panel-head">
+        <h3>Monitor de Visitantes</h3>
+
+        <button type="button" class="link-btn" (click)="actualizarLista()">
+          <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+          Actualizar lista
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Apartamento</th>
+              <th>Nombre Visitante</th>
+              <th>Hora Ingreso</th>
+              <th>Estado</th>
+              <th>Tiempo</th>
+              <th>Valor</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (v of visitantes(); track v.id) {
+              <tr>
+                <td class="placa">{{ v.placa }}</td>
+                <td>{{ v.apartamento }}</td>
+                <td>{{ v.nombre }}</td>
+                <td>{{ v.horaIngreso }}</td>
+
+                <td>
+                  <span class="table-badge">
+                    <app-status-badge
+                      [statusType]="tipoBadge(v.estado)"
+                      [showDot]="false">
+                      {{ etiquetaEstado(v.estado) }}
+                    </app-status-badge>
+                  </span>
+                </td>
+
+                <td>{{ v.tiempo }}</td>
+                <td class="valor valor-blue">{{ formatearValor(v.valor) }}</td>
+
+                <td>
+                  <div class="row-actions">
+                    <button
+                      type="button"
+                      class="icon-btn"
+                      aria-label="Registrar cobro"
+                      (click)="cobrar(v)">
+                      <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-btn muted"
+                      aria-label="Más acciones"
+                      (click)="masAcciones(v)">
+                      <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="empty-cell">
+                  No hay vehículos registrados todavía.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Finalización de turno -->
+    <section class="shift-end">
+      <div class="shift-text">
+        <span class="shift-title">Finalización de turno</span>
+        <span class="shift-hint">
+          Asegúrese de registrar todos los movimientos antes del cierre.
+        </span>
+      </div>
+
+      <button type="button" class="light-btn" (click)="realizarArqueo()">
+        <span class="material-symbols-outlined" aria-hidden="true">point_of_sale</span>
+        Realizar Arqueo de Caja
+      </button>
+    </section>
+
+    <!-- Historial de cobros -->
+    <section class="panel">
+      <div class="panel-head">
+        <h3 class="with-icon">
+          <span class="material-symbols-outlined accent" aria-hidden="true">receipt_long</span>
+          Historial de Cobros
+        </h3>
+
+        <button type="button" class="link-btn muted" (click)="verTodosCobros()">
+          Ver todos
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="cobros">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Tiempo</th>
+              <th>Valor</th>
+              <th class="end">Hora de pago</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (c of cobros(); track $index) {
+              <tr>
+                <td class="placa">{{ c.placa }}</td>
+                <td>{{ c.tiempo }}</td>
+                <td class="valor valor-green">{{ formatearValor(c.valor) }}</td>
+                <td class="end">{{ c.horaPago }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="empty-cell">
+                  Aún no se han registrado cobros.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </section>
+</main>

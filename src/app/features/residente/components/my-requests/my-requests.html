@@ -1,0 +1,19 @@
+<app-card-widget
+  title="Mis Solicitudes"
+  icon="assignment"
+  actionLabel="Nueva Solicitud"
+  (actionClick)="onNewRequest()">
+
+  <ul class="request-list">
+    @for (request of requests; track request.title) {
+      <li class="request-item">
+        <span class="request-title">{{ request.title }}</span>
+        <app-status-badge [statusType]="badgeType(request.status)">
+          {{ request.status }}
+        </app-status-badge>
+      </li>
+    } @empty {
+      <li class="empty-state">No tienes solicitudes registradas.</li>
+    }
+  </ul>
+</app-card-widget>

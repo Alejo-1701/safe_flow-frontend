@@ -1,0 +1,8 @@
+// Styles for the visitor history page.
+// Split into partials to stay within the anyComponentStyle budget (8kB).
+@use 'base';
+@use 'sidebar';
+@use 'header';
+@use 'filters';
+@use 'table';
+@use 'responsive';

@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+/*
+ * Icono de la cabecera del `app-card-widget` compartido.
+ * Glifo inyectado desde el módulo residente con `::ng-deep`
+ * (sin modificar el código fuente del componente compartido).
+ */
+:host ::ng-deep app-card-widget .card-title-group i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-accent);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep app-card-widget .card-title-group i::before {
+  content: 'bolt';
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.quick-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: var(--bg-main);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+}
+
+.quick-icon {
+  color: var(--color-accent);
+  font-size: 26px;
+}
+
+.quick-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
