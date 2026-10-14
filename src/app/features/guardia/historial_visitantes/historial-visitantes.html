@@ -1,0 +1,442 @@
+<div class="history-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <span class="material-symbols-outlined">local_parking</span>
+      </div>
+
+      <div class="brand-copy">
+        <strong>SafeFlow</strong>
+        <span>Parking System</span>
+      </div>
+    </div>
+
+    <nav class="side-nav" aria-label="Navegación principal">
+      <button type="button" class="nav-item" (click)="navegarA('Dashboard')">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </button>
+
+      <button type="button" class="nav-item" (click)="navegarA('Recaudos')">
+        <span class="material-symbols-outlined">payments</span>
+        <span>Recaudos</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item active"
+        aria-current="page"
+        (click)="navegarA('Visitantes')"
+      >
+        <span class="material-symbols-outlined">groups</span>
+        <span>Visitantes</span>
+      </button>
+    </nav>
+
+    <button type="button" class="logout-button" (click)="cerrarSesion()">
+      <span class="material-symbols-outlined">logout</span>
+      <span>Cerrar sesión</span>
+    </button>
+  </aside>
+
+  <main class="content">
+    <header class="page-header">
+      <div>
+        <h1>Historial de visitantes</h1>
+        <p>Consulta y administra los registros de acceso.</p>
+      </div>
+
+      <button
+        type="button"
+        class="export-button"
+        (click)="exportarReporte()"
+      >
+        <span class="material-symbols-outlined">download</span>
+        <span>Exportar reporte</span>
+      </button>
+    </header>
+
+    <section class="filters-card" aria-label="Filtros de visitantes">
+      <div class="filter-inputs">
+        <label class="search-field">
+          <span class="material-symbols-outlined">search</span>
+
+          <input
+            type="search"
+            placeholder="Buscar por placa, nombre o documento..."
+            [value]="busqueda()"
+            (input)="cambiarBusqueda($any($event.target).value)"
+            aria-label="Buscar visitantes"
+          >
+        </label>
+
+        <label class="date-field">
+          <span class="material-symbols-outlined">calendar_today</span>
+
+          <input
+            type="date"
+            [value]="fechaSeleccionada()"
+            (change)="cambiarFecha($any($event.target).value)"
+            aria-label="Filtrar por fecha"
+          >
+        </label>
+
+        <button
+          type="button"
+          class="clear-filters"
+          (click)="cambiarBusqueda(''); cambiarFecha(''); seleccionarTipo('Todos'); seleccionarEstado('Todos')"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+
+      <div class="quick-filters">
+        <span class="quick-label">Tipo:</span>
+
+        <div class="filter-group types">
+          <button
+            type="button"
+            [class.selected]="tipoSeleccionado() === 'Todos'"
+            [attr.aria-pressed]="tipoSeleccionado() === 'Todos'"
+            (click)="seleccionarTipo('Todos')"
+          >
+            Todos
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="tipoSeleccionado() === 'Residente'"
+            [attr.aria-pressed]="tipoSeleccionado() === 'Residente'"
+            (click)="seleccionarTipo(tipoSeleccionado() === 'Residente' ? 'Todos' : 'Residente')"
+          >
+            Residente
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="tipoSeleccionado() === 'Visitante'"
+            [attr.aria-pressed]="tipoSeleccionado() === 'Visitante'"
+            (click)="seleccionarTipo(tipoSeleccionado() === 'Visitante' ? 'Todos' : 'Visitante')"
+          >
+            Visitante
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="tipoSeleccionado() === 'Delivery'"
+            [attr.aria-pressed]="tipoSeleccionado() === 'Delivery'"
+            (click)="seleccionarTipo(tipoSeleccionado() === 'Delivery' ? 'Todos' : 'Delivery')"
+          >
+            Delivery
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="tipoSeleccionado() === 'Servicios'"
+            [attr.aria-pressed]="tipoSeleccionado() === 'Servicios'"
+            (click)="seleccionarTipo(tipoSeleccionado() === 'Servicios' ? 'Todos' : 'Servicios')"
+          >
+            Servicios
+          </button>
+        </div>
+
+        <span class="filter-divider"></span>
+
+        <span class="quick-label">Estado:</span>
+
+        <div class="filter-group states">
+          <button
+            type="button"
+            [class.selected]="estadoSeleccionado() === 'Todos'"
+            [attr.aria-pressed]="estadoSeleccionado() === 'Todos'"
+            (click)="seleccionarEstado('Todos')"
+          >
+            Todos
+          </button>
+
+          <button
+            type="button"
+            class="filter-ingresado"
+            [class.selected]="estadoSeleccionado() === 'En Predio'"
+            [attr.aria-pressed]="estadoSeleccionado() === 'En Predio'"
+            (click)="seleccionarEstado(estadoSeleccionado() === 'En Predio' ? 'Todos' : 'En Predio')"
+          >
+            Ingresado
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="estadoSeleccionado() === 'Finalizado'"
+            [attr.aria-pressed]="estadoSeleccionado() === 'Finalizado'"
+            (click)="seleccionarEstado(estadoSeleccionado() === 'Finalizado' ? 'Todos' : 'Finalizado')"
+          >
+            Finalizado
+          </button>
+
+          <button
+            type="button"
+            class="filter-rechazado"
+            [class.selected]="estadoSeleccionado() === 'Rechazado'"
+            [attr.aria-pressed]="estadoSeleccionado() === 'Rechazado'"
+            (click)="seleccionarEstado(estadoSeleccionado() === 'Rechazado' ? 'Todos' : 'Rechazado')"
+          >
+            Rechazado
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="table-card" aria-label="Registros de visitantes">
+      <div class="table-heading">
+        <div>
+          <h2>Registros de acceso</h2>
+          <p>Consulta los movimientos registrados en el sistema.</p>
+        </div>
+
+        <span class="record-count">
+          {{ registrosFiltrados().length }} registros
+        </span>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Entrada / salida</th>
+              <th>Placa</th>
+              <th>Visitante</th>
+              <th>Destino</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (registro of registrosVisibles(); track registro.id) {
+              <tr>
+                <td class="date-cell">
+                  {{ registro.fecha | date:'dd MMM, yyyy':'':'es-CO' }}
+                </td>
+
+                <td class="time-cell">
+                  <span [class.denied]="registro.salida === 'Denegado'">
+                    {{ registro.entrada }}
+                  </span>
+
+                  <small [class.denied]="registro.salida === 'Denegado'">
+                    {{ registro.salida }}
+                  </small>
+                </td>
+
+                <td>
+                  <span class="plate">{{ registro.placa }}</span>
+                </td>
+
+                <td>
+                  <div class="visitor-cell">
+                    <span class="avatar" [ngClass]="registro.avatarColor">
+                      {{ registro.iniciales }}
+                    </span>
+
+                    <span class="visitor-name">
+                      {{ registro.visitante }}
+                    </span>
+                  </div>
+                </td>
+
+                <td>{{ registro.destino }}</td>
+
+                <td>
+                  <span class="type-label">{{ registro.tipo }}</span>
+                </td>
+
+                <td>
+                  <span
+                    class="status-pill"
+                    [class.in-property]="registro.estado === 'En Predio'"
+                    [class.finished]="registro.estado === 'Finalizado'"
+                    [class.rejected]="registro.estado === 'Rechazado'"
+                  >
+                    <span class="status-dot"></span>
+
+                    {{
+                      registro.estado === 'En Predio'
+                        ? 'Ingresado'
+                        : registro.estado
+                    }}
+                  </span>
+                </td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="view-button"
+                    aria-label="Ver detalle del visitante"
+                    title="Ver detalle"
+                    (click)="verDetalle(registro)"
+                  >
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="empty-row">
+                  <span class="material-symbols-outlined">search_off</span>
+                  <strong>No se encontraron registros</strong>
+                  <span>Prueba cambiando los filtros de búsqueda.</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="table-footer">
+        <span class="pagination-info">
+          Mostrando {{ desde() }}-{{ hasta() }} de
+          {{ registrosFiltrados().length }} registros
+        </span>
+
+        <nav class="pagination" aria-label="Paginación">
+          <button
+            type="button"
+            class="page-arrow"
+            [disabled]="pagina() <= 1"
+            aria-label="Página anterior"
+            (click)="cambiarPagina(pagina() - 1)"
+          >
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+
+          @for (numero of [].constructor(totalPaginas()); track $index) {
+            @if (
+              $index + 1 === 1 ||
+              $index + 1 === totalPaginas() ||
+              ($index + 1 >= pagina() - 1 &&
+               $index + 1 <= pagina() + 1)
+            ) {
+              <button
+                type="button"
+                class="page-number"
+                [class.current]="pagina() === $index + 1"
+                [attr.aria-current]="pagina() === $index + 1 ? 'page' : null"
+                (click)="cambiarPagina($index + 1)"
+              >
+                {{ $index + 1 }}
+              </button>
+            } @else if ($index + 1 === 2 && pagina() > 3) {
+              <span class="ellipsis">...</span>
+            } @else if (
+              $index + 1 === totalPaginas() - 1 &&
+              pagina() < totalPaginas() - 2
+            ) {
+              <span class="ellipsis">...</span>
+            }
+          }
+
+          <button
+            type="button"
+            class="page-arrow"
+            [disabled]="pagina() >= totalPaginas()"
+            aria-label="Página siguiente"
+            (click)="cambiarPagina(pagina() + 1)"
+          >
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </nav>
+      </footer>
+    </section>
+  </main>
+</div>
+
+@if (registroDetalle(); as detalle) {
+  <div class="modal-backdrop" (click)="cerrarDetalle()">
+    <section
+      class="detail-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="detail-title"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        type="button"
+        class="modal-close"
+        aria-label="Cerrar detalle"
+        (click)="cerrarDetalle()"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <div class="modal-icon">
+        <span class="material-symbols-outlined">badge</span>
+      </div>
+
+      <h2 id="detail-title">Detalle del visitante</h2>
+      <p class="detail-subtitle">
+        Información del registro de acceso
+      </p>
+
+      <dl>
+        <div>
+          <dt>Visitante</dt>
+          <dd>{{ detalle.visitante }}</dd>
+        </div>
+
+        <div>
+          <dt>Placa</dt>
+          <dd>{{ detalle.placa }}</dd>
+        </div>
+
+        <div>
+          <dt>Documento</dt>
+          <dd>{{ detalle.documento }}</dd>
+        </div>
+
+        <div>
+          <dt>Destino</dt>
+          <dd>{{ detalle.destino }}</dd>
+        </div>
+
+        <div>
+          <dt>Fecha</dt>
+          <dd>
+            {{ detalle.fecha | date:'dd MMM, yyyy':'':'es-CO' }}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Entrada / salida</dt>
+          <dd>{{ detalle.entrada }} / {{ detalle.salida }}</dd>
+        </div>
+
+        <div>
+          <dt>Tipo</dt>
+          <dd>{{ detalle.tipo }}</dd>
+        </div>
+
+        <div>
+          <dt>Estado</dt>
+          <dd
+            class="detail-status"
+            [class.status-ingresado]="detalle.estado === 'En Predio'"
+            [class.status-rechazado]="detalle.estado === 'Rechazado'"
+            [class.status-finalizado]="detalle.estado === 'Finalizado'"
+          >
+            {{
+              detalle.estado === 'En Predio'
+                ? 'Ingresado'
+                : detalle.estado
+            }}
+          </dd>
+        </div>
+      </dl>
+
+      <button type="button" class="modal-done" (click)="cerrarDetalle()">
+        Cerrar
+      </button>
+    </section>
+  </div>
+}

@@ -1,0 +1,728 @@
+$accent: var(--color-accent, #38bdf8);
+$card: var(--bg-card, #1e293b);
+$text: var(--text-primary, #e2e8f0);
+$muted: #94a3b8;
+$subtle: #64748b;
+$ok: var(--status-free, #22c55e);
+$warn: var(--status-full, #f59e0b);
+$danger: #ef4444;
+$line: rgba(255, 255, 255, 0.06);
+$surface: var(--bg-card, #1E293B);
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--bg-main, #121826);
+  color: $text;
+  font-family: inherit;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+.material-symbols-outlined {
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+.ok {
+  color: $ok;
+}
+.accent {
+  color: $accent;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $ok;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+}
+/* ---------------- Cabecera ---------------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-card, #1E293B);
+  border-bottom: 1px solid $line;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.brand-logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--color-accent, #38BDF8);
+  color: var(--bg-main, #121826);
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+}
+.brand-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: $accent;
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.shift-pill,
+.sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  color: $text;
+  background: var(--bg-card, #1E293B);
+  border: 1px solid $line;
+}
+.sync-pill {
+  align-self: flex-start;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+}
+.topbar-divider {
+  width: 1px;
+  height: 32px;
+  background: $line;
+}
+.user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.3;
+}
+.user-role {
+  font-size: 0.7rem;
+  color: $muted;
+}
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg-card, #1E293B);
+  font-size: 0.75rem;
+  font-weight: 700;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: $muted;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  &:hover {
+    color: $text;
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+}
+/* ---------------- Layout ---------------- */
+.layout {
+  display: grid;
+  grid-template-columns: clamp(240px, 22%, 400px) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+  width: 90%;
+  /* la vista ocupa el 90% del ancho de la pantalla */
+  margin: 0 auto;
+  padding: 1.25rem 0 3rem;
+}
+.side-col,
+.main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+/* Íconos de los títulos de card-widget (el componente espera una clase de ícono) */
+:host ::ng-deep .gi {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.3rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  color: $accent;
+}
+:host ::ng-deep .gi-barrier::before {
+  content: 'garage_door';
+}
+:host ::ng-deep .gi-pending::before {
+  content: 'pending_actions';
+}
+:host ::ng-deep .gi-pending {
+  color: $warn;
+}
+:host ::ng-deep .gi-history::before {
+  content: 'history';
+}
+:host ::ng-deep app-card-widget h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+/* ---------------- Panel izquierdo ---------------- */
+.barrier-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  padding: 0.65rem 0.9rem;
+  background: $surface;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: $text;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  &:hover {
+    border-color: $accent;
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+  .chev {
+    margin-left: -0.25rem;
+    font-size: 18px;
+  }
+}
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.alert-item {
+  padding: 0.6rem 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid $danger;
+  border-radius: 4px;
+  strong {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  p {
+    margin: 0.15rem 0 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: $muted;
+  }
+}
+.card-divider {
+  height: 1px;
+  margin: -0.25rem -1.5rem 0;
+  background: $line;
+}
+.visit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.visit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.85rem;
+  background: $surface;
+  border: 1px solid $line;
+  border-radius: 12px;
+  &.is-authorized {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+.visit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  strong {
+    font-size: 0.85rem;
+  }
+}
+.visit-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.75rem;
+  color: $muted;
+  .material-symbols-outlined {
+    font-size: 14px;
+  }
+}
+.btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+.btn-row .compact {
+  flex: 0 1 auto;
+  min-width: 70px;
+}
+app-button {
+  display: block;
+}
+/* Botones compactos: ajusta el tamaño del app-button solo dentro de esta vista */
+.compact {
+  width: 100%;
+  ::ng-deep .btn {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: 6px;
+  }
+}
+.compact.call ::ng-deep .btn-outline {
+  border-width: 1px;
+  background: rgba(56, 189, 248, 0.15);
+}
+/* Badges de estado (el componente fuerza mayúsculas y tamaño; se ajusta localmente) */
+.card-badge ::ng-deep .badge {
+  padding: 0.12rem 0.5rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.table-badge ::ng-deep .badge {
+  padding: 0.15rem 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: none;
+}
+.history-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.85rem;
+  background: $surface;
+  border: 1px solid $line;
+  border-radius: 10px;
+  color: $text;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  &:hover {
+    border-color: $accent;
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+  .history-label {
+    flex: 1;
+    text-align: center;
+  }
+  .chev {
+    font-size: 18px;
+  }
+}
+/* ---------------- Panel principal ---------------- */
+:host ::ng-deep .quick h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 1rem;
+}
+.search {
+  position: relative;
+  flex: 1 1 260px;
+  min-width: 0;
+  input {
+    width: 100%;
+    height: 60px;
+    padding: 0 1rem 0 2.9rem;
+    background: $surface;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: $text;
+    font: inherit;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    &::placeholder {
+      color: $subtle;
+      opacity: 1;
+    }
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+  }
+  &.invalid input {
+    border-color: $danger;
+  }
+}
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: $subtle;
+  pointer-events: none;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 60px;
+  padding: 0 1.5rem;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 3px;
+  }
+}
+.cta-primary {
+  background: $accent;
+  border: none;
+  color: var(--bg-main, #121826);
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+  &:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+}
+.cta-outline {
+  background: transparent;
+  border: 2px solid $accent;
+  color: $accent;
+  &:hover {
+    background: rgba(56, 189, 248, 0.1);
+  }
+}
+.panel {
+  padding: 1.5rem;
+  background: $card;
+  border: 1px solid $line;
+  border-radius: 12px;
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  h3.with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+  }
+}
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  background: none;
+  border: none;
+  color: $accent;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  .material-symbols-outlined {
+    font-size: 14px;
+  }
+  &.muted {
+    color: $muted;
+    font-size: 0.8rem;
+  }
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+}
+/* ---------------- Tablas ---------------- */
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  padding: 0.65rem 0.75rem;
+  background: var(--bg-main, #121826);
+  color: $subtle;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+td {
+  padding: 0.9rem 0.75rem;
+  font-size: 0.85rem;
+  color: $muted;
+  vertical-align: middle;
+}
+.placa {
+  font-weight: 700;
+  color: $text;
+}
+.valor {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.valor-blue {
+  color: $accent;
+}
+.valor-green {
+  color: $ok;
+}
+.end {
+  text-align: right;
+}
+.cobros td {
+  padding: 0.7rem 0.75rem;
+}
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.icon-btn {
+  display: inline-flex;
+  padding: 2px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: $accent;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  &.muted {
+    color: $muted;
+  }
+  &:hover {
+    opacity: 0.75;
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+}
+/* ---------------- Cierre de turno ---------------- */
+.shift-end {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--bg-card, #1E293B);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+}
+.shift-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.shift-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $subtle;
+}
+.shift-hint {
+  font-size: 0.7rem;
+  color: $subtle;
+}
+.light-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--text-primary, #E2E8F0);
+  border: none;
+  border-radius: 10px;
+  color: var(--bg-main, #121826);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  &:hover {
+    background: var(--color-accent, #38BDF8);
+  }
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 3px;
+  }
+}
+/* ---------------- Estados vacíos ---------------- */
+.empty-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: $subtle;
+}
+.empty-cell {
+  padding: 2rem 0.75rem;
+  text-align: center;
+  color: $subtle;
+}
+/* ---------------- Responsive ---------------- */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .main-col {
+    order: -1;
+  }
+}
+@media (max-width: 600px) {
+  .topbar {
+    padding: 0.75rem 1rem;
+  }
+  .user-info {
+    display: none;
+  }
+  .layout {
+    padding: 1rem;
+  }
+  .panel,
+  .shift-end {
+    padding: 1rem;
+  }
+  .cta {
+    flex: 1 1 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Botones del navbar en la vista de Guardia */
+:host ::ng-deep app-navbar .right-section > button {
+  padding: 8px 12px;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Actualizar Datos */
+:host ::ng-deep app-navbar .right-section > button:first-of-type {
+  background-color: #334155;
+  color: #E2E8F0;
+  border: 1px solid #334155;
+}
+
+:host ::ng-deep app-navbar .right-section > button:first-of-type::before {
+  content: "edit";
+  font-family: "Material Symbols Outlined";
+  font-size: 14px;
+  vertical-align: -3px;
+  margin-right: 5px;
+}
+
+/* Cerrar Sesión */
+:host ::ng-deep app-navbar .right-section > button:nth-of-type(2) {
+  background-color: #29212B;
+  color: #F87171;
+  border: 1px solid #65323E;
+}
+
+:host ::ng-deep app-navbar .right-section > button:nth-of-type(2)::before {
+  content: "logout";
+  font-family: "Material Symbols Outlined";
+  font-size: 14px;
+  vertical-align: -3px;
+  margin-right: 5px;
+}
+
+/* Efectos al pasar el cursor */
+:host ::ng-deep app-navbar .right-section > button:first-of-type:hover {
+  background-color: #475569;
+}
+
+:host ::ng-deep app-navbar .right-section > button:nth-of-type(2):hover {
+  background-color: #3B2730;
+}
