@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+/*
+ * Icono de la cabecera del `app-card-widget` compartido.
+ * Glifo inyectado desde el módulo residente con `::ng-deep`
+ * (sin modificar el código fuente del componente compartido).
+ */
+:host ::ng-deep app-card-widget .card-title-group i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-accent);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep app-card-widget .card-title-group i::before {
+  content: 'assignment';
+}
+
+.request-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.request-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  background-color: var(--bg-main);
+}
+
+.request-title {
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  min-width: 0;
+}
+
+.empty-state {
+  color: #64748b;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.5rem 0;
+}

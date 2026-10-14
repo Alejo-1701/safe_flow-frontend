@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+/*
+ * Icono de la cabecera del `form-field` compartido.
+ * El componente recibe `iconClass` pero no aplica la fuente Material Symbols,
+ * así que inyectamos el glifo desde el módulo residente con `::ng-deep`,
+ * sin modificar su código fuente.
+ */
+:host ::ng-deep form-field .header-icon i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-accent);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep form-field .header-icon i::before {
+  content: 'person_add';
+}
+
+/*
+ * La tarjeta debe lucir limpia y sin errores estáticos por defecto:
+ * ocultamos el mensaje de validación en rojo ("Este campo es obligatorio").
+ * Se hace desde el módulo residente con `::ng-deep`, sin tocar `form-field`.
+ */
+:host ::ng-deep form-field .error-message {
+  display: none;
+}
+
+/*
+ * El `form-field` compartido aplica `text-transform: uppercase` a los inputs,
+ * lo que mostraría el placeholder "Ej. Carlos Mendoza" en mayúsculas.
+ * Lo anulamos para que el placeholder se vea exactamente como se definió.
+ * El texto que escribe el usuario se sigue pasando a mayúsculas por el propio
+ * componente (manejador `onInputUppercase`).
+ */
+:host ::ng-deep form-field .form-field-container .form-field-grid .form-field-group .uppercase-input {
+  text-transform: none;
+}

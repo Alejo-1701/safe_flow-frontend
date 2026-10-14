@@ -91,6 +91,49 @@ $accent-blue-hover: #0ea5e9;
           border-color: $accent-blue;
           box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
         }
+
+        &:disabled,
+        &[readonly] {
+          background-color: $bg-card;
+          color: $text-secondary;
+          cursor: not-allowed;
+        }
+      }
+
+      /* Envoltura del control: permite superponer el botón mostrar/ocultar. */
+      .control-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        &:has(.toggle-password) .form-field-control {
+          padding-right: 2.25rem;
+        }
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.15rem;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        color: $text-secondary;
+        cursor: pointer;
+        transition: color 0.2s, background-color 0.2s;
+
+        .material-symbols-outlined {
+          font-size: 18px;
+        }
+
+        &:hover {
+          color: $text-primary;
+          background-color: color-mix(in srgb, var(--text-primary) 12%, transparent);
+        }
       }
 
       select.form-field-control {

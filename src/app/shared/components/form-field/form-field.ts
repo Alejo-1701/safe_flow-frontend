@@ -12,6 +12,14 @@ export interface FieldConfig {
   placeholder?: string;
   options?: { label: string; value: any }[];
   required?: boolean; // Define si el campo es obligatorio (true por defecto)
+  /** Valor inicial del campo (se usa al construir el formulario). */
+  value?: string | number;
+  /** Campo deshabilitado: no editable y excluido de la validación. */
+  disabled?: boolean;
+  /** Campo de solo lectura: se ve normal pero no se puede editar. */
+  readonly?: boolean;
+  /** Aplica mayúsculas automáticas al escribir (true por defecto). */
+  uppercase?: boolean;
 }
 
 @Component({
@@ -36,6 +44,9 @@ export class FormFieldComponent implements OnChanges {
   @Output() formSubmitted = new EventEmitter<any>();
   @Output() formCancelled = new EventEmitter<void>();
 
+  /** Estado de visibilidad de cada campo de contraseña (indexado por `key`). */
+  private passwordVisibility: { [key: string]: boolean } = {};
+
   constructor(private fb: FormBuilder) {}
 
   /**
@@ -49,8 +60,9 @@ export class FormFieldComponent implements OnChanges {
   }
 
   /**
-   * Genera dinámicamente los controles del formulario y aplica
-   * las restricciones de vacío obligatorias por defecto.
+   * Genera dinámicamente los controles del formulario, respetando el valor
+   * inicial y el estado (deshabilitado) de cada campo, y aplicando las
+   * restricciones de vacío obligatorias por defecto.
    */
   private buildForm(): void {
     const group: { [key: string]: any } = {};
@@ -58,24 +70,46 @@ export class FormFieldComponent implements OnChanges {
     this.fields.forEach(field => {
       // Restricción explícita: Por defecto es requerido a menos que se indique lo contrario
       const isRequired = field.required !== false;
-      group[field.key] = ['', isRequired ? [Validators.required] : []];
+      group[field.key] = [
+        { value: field.value ?? '', disabled: field.disabled === true },
+        isRequired ? [Validators.required] : []
+      ];
     });
 
     this.form = this.fb.group(group);
   }
 
   /**
-   * Transforma el texto ingresado a mayúsculas en tiempo real
-   * sin disparar eventos innecesarios del ciclo de cambios.
+   * Transforma el texto ingresado a mayúsculas en tiempo real (salvo que el
+   * campo lo desactive con `uppercase: false`) sin disparar eventos innecesarios.
    */
-  onInputUppercase(event: Event, controlName: string): void {
+  onInputUppercase(event: Event, field: FieldConfig): void {
+    if (field.uppercase === false) {
+      return;
+    }
+
     const input = event.target as HTMLInputElement;
     const upperValue = input.value.toUpperCase();
-    const control = this.form.get(controlName);
+    const control = this.form.get(field.key);
 
     if (control) {
       control.setValue(upperValue, { emitEvent: false });
     }
+  }
+
+  /** Tipo efectivo del input (permite alternar la visibilidad de la contraseña). */
+  inputType(field: FieldConfig): string {
+    return field.type === 'password' && this.isPasswordVisible(field.key) ? 'text' : field.type;
+  }
+
+  /** Indica si la contraseña del campo está visible. */
+  isPasswordVisible(key: string): boolean {
+    return this.passwordVisibility[key] === true;
+  }
+
+  /** Alterna mostrar/ocultar la contraseña del campo. */
+  togglePassword(key: string): void {
+    this.passwordVisibility[key] = !this.isPasswordVisible(key);
   }
 
   /**

@@ -1,0 +1,25 @@
+<div class="visitor-alert" role="alert">
+  <div class="alert-info">
+    <span class="material-symbols-outlined alert-icon" aria-hidden="true">notifications_active</span>
+    <div class="alert-text">
+      <strong class="alert-title">{{ title }}</strong>
+      <span *ngIf="visitorName" class="alert-visitor">{{ visitorName }}</span>
+      <span *ngIf="message" class="alert-message">{{ message }}</span>
+    </div>
+  </div>
+
+  <div class="alert-actions">
+    <app-button
+      class="alert-btn alert-btn--approve"
+      text="Aprobar"
+      colorVariant="primary"
+      (onClick)="onApprove()">
+    </app-button>
+    <app-button
+      class="alert-btn alert-btn--reject"
+      text="Rechazar"
+      colorVariant="primary"
+      (onClick)="onReject()">
+    </app-button>
+  </div>
+</div>
