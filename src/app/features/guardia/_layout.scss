@@ -1,0 +1,52 @@
+@use 'tokens' as *;
+
+/* ---------------- Layout ---------------- */
+.layout {
+  display: grid;
+  grid-template-columns: clamp(240px, 22%, 400px) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+  width: 90%;
+  /* la vista ocupa el 90% del ancho de la pantalla */
+  margin: 0 auto;
+  padding: 1.25rem 0 3rem;
+}
+.side-col,
+.main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+/* Íconos de los títulos de card-widget (el componente espera una clase de ícono) */
+:host ::ng-deep .gi {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.3rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  color: $accent;
+}
+:host ::ng-deep .gi-barrier::before {
+  content: 'garage_door';
+}
+:host ::ng-deep .gi-pending::before {
+  content: 'pending_actions';
+}
+:host ::ng-deep .gi-pending {
+  color: $warn;
+}
+:host ::ng-deep .gi-history::before {
+  content: 'history';
+}
+:host ::ng-deep app-card-widget h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}

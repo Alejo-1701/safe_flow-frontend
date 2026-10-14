@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: var(--text-primary, #e2e8f0);
+  font-family: inherit;
+  background: var(--bg-main, #121826);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 3px;
+}

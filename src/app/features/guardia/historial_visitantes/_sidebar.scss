@@ -1,0 +1,128 @@
+.history-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-main, #121826);
+}
+
+/* BARRA LATERAL */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex: 0 0 220px;
+  flex-direction: column;
+  width: 220px;
+  height: 100vh;
+  padding: 24px 16px;
+  background: var(--bg-card, #1e293b);
+  border-right: 1px solid #334155;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  margin-bottom: 36px;
+}
+
+.brand-mark {
+  display: grid;
+  flex: 0 0 38px;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #38bdf8;
+  color: #082f49;
+}
+
+.brand-mark .material-symbols-outlined {
+  font-size: 23px;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brand-copy strong {
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.brand-copy span {
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #94a3b8;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-item .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+}
+
+.nav-item.active {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin-top: auto;
+  padding: 17px 10px 5px;
+  border: 0;
+  border-top: 1px solid #334155;
+  background: transparent;
+  color: #94a3b8;
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.logout-button .material-symbols-outlined {
+  font-size: 19px;
+}
+
+.logout-button:hover {
+  color: #f87171;
+}
+
+/* CONTENIDO PRINCIPAL */

@@ -1,0 +1,32 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--bg-main, #121826);
+  color: $text;
+  font-family: inherit;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+.material-symbols-outlined {
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+.ok {
+  color: $ok;
+}
+.accent {
+  color: $accent;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $ok;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+}
