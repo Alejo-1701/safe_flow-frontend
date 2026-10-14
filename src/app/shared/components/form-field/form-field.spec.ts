@@ -1,42 +1,37 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormFieldComponent } from './form-field';
 
-export interface FieldConfig {
-  key: string;
-  label: string;
-  type: 'text' | 'email' | 'password' | 'select' | 'date' | 'tel';
-  placeholder?: string;
-  options?: { label: string; value: any }[];
-}
+describe('FormFieldComponent', () => {
+  let component: FormFieldComponent;
+  let fixture: ComponentFixture<FormFieldComponent>;
 
-@Component({
-  selector: 'form-field',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './form-field.html',
-  styleUrls: ['./form-field.scss']
-})
-export class FormFieldComponent {
-  @Input() form!: FormGroup;
-  @Input() fields: FieldConfig[] = [];
-  @Input() title: string = '';
-  @Input() iconClass: string = '';
-  @Input() submitLabel: string = 'Guardar Cambios';
-  @Input() cancelLabel: string = 'Cancelar';
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FormFieldComponent],
+    }).compileComponents();
 
-  @Output() formSubmitted = new EventEmitter<any>();
-  @Output() formCancelled = new EventEmitter<void>();
+    fixture = TestBed.createComponent(FormFieldComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
 
-  onSubmit() {
-    if (this.form.valid) {
-      this.formSubmitted.emit(this.form.value);
-    } else {
-      this.form.markAllAsTouched();
-    }
-  }
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-  onCancel() {
-    this.formCancelled.emit();
-  }
-}
+  // El template llama estos métodos directamente. El spec anterior redeclaraba una
+  // copia del componente sin ellos, así que la suite compilaba contra un stub y
+  // nunca ejercitaba el componente real.
+  it('alterna la visibilidad de una contraseña', () => {
+    expect(component.isPasswordVisible('pwd')).toBe(false);
+
+    component.togglePassword('pwd');
+
+    expect(component.isPasswordVisible('pwd')).toBe(true);
+    expect(component.inputType({ key: 'pwd', label: 'Clave', type: 'password' })).toBe('text');
+  });
+
+  it('no altera la visibilidad de campos que no son contraseña', () => {
+    expect(component.inputType({ key: 'email', label: 'Email', type: 'email' })).toBe('email');
+  });
+});

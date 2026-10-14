@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Login } from './login';
 import { FormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
 
 describe('Login', () => {
   let component: Login;
@@ -9,6 +10,8 @@ describe('Login', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Login, FormsModule],
+      // El template usa routerLink; sin esto NG0201: No provider found for `ActivatedRoute`.
+      providers: [provideRouter([])],
     })
     .compileComponents();
 
@@ -40,7 +43,8 @@ describe('Login', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const identifierInput = compiled.querySelector('#identifier');
     const passwordInput = compiled.querySelector('#password');
-    const submitButton = compiled.querySelector('.btn-submit');
+    // El submit es <app-button type="submit">, no un <button class="btn-submit"> nativo.
+    const submitButton = compiled.querySelector('app-button[type="submit"]');
 
     expect(identifierInput).toBeTruthy();
     expect(passwordInput).toBeTruthy();
