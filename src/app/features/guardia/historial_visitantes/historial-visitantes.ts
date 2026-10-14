@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { DetalleModalComponent } from './detalle-modal';
 
-interface RegistroVisitante {
+export interface RegistroVisitante {
   id: number;
   fecha: string;
   entrada: string;
@@ -20,7 +21,7 @@ interface RegistroVisitante {
 @Component({
   selector: 'app-historial-visitantes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DetalleModalComponent],
   templateUrl: './historial-visitantes.html',
   styleUrls: ['./historial-visitantes.scss']
 })
