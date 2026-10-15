@@ -1,4 +1,4 @@
-<!-- Barra superior fija con botón hamburguesa para pantallas móviles / tablets -->
+<!-- Barra superior fija para móviles -->
 <div class="mobile-topbar">
   <div class="mobile-brand">
     <div class="brand-logo">
@@ -18,18 +18,18 @@
   </button>
 </div>
 
-<!-- Fondo oscuro semitransparente al desplegar el menú móvil -->
+<!-- Fondo oscuro semitransparente al abrir menú móvil -->
 <div
   class="sidebar-backdrop"
   *ngIf="isMobileMenuOpen"
   (click)="closeMobileMenu()">
 </div>
 
-<!-- Sidebar principal -->
+<!-- Panel Sidebar principal -->
 <aside [class.mobile-open]="isMobileMenuOpen">
   <div class="sidebar-header">
     <div class="brand-logo">
-      <span class="material-symbols-outlined logo-icon" aria-hidden="true">shield</span>
+      <img src="assets/images/logo.png" alt="Safe Flow Logo" class="logo-img" />
     </div>
     <h1>Safe Flow</h1>
 
@@ -39,7 +39,7 @@
   </div>
 
   <nav>
-    @for (item of navItems; track item.route) {
+    @for (item of displayNavItems; track item.route) {
       <a [routerLink]="getFullRoute(item.route)"
          routerLinkActive="nav-item-active"
          [routerLinkActiveOptions]="{ exact: false }"
@@ -47,7 +47,6 @@
          (click)="closeMobileMenu()">
 
         <span class="material-symbols-outlined nav-icon" aria-hidden="true">{{ item.icon }}</span>
-
         <span>{{ item.label }}</span>
       </a>
     }

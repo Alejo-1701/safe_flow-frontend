@@ -22,13 +22,17 @@ export interface UserProfile {
 })
 export class SidebarComponent {
   @Input() basePath: string = '/admin';
+
   @Input() currentUser: UserProfile = {
     name: 'Admin Juan',
     role: 'Super Admin'
   };
 
-  // navItems como @Input() directo para permitir pasar el menú dinámico de cualquier portal (Admin, Residentes, Guardias, etc.)
-  @Input() navItems: NavItem[] = [
+  // Soporta tanto [customNavItems] como [navItems] opcionales
+  @Input() customNavItems?: NavItem[];
+  @Input() navItems?: NavItem[];
+
+  defaultNavItems: NavItem[] = [
     { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
     { label: 'Residentes', route: '/residentes', icon: 'groups' },
     { label: 'Mapa', route: '/mapa', icon: 'map' },
@@ -38,7 +42,17 @@ export class SidebarComponent {
     { label: 'Configuración', route: '/configuracion', icon: 'settings' }
   ];
 
-  // Estado para el menú hamburguesa en pantallas pequeñas
+  // Si no se pasa ninguna lista personalizada, devuelve el menú de administración por defecto
+  get displayNavItems(): NavItem[] {
+    if (this.customNavItems && this.customNavItems.length > 0) {
+      return this.customNavItems;
+    }
+    if (this.navItems && this.navItems.length > 0) {
+      return this.navItems;
+    }
+    return this.defaultNavItems;
+  }
+
   isMobileMenuOpen: boolean = false;
 
   getFullRoute(route: string): string {
