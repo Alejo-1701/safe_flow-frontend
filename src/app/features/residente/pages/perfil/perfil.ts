@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { SidebarComponent, NavItem, UserProfile } from '../../../../shared/components/sidebar/sidebar';
 import { FormFieldComponent, FieldConfig } from '../../../../shared/components/form-field/form-field';
 import { CardWidgetComponent } from '../../../../shared/components/card-widget/card-widget.component';
+import { Modal } from '../../../../shared/components/modal/modal';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, FormFieldComponent, CardWidgetComponent],
+  imports: [CommonModule, SidebarComponent, FormFieldComponent, CardWidgetComponent, Modal],
   templateUrl: './perfil.html',
   styleUrl: './perfil.scss',
 })
@@ -81,14 +82,34 @@ export class Perfil {
     'Para cambios en la asignación de Torre o Apartamento, por favor comuníquese ' +
     'directamente con la administración del edificio presentando la documentación requerida.';
 
+  /** Visibilidad del diálogo de confirmación "¡Datos Actualizados!". */
+  readonly showSavedModal = signal(false);
+
+  /** Textos del diálogo de confirmación. */
+  readonly savedModalTitle = '¡Datos Actualizados!';
+  readonly savedModalMessage =
+    'Tu información personal ha sido actualizada correctamente en el sistema.';
+
   /** TODO: guardar los datos del residente (integración con backend pendiente). */
   onSaveResident(_payload: unknown): void {
-    // Lógica pendiente.
+    // Lógica pendiente. El diálogo se abre igual para poder revisar el flujo.
+    this.showSavedModal.set(true);
   }
 
   /** TODO: actualizar la contraseña (integración con backend pendiente). */
   onSavePassword(_payload: unknown): void {
-    // Lógica pendiente.
+    // Lógica pendiente. El diálogo se abre igual para poder revisar el flujo.
+    this.showSavedModal.set(true);
+  }
+
+  /**
+   * Cierra el diálogo al pulsar "Continuar" o el overlay.
+   *
+   * TODO: si el flujo definitivo exige navegar al portal al confirmar, aquí va.
+   * Ej: this.router.navigate(['/residente']);
+   */
+  onCloseSavedModal(): void {
+    this.showSavedModal.set(false);
   }
 
   /** TODO: cancelar la edición / volver atrás (ruteo pendiente). */

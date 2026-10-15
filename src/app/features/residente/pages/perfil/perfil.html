@@ -1,5 +1,20 @@
 <div class="perfil-layout">
 
+  <!--
+    Diálogo de confirmación tras guardar. Reutiliza `app-modal` del compartido
+    sin modificarlo: type="success" aporta el círculo verde con el ✓, y
+    `buttonText` ya viene en "Continuar" por defecto.
+  -->
+  @if (showSavedModal()) {
+    <app-modal
+      type="success"
+      [title]="savedModalTitle"
+      [message]="savedModalMessage"
+      buttonText="Continuar"
+      (close)="onCloseSavedModal()">
+    </app-modal>
+  }
+
   <!-- Menú lateral (componente compartido app-sidebar) -->
   <app-sidebar
     basePath="/residente"

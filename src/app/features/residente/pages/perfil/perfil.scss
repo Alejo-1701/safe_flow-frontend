@@ -81,6 +81,18 @@ app-sidebar {
 }
 
 /* ----------------------------------------------------------------- *
+ * Diálogo de confirmación (`app-modal` compartido).
+ *
+ * El compartido estiliza el botón con `padding` pero sin `width`, y el
+ * diseño lo pide a ancho completo. Se ajusta desde acá con `::ng-deep`,
+ * igual que los iconos de arriba, en vez de modificar el compartido.
+ * ----------------------------------------------------------------- */
+:host ::ng-deep app-modal .modal-content button {
+  width: 100%;
+  margin-top: 1.25rem;
+}
+
+/* ----------------------------------------------------------------- *
  * Iconos Material en las cabeceras de los form-field compartidos.
  * El componente recibe `iconClass` pero no aplica la fuente Material
  * Symbols, así que inyectamos el glifo desde la vista con `::ng-deep`.
