@@ -1,9 +1,41 @@
-<aside>
+<!-- Barra superior fija con botón hamburguesa para pantallas móviles / tablets -->
+<div class="mobile-topbar">
+  <div class="mobile-brand">
+    <div class="brand-logo">
+      <img src="assets/images/logo.png" alt="Safe Flow Logo" class="logo-img" />
+    </div>
+    <h1>Safe Flow</h1>
+  </div>
+
+  <button
+    type="button"
+    class="btn-hamburger"
+    (click)="toggleMobileMenu()"
+    [attr.aria-label]="isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'">
+    <span class="material-symbols-outlined">
+      {{ isMobileMenuOpen ? 'close' : 'menu' }}
+    </span>
+  </button>
+</div>
+
+<!-- Fondo oscuro semitransparente al desplegar el menú móvil -->
+<div
+  class="sidebar-backdrop"
+  *ngIf="isMobileMenuOpen"
+  (click)="closeMobileMenu()">
+</div>
+
+<!-- Sidebar principal -->
+<aside [class.mobile-open]="isMobileMenuOpen">
   <div class="sidebar-header">
     <div class="brand-logo">
       <span class="material-symbols-outlined logo-icon" aria-hidden="true">shield</span>
     </div>
     <h1>Safe Flow</h1>
+
+    <button type="button" class="btn-close-mobile" (click)="closeMobileMenu()" aria-label="Cerrar menú">
+      <span class="material-symbols-outlined">close</span>
+    </button>
   </div>
 
   <nav>
@@ -11,7 +43,8 @@
       <a [routerLink]="getFullRoute(item.route)"
          routerLinkActive="nav-item-active"
          [routerLinkActiveOptions]="{ exact: false }"
-         class="nav-item group">
+         class="nav-item group"
+         (click)="closeMobileMenu()">
 
         <span class="material-symbols-outlined nav-icon" aria-hidden="true">{{ item.icon }}</span>
 

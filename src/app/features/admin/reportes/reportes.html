@@ -1,0 +1,171 @@
+<div class="app-layout">
+  <!-- Sidebar Reutilizable Global -->
+  <app-sidebar basePath="/admin"></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Encabezado -->
+    <header class="page-header">
+      <div class="header-title">
+        <h1>Gestión de Reportes de Incidencias</h1>
+        <p>Monitoreo y administración de accesos y convivencia residencial.</p>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn-action btn-export" (click)="exportReportes()">
+          <span class="material-symbols-outlined icon-download">download</span>
+          Exportar
+        </button>
+      </div>
+    </header>
+
+    <!-- Métricas -->
+    <section class="stats-grid">
+
+      <div class="metric-card metric-card-total">
+        <div class="metric-content">
+          <span class="metric-label">TOTAL REPORTES</span>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ metrics.totalReportes | number }}</span>
+            <span class="metric-trend positive">+12% vs. mes anterior</span>
+          </div>
+        </div>
+        <div class="metric-icon-box">
+          <span class="material-symbols-outlined">description</span>
+        </div>
+      </div>
+
+      <div class="metric-card metric-card-pending">
+        <div class="metric-content">
+          <span class="metric-label">PENDIENTES</span>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ metrics.pendientes }}</span>
+            <span class="metric-subtext warning">Atención inmediata</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card metric-card-resolved">
+        <div class="metric-content">
+          <span class="metric-label">RESUELTOS</span>
+          <div class="metric-value-row">
+            <span class="metric-number green">{{ metrics.resueltos | number }}</span>
+            <span class="metric-subtext green">{{ metrics.efectividadPorcentaje }}% efectividad</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Toolbar de Filtros -->
+    <section class="filter-toolbar">
+      <div class="filter-dropdown">
+        <span class="material-symbols-outlined filter-icon">filter_list</span>
+        <select [(ngModel)]="selectedPrioridad">
+          <option value="TODAS">Todas las Prioridades</option>
+          <option value="ALTA">Alta</option>
+          <option value="MEDIA">Media</option>
+          <option value="BAJA">Baja</option>
+        </select>
+        <span class="material-symbols-outlined chevron-icon">expand_more</span>
+      </div>
+
+      <div class="filter-dropdown">
+        <select [(ngModel)]="selectedCategoria">
+          <option value="TODAS">Todas las Categorías</option>
+          <option value="Parqueadero">Parqueadero</option>
+          <option value="Convivencia">Convivencia</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+        </select>
+        <span class="material-symbols-outlined chevron-icon">expand_more</span>
+      </div>
+
+      <div class="filter-actions">
+        <button type="button" class="btn-clear" (click)="resetFilters()">
+          Limpiar Filtros
+        </button>
+
+        <app-button
+          text="Aplicar"
+          colorVariant="primary"
+          (onClick)="applyFilters()">
+        </app-button>
+      </div>
+    </section>
+
+    <!-- Tabla Principal -->
+    <section class="reports-table-card">
+      <div class="table-wrapper">
+        <table class="custom-data-table">
+          <thead>
+            <tr>
+              <th>ID REPORTE</th>
+              <th>FECHA</th>
+              <th>REMITENTE</th>
+              <th>ASUNTO</th>
+              <th>PRIORIDAD</th>
+              <th>ESTADO</th>
+              <th>ACCIÓN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredIncidencias">
+              <td>
+                <span class="report-id">{{ item.id }}</span>
+              </td>
+
+              <td class="date-cell">{{ item.fecha }}</td>
+
+              <td>
+                <div class="sender-info">
+                  <span class="sender-unit">{{ item.remitenteUbicacion }}</span>
+                  <span class="sender-name">{{ item.remitenteNombre }}</span>
+                </div>
+              </td>
+
+              <td class="subject-cell">{{ item.asunto }}</td>
+
+              <td>
+                <span class="priority-badge" [ngClass]="item.prioridad.toLowerCase()">
+                  {{ item.prioridad }}
+                </span>
+              </td>
+
+              <td>
+                <div class="status-indicator">
+                  <span class="status-dot" [ngClass]="item.estado.toLowerCase().replace(' ', '-')"></span>
+                  <span class="status-text">{{ item.estado }}</span>
+                </div>
+              </td>
+
+              <td>
+                <button type="button" class="btn-manage" (click)="gestionarIncidencia(item)">
+                  Gestionar
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredIncidencias.length === 0">
+              <td colspan="7" class="no-data">
+                No se encontraron reportes con los filtros seleccionados.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pie de Tabla -->
+      <footer class="reports-table-footer">
+        <span class="records-info">
+          MOSTRANDO {{ filteredIncidencias.length }} DE {{ metrics.totalReportes | number }} INCIDENTES
+        </span>
+        <div class="pagination-controls">
+          <button type="button" class="btn-page" title="Página anterior">&lt;</button>
+          <button type="button" class="btn-page" title="Página siguiente">&gt;</button>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+</div>

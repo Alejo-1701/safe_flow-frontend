@@ -1,20 +1,33 @@
 :host {
   display: block;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .stat-card {
   background-color: var(--bg-card, #1e293b);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: padding 0.2s ease, gap 0.2s ease;
+
+  // Ajuste de padding y espaciado en pantallas pequeñas
+  @media (max-width: 640px) {
+    padding: 1rem;
+    gap: 0.35rem;
+  }
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .title {
@@ -23,18 +36,43 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+
+  // Evita que títulos largos rompan la maquetación
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 480px) {
+    font-size: 0.7rem;
+  }
 }
 
 .value {
   color: var(--text-primary, #e2e8f0);
   font-size: 1.75rem;
   font-weight: 700;
+  line-height: 1.2;
+  word-break: break-word;
+
+  // Escala progresiva del texto principal en dispositivos reducidos
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.35rem;
+  }
 }
 
 .trend {
   font-size: 0.85rem;
   font-weight: 500;
-  
+  line-height: 1.2;
+
+  @media (max-width: 480px) {
+    font-size: 0.775rem;
+  }
+
   &.positive { color: var(--status-free, #22c55e); }
   &.negative { color: #ef4444; }
   &.warning { color: var(--status-full, #eab308); }
