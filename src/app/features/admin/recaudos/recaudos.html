@@ -1,0 +1,184 @@
+<div class="app-layout">
+  <!-- Sidebar Reutilizable Global -->
+  <app-sidebar basePath="/admin"></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Encabezado con Botón Exportar -->
+    <header class="page-header">
+      <h1>Gestión de Recaudos</h1>
+
+      <button type="button" class="btn-cyan-export" (click)="exportReport()">
+        <span class="material-symbols-outlined icon-download">download</span>
+        Exportar Reporte
+      </button>
+    </header>
+
+    <!-- Tarjetas Métricas Superiores -->
+    <section class="stats-grid">
+      <div *ngFor="let m of metrics" class="metric-card">
+        <span class="metric-title">{{ m.titulo }}</span>
+        <div class="metric-value-row">
+          <span class="metric-value">{{ m.valor }}</span>
+          <span class="metric-badge" [class.positive]="m.esPositiva" [class.negative]="!m.esPositiva">
+            {{ m.variacion }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filtros de Búsqueda -->
+    <section class="filter-card">
+      <div class="filter-header">
+        <span class="material-symbols-outlined filter-icon">filter_alt</span>
+        <h2>Filtros de Búsqueda</h2>
+      </div>
+
+      <div class="filter-body">
+        <div class="form-group">
+          <label>RANGO DE FECHAS</label>
+          <div class="input-with-icon">
+            <span class="material-symbols-outlined input-icon">calendar_today</span>
+            <select [(ngModel)]="selectedRangoFecha" (change)="applyFilters()">
+              <option value="HOY">Seleccione periodo (Hoy, Últimos 7 días...)</option>
+              <option value="7DIAS">Últimos 7 días</option>
+              <option value="30DIAS">Últimos 30 días</option>
+            </select>
+            <span class="material-symbols-outlined select-chevron">expand_more</span>
+          </div>
+        </div>
+
+        <div class="form-group flex-1">
+          <label>NOMBRE DEL GUARDA</label>
+          <div class="input-with-icon">
+            <span class="material-symbols-outlined input-icon">person_search</span>
+            <input
+              type="text"
+              placeholder="Buscar por nombre de seguridad..."
+              [(ngModel)]="searchGuarda"
+              (input)="applyFilters()"
+            />
+          </div>
+        </div>
+
+        <button type="button" class="btn-clear-filters" (click)="clearFilters()">
+          Limpiar Filtros
+        </button>
+      </div>
+    </section>
+
+    <!-- Tabla Principal de Recaudos -->
+    <section class="table-card">
+      <div class="table-wrapper">
+        <table class="custom-data-table">
+          <thead>
+            <tr>
+              <th>FECHA / HORA</th>
+              <th>PLACA</th>
+              <th>TIPO</th>
+              <th>TIEMPO</th>
+              <th>VALOR</th>
+              <th>MÉTODO DE PAGO</th>
+              <th>GUARDA</th>
+              <th>ESTADO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredRecaudos">
+              <!-- Fecha / Hora -->
+              <td class="date-cell">{{ item.fechaHora }}</td>
+
+              <!-- Placa con resalte Azul Cyan -->
+              <td>
+                <span class="plate-text">{{ item.placa }}</span>
+              </td>
+
+              <!-- Tipo de Vehículo -->
+              <td class="text-secondary">{{ item.tipoVehiculo }}</td>
+
+              <!-- Tiempo -->
+              <td class="text-secondary">{{ item.tiempo }}</td>
+
+              <!-- Valor -->
+              <td class="font-bold">{{ item.valor }}</td>
+
+              <!-- Método de Pago -->
+              <td class="text-secondary">{{ item.metodoPago }}</td>
+
+              <!-- Guarda -->
+              <td>{{ item.guardaNombre }}</td>
+
+              <!-- Estado Badge -->
+              <td>
+                <span class="status-pill liquidado">{{ item.estado }}</span>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredRecaudos.length === 0">
+              <td colspan="8" class="no-data">
+                No se encontraron recaudos registrados con los criterios seleccionados.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pie de Tabla con Paginación -->
+      <footer class="table-footer">
+        <span class="records-info">Mostrando 1-10 de {{ totalRecords }} recaudos</span>
+
+        <div class="pagination-controls">
+          <button
+            type="button"
+            class="btn-page"
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)">&lt;</button>
+
+          <button
+            type="button"
+            class="btn-page"
+            [class.active]="currentPage === 1"
+            (click)="goToPage(1)">1</button>
+
+          <button
+            type="button"
+            class="btn-page"
+            [class.active]="currentPage === 2"
+            (click)="goToPage(2)">2</button>
+
+          <button
+            type="button"
+            class="btn-page"
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)">&gt;</button>
+        </div>
+      </footer>
+    </section>
+
+    <!-- Tarjeta Inferior de Arqueo de Caja Pendiente -->
+    <section class="arqueo-alert-card">
+      <div class="arqueo-info">
+        <div class="warning-icon-box">
+          <span class="material-symbols-outlined">warning</span>
+        </div>
+        <div class="arqueo-text">
+          <h3>Arqueo de Caja Pendiente</h3>
+          <p>{{ arqueoPendiente.descripcion }}</p>
+        </div>
+      </div>
+
+      <div class="arqueo-action">
+        <div class="monto-box">
+          <span class="monto-label">MONTO POR CONCILIAR</span>
+          <span class="monto-value">{{ arqueoPendiente.monto }}</span>
+        </div>
+
+        <button type="button" class="btn-view-arqueo" (click)="viewArqueo()">
+          Ver Arqueo
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>

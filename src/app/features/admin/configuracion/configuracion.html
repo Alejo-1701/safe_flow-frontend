@@ -1,0 +1,275 @@
+<div class="app-layout">
+  <!-- Sidebar Reutilizable Global -->
+  <app-sidebar basePath="/admin"></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Encabezado de la pantalla -->
+    <header class="page-header">
+      <h1>Configuración del Sistema</h1>
+      <p>Gestione parámetros económicos, accesos, alertas y auditoría de ParkResidencial.</p>
+    </header>
+
+    <!-- Grilla de 4 Secciones -->
+    <div class="settings-grid">
+
+      <!-- Bloque 1: Parámetros Económicos -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="material-symbols-outlined icon-blue">payments</span>
+            <h2>Parámetros Económicos</h2>
+          </div>
+          <button type="button" class="btn-link" (click)="toggleTariffEdit()">
+            {{ isEditingTariffs ? 'Guardar' : 'Editar todo' }}
+          </button>
+        </div>
+
+        <div class="card-body">
+          <!-- Tabla de Tarifas -->
+          <table class="config-table">
+            <thead>
+              <tr>
+                <th>Tipo Vehículo</th>
+                <th>Tarifa (min)</th>
+                <th>Tiempo Gracia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of tarifas">
+                <td class="font-semibold">{{ item.tipoVehiculo }}</td>
+                <td>
+                  <input
+                    *ngIf="isEditingTariffs; else textTarifa"
+                    type="text"
+                    [(ngModel)]="item.tarifaMinuto"
+                    class="inline-input"
+                  />
+                  <ng-template #textTarifa>{{ item.tarifaMinuto }}</ng-template>
+                </td>
+                <td>
+                  <input
+                    *ngIf="isEditingTariffs; else textGracia"
+                    type="text"
+                    [(ngModel)]="item.tiempoGracia"
+                    class="inline-input"
+                  />
+                  <ng-template #textGracia>{{ item.tiempoGracia }}</ng-template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Formulario Datos Legales -->
+          <div class="form-grid">
+            <div class="form-group col-span-1">
+              <label>NOMBRE LEGAL / RAZÓN SOCIAL</label>
+              <input type="text" [(ngModel)]="datosLegales.razonSocial" />
+            </div>
+
+            <div class="form-group col-span-1">
+              <label>NIT</label>
+              <input type="text" [(ngModel)]="datosLegales.nit" />
+            </div>
+
+            <div class="form-group col-span-2">
+              <label>RESOLUCIÓN DIAN</label>
+              <input type="text" [(ngModel)]="datosLegales.resolucionDian" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloque 2: Notificaciones & Alertas -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="material-symbols-outlined icon-blue">notifications</span>
+            <h2>Notificaciones & Alertas</h2>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Interruptores de Alertas -->
+          <div class="toggle-list">
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-title">Alertas Push (Admin)</span>
+                <span class="toggle-desc">Notificar ingresos inusuales</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [checked]="alertasPushAdmin" (change)="togglePushAlert()" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <span class="toggle-title">Alertas Email (Propietario)</span>
+                <span class="toggle-desc">Reporte semanal de visitas</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [checked]="alertasEmailPropietario" (change)="toggleEmailAlert()" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Umbrales de Mal Uso -->
+          <div class="thresholds-section">
+            <span class="section-subtitle">Umbrales de 'Mal Uso'</span>
+            <p class="section-desc">
+              Tiempo máximo permitido en celda antes de generar alerta de seguridad.
+            </p>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>TIEMPO (HORAS)</label>
+                <input type="number" [(ngModel)]="umbralesMalUso.tiempoHoras" />
+              </div>
+
+              <div class="form-group">
+                <label>ACCIÓN AUTOMÁTICA</label>
+                <div class="custom-select-wrapper">
+                  <select [(ngModel)]="umbralesMalUso.accionAutomatica">
+                    <option *ngFor="let acc of accionesDisponibles" [value]="acc">
+                      {{ acc }}
+                    </option>
+                  </select>
+                  <span class="material-symbols-outlined select-chevron">expand_more</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloque 3: Accesos y Personal -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="material-symbols-outlined icon-blue">badge</span>
+            <h2>Accesos y Personal</h2>
+          </div>
+          <button type="button" class="btn-cyan-action" (click)="openNewUserModal()">
+            + Nuevo Usuario
+          </button>
+        </div>
+
+        <div class="card-body">
+          <table class="config-table align-middle">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th class="text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of usuariosPersonal">
+                <td>
+                  <div class="user-cell">
+                    <div class="avatar">{{ user.iniciales }}</div>
+                    <div class="details">
+                      <span class="name">{{ user.nombre }}</span>
+                      <span class="subtext">{{ user.turno }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="role-badge" [class.admin]="user.rol === 'ADMIN'">
+                    {{ user.rol }}
+                  </span>
+                </td>
+                <td class="text-right">
+                  <button
+                    type="button"
+                    class="btn-text-danger"
+                    (click)="toggleUserStatus(user)">
+                    {{ user.activo ? 'Inhabilitar' : 'Habilitar' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Bloque 4: Auditoría y Reportes -->
+      <section class="settings-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="material-symbols-outlined icon-blue">bar_chart</span>
+            <h2>Auditoría y Reportes</h2>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Box de Cierre de Turno -->
+          <div class="audit-box">
+            <div class="audit-header">
+              <span class="audit-title">Cuadre de Caja (Cierre de Turno)</span>
+              <span class="status-badge-active">ACTIVO</span>
+            </div>
+            <p class="audit-desc">Supervisión de conciliación diaria.</p>
+            <div class="audit-meta">
+              <span><span class="material-symbols-outlined meta-icon">schedule</span> Cierre: 10:00 PM</span>
+              <span><span class="material-symbols-outlined meta-icon">verified</span> Requiere Firma Admin</span>
+            </div>
+          </div>
+
+          <!-- Reportes Automáticos -->
+          <div class="scheduled-reports">
+            <span class="section-subtitle">Programación de Reportes Automáticos</span>
+
+            <div class="report-row">
+              <div class="report-info">
+                <span class="material-symbols-outlined report-icon">calendar_today</span>
+                <div class="details">
+                  <span class="title">Reporte Diario de Ingresos</span>
+                  <span class="subtext">Enviar a: admin@edificio.com</span>
+                </div>
+              </div>
+              <div class="custom-select-wrapper compact">
+                <select [(ngModel)]="reporteIngresosFrecuencia">
+                  <option *ngFor="let freq of frecuenciasReporte" [value]="freq">{{ freq }}</option>
+                </select>
+                <span class="material-symbols-outlined select-chevron">expand_more</span>
+              </div>
+            </div>
+
+            <div class="report-row">
+              <div class="report-info">
+                <span class="material-symbols-outlined report-icon">date_range</span>
+                <div class="details">
+                  <span class="title">Auditoría de Ocupación</span>
+                  <span class="subtext">Enviar a: gerencia@edificio.com</span>
+                </div>
+              </div>
+              <div class="custom-select-wrapper compact">
+                <select [(ngModel)]="reporteOcupacionFrecuencia">
+                  <option *ngFor="let freq of frecuenciasReporte" [value]="freq">{{ freq }}</option>
+                </select>
+                <span class="material-symbols-outlined select-chevron">expand_more</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Barra Inferior de Acciones Globales -->
+    <footer class="settings-actions-bar">
+      <button type="button" class="btn-cancel" (click)="cancelChanges()">
+        Cancelar Cambios
+      </button>
+
+      <button type="button" class="btn-save-global" (click)="saveGlobalConfiguration()">
+        Guardar Configuración Global
+      </button>
+    </footer>
+
+  </main>
+</div>

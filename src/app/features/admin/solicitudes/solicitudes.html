@@ -1,0 +1,201 @@
+<div class="app-layout">
+  <!-- Sidebar Reutilizable Global -->
+  <app-sidebar basePath="/admin"></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Encabezado con Buscador -->
+    <header class="page-header">
+      <h1>Gestión de Solicitudes</h1>
+
+      <div class="header-actions">
+        <div class="search-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            placeholder="Buscar residente..."
+            [(ngModel)]="searchTerm"
+          />
+        </div>
+      </div>
+    </header>
+
+    <!-- Tarjeta Destacada: Siguiente en Turno -->
+    <section class="next-turn-card">
+      <div class="next-turn-info">
+        <div class="turn-icon-box">
+          <span class="material-symbols-outlined">priority_high</span>
+        </div>
+
+        <div class="turn-details">
+          <span class="turn-label">SIGUIENTE EN TURNO</span>
+          <h2 class="turn-name">{{ nextInTurn.nombre }}</h2>
+          <p class="turn-subtext">
+            {{ nextInTurn.torreApto }} | Vehículo: {{ nextInTurn.vehiculoDetalle }}
+          </p>
+        </div>
+      </div>
+
+      <div class="turn-actions">
+        <button type="button" class="btn-secondary-action" (click)="viewProfile()">
+          Ver Perfil
+        </button>
+
+        <button type="button" class="btn-primary-cyan" (click)="assignSpace()">
+          <span class="material-symbols-outlined icon-check">check_circle</span>
+          Asignar Espacio
+        </button>
+      </div>
+    </section>
+
+    <!-- Tabla Lista de Espera de Parqueaderos -->
+    <section class="waiting-list-card">
+      <div class="table-card-header">
+        <h2>Lista de Espera de Parqueaderos</h2>
+
+        <!-- Filtros de la tabla -->
+        <div class="table-filters">
+          <div class="filter-dropdown">
+            <select [(ngModel)]="selectedEstado">
+              <option value="TODOS">Todos</option>
+              <option value="PENDIENTE">Pendientes</option>
+              <option value="EN ESPERA">En Espera</option>
+            </select>
+            <span class="material-symbols-outlined chevron-icon">expand_more</span>
+          </div>
+
+          <div class="filter-dropdown">
+            <select [(ngModel)]="selectedTipoVehiculo">
+              <option value="TODOS">Tipo Vehículo</option>
+              <option value="Automóvil">Automóvil</option>
+              <option value="Motocicleta">Motocicleta</option>
+              <option value="Camioneta">Camioneta</option>
+            </select>
+            <span class="material-symbols-outlined chevron-icon">expand_more</span>
+          </div>
+
+          <button type="button" class="btn-filter" (click)="applyFilters()">
+            <span class="material-symbols-outlined">filter_list</span>
+            Filtrar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Datos -->
+      <div class="table-wrapper">
+        <table class="custom-data-table">
+          <thead>
+            <tr>
+              <th>POSICIÓN</th>
+              <th>RESIDENTE</th>
+              <th>TORRE / APTO</th>
+              <th>TIPO DE VEHÍCULO</th>
+              <th>FECHA DE SOLICITUD</th>
+              <th>ESTADO</th>
+              <th class="text-center">ACCIÓN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredSolicitudes">
+              <!-- Posición / Badge circular -->
+              <td>
+                <span
+                  class="position-badge"
+                  [class.pos-first]="item.posicion === 1">
+                  {{ item.posicion }}
+                </span>
+              </td>
+
+              <!-- Residente con Avatar de Icono -->
+              <td>
+                <div class="resident-cell">
+                  <div class="avatar-icon">
+                    <span class="material-symbols-outlined">person</span>
+                  </div>
+                  <span class="resident-name">{{ item.nombre }}</span>
+                </div>
+              </td>
+
+              <!-- Torre / Apto -->
+              <td class="text-secondary">{{ item.torreApto }}</td>
+
+              <!-- Tipo de Vehículo con Icono -->
+              <td>
+                <div class="vehicle-cell">
+                  <span class="material-symbols-outlined vehicle-icon">{{ item.iconoVehiculo }}</span>
+                  <span>{{ item.tipoVehiculo }}</span>
+                </div>
+              </td>
+
+              <!-- Fecha -->
+              <td class="text-secondary">{{ item.fecha }}</td>
+
+              <!-- Badge de Estado -->
+              <td>
+                <span
+                  class="status-pill"
+                  [class.pendiente]="item.estado === 'PENDIENTE'"
+                  [class.en-espera]="item.estado === 'EN ESPERA'">
+                  {{ item.estado }}
+                </span>
+              </td>
+
+              <!-- Botón de Acción Menú (...) -->
+              <td class="text-center">
+                <button type="button" class="btn-more-actions" (click)="openActionMenu(item)" title="Más opciones">
+                  <span class="material-symbols-outlined">more_horiz</span>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredSolicitudes.length === 0">
+              <td colspan="7" class="no-data">
+                No se encontraron solicitudes en la lista de espera.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tarjetas Métricas Inferiores -->
+    <section class="stats-grid">
+
+      <!-- Espacios Disponibles -->
+      <div class="metric-card">
+        <div class="metric-icon-box green">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <div class="metric-info">
+          <span class="metric-title">Espacios Disponibles</span>
+          <span class="metric-value">{{ metrics.espaciosDisponibles }}</span>
+        </div>
+      </div>
+
+      <!-- Solicitudes en Espera -->
+      <div class="metric-card">
+        <div class="metric-icon-box yellow">
+          <span class="material-symbols-outlined">hourglass_empty</span>
+        </div>
+        <div class="metric-info">
+          <span class="metric-title">Solicitudes en Espera</span>
+          <span class="metric-value">{{ metrics.solicitudesEnEspera }}</span>
+        </div>
+      </div>
+
+      <!-- Promedio de Espera -->
+      <div class="metric-card">
+        <div class="metric-icon-box blue">
+          <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <div class="metric-info">
+          <span class="metric-title">Promedio de Espera</span>
+          <span class="metric-value">{{ metrics.promedioEspera }}</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>

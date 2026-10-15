@@ -1,0 +1,189 @@
+<div class="app-layout">
+  <!-- Sidebar Reutilizable Global -->
+  <app-sidebar basePath="/admin"></app-sidebar>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Encabezado con Buscador y Nuevo Ingreso -->
+    <header class="page-header">
+      <h1>Mapa de Parqueo</h1>
+
+      <div class="header-actions">
+        <div class="search-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            placeholder="Buscar placa..."
+            [(ngModel)]="searchPlaca"
+          />
+        </div>
+
+        <app-button
+          text="+ Nuevo Ingreso"
+          colorVariant="primary"
+          (onClick)="nuevoIngreso()">
+        </app-button>
+      </div>
+    </header>
+
+    <!-- Tarjetas Métricas Superiores -->
+    <section class="stats-grid">
+
+      <!-- Ocupación Carros -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="material-symbols-outlined icon-type">directions_car</span>
+          <span class="metric-title">OCUPACIÓN CARROS</span>
+        </div>
+
+        <div class="metric-body">
+          <div class="metric-value">
+            <span class="big-number">{{ summary.ocupadosCarros }}</span>
+            <span class="total-number">/{{ summary.totalCarros }}</span>
+          </div>
+
+          <div class="status-pill warning">
+            {{ porcentajeCarros }}% LLENO
+          </div>
+        </div>
+
+        <span class="metric-footer-text">{{ libresCarros }} espacios libres</span>
+      </div>
+
+      <!-- Ocupación Motos -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="material-symbols-outlined icon-type">two_wheeler</span>
+          <span class="metric-title">OCUPACIÓN MOTOS</span>
+        </div>
+
+        <div class="metric-body">
+          <div class="metric-value">
+            <span class="big-number">{{ summary.ocupadosMotos }}</span>
+            <span class="total-number">/{{ summary.totalMotos }}</span>
+          </div>
+
+          <div class="status-pill success">
+            {{ porcentajeMotos }}% LLENO
+          </div>
+        </div>
+
+        <span class="metric-footer-text">{{ libresMotos }} espacios libres</span>
+      </div>
+
+      <!-- Próximas Salidas -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="material-symbols-outlined icon-type">schedule</span>
+          <span class="metric-title">PRÓXIMAS SALIDAS</span>
+        </div>
+
+        <div class="metric-body">
+          <div class="metric-value">
+            <span class="big-number">{{ summary.proximasSalidas }}</span>
+          </div>
+          <span class="material-symbols-outlined trend-icon">trending_up</span>
+        </div>
+
+        <span class="metric-footer-text">En los próximos 30 min</span>
+      </div>
+
+    </section>
+
+    <!-- Plano Principal Nivel 1 -->
+    <section class="map-card">
+      <div class="map-card-header">
+        <h2>Plano Nivel 1</h2>
+
+        <!-- Leyenda de Estados -->
+        <div class="map-legend">
+          <div class="legend-item">
+            <span class="dot libre"></span>
+            <span>Libre</span>
+          </div>
+          <div class="legend-item">
+            <span class="dot ocupado"></span>
+            <span>Ocupado</span>
+          </div>
+          <div class="legend-item">
+            <span class="dot asignado"></span>
+            <span>Asignado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secciones de Parqueo: Carros y Motos -->
+      <div class="map-zones-container">
+
+        <!-- ZONA CARROS -->
+        <div class="zone-column zone-cars">
+          <span class="zone-title">ZONA CARROS</span>
+
+          <div class="slots-grid car-grid">
+            <div
+              *ngFor="let slot of carSlots"
+              class="parking-slot"
+              [ngClass]="slot.estado.toLowerCase()"
+              (click)="selectSlot(slot)">
+
+              <span class="slot-number">{{ slot.numero }}</span>
+              <span class="material-symbols-outlined vehicle-icon">directions_car</span>
+
+              <span class="slot-plate" *ngIf="slot.placa">{{ slot.placa }}</span>
+            </div>
+          </div>
+
+          <!-- Paginación Zona Carros -->
+          <div class="zone-pagination">
+            <button
+              type="button"
+              class="btn-page"
+              [disabled]="currentCarPage === 1"
+              (click)="prevCarPage()">&lt;</button>
+            <span>{{ currentCarPage }} / {{ totalCarPages }}</span>
+            <button
+              type="button"
+              class="btn-page"
+              [disabled]="currentCarPage === totalCarPages"
+              (click)="nextCarPage()">&gt;</button>
+          </div>
+        </div>
+
+        <!-- ZONA MOTOS -->
+        <div class="zone-column zone-motos">
+          <span class="zone-title">ZONA MOTOS</span>
+
+          <div class="slots-grid moto-grid">
+            <div
+              *ngFor="let slot of motoSlots"
+              class="parking-slot moto-slot"
+              [ngClass]="slot.estado.toLowerCase()"
+              (click)="selectSlot(slot)">
+
+              <span class="slot-number">{{ slot.numero }}</span>
+              <span class="material-symbols-outlined vehicle-icon">two_wheeler</span>
+            </div>
+          </div>
+
+          <!-- Paginación Zona Motos -->
+          <div class="zone-pagination">
+            <button
+              type="button"
+              class="btn-page"
+              [disabled]="currentMotoPage === 1"
+              (click)="prevMotoPage()">&lt;</button>
+            <span>{{ currentMotoPage }} / {{ totalMotoPages }}</span>
+            <button
+              type="button"
+              class="btn-page"
+              [disabled]="currentMotoPage === totalMotoPages"
+              (click)="nextMotoPage()">&gt;</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
