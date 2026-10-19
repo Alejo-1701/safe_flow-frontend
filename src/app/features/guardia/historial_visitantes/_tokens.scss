@@ -1,0 +1,43 @@
+// Tokens locales de la vista "Historial de Visitantes".
+//
+// Todos los valores apuntan a las variables globales definidas en
+// src/styles.scss, con el mismo valor como fallback. Así la vista no
+// vuelve a escribir colores sueltos y un cambio de tema en styles.scss
+// se propaga solo.
+
+// Superficies
+$bg: var(--bg-main, #121826);
+$surface: var(--bg-card, #1e293b);
+$surface-deep: var(--bg-input, #111827);
+
+// Texto
+$text: var(--text-primary, #e2e8f0);
+$text-strong: var(--text-strong, #f8fafc);
+$text-secondary: var(--text-secondary, #cbd5e1);
+$muted: var(--text-muted, #94a3b8);
+$subtle: var(--text-subtle, #64748b);
+
+// Bordes
+$line-subtle: var(--border-subtle, #29374b);
+$line: var(--border-color, #334155);
+$line-strong: var(--border-strong, #475569);
+
+// Tintes translúcidos
+$hover: var(--bg-hover, rgba(255, 255, 255, 0.04));
+$divider: var(--divider, rgba(148, 163, 184, 0.1));
+$scrim: var(--scrim, rgba(2, 6, 23, 0.78));
+$accent-soft: var(--color-accent-soft, rgba(56, 189, 248, 0.13));
+$accent-border: var(--color-accent-border, rgba(56, 189, 248, 0.35));
+$ok-soft: var(--status-free-soft, rgba(34, 197, 94, 0.14));
+$ok-border: var(--status-free-border, rgba(34, 197, 94, 0.35));
+$danger-soft: var(--status-danger-soft, rgba(239, 68, 68, 0.14));
+$danger-border: var(--status-danger-border, rgba(239, 68, 68, 0.35));
+
+// Acento y estados
+$accent: var(--color-accent, #38bdf8);
+$accent-strong: var(--color-accent-strong, #7dd3fc);
+$on-accent: var(--on-accent, #082f49);
+$ok: var(--status-free, #22c55e);
+$warn: var(--status-full, #f59e0b);
+$danger: var(--status-danger, #ef4444);
+$purple: var(--color-purple, #a78bfa);

@@ -1,3 +1,5 @@
+@use 'tokens' as *;
+
 // El host no debe generar ninguna caja: `.modal-backdrop` es `position: fixed`
 // y debe seguir comportándose igual que cuando vivía dentro del componente padre.
 :host {
@@ -11,7 +13,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(2, 6, 23, 0.78);
+  background: $scrim;
   backdrop-filter: blur(4px);
 }
 
@@ -21,9 +23,9 @@
   max-height: calc(100vh - 40px);
   overflow-y: auto;
   padding: 28px;
-  border: 1px solid #334155;
+  border: 1px solid $line;
   border-radius: 16px;
-  background: #1e293b;
+  background: $surface;
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
 }
 
@@ -34,8 +36,8 @@
   height: 44px;
   margin-bottom: 17px;
   border-radius: 12px;
-  background: rgba(56, 189, 248, 0.12);
-  color: #38bdf8;
+  background: $accent-soft;
+  color: $accent;
 }
 
 .modal-icon .material-symbols-outlined {
@@ -44,14 +46,14 @@
 
 .detail-modal h2 {
   margin: 0;
-  color: #f8fafc;
+  color: $text-strong;
   font-size: 21px;
   line-height: 1.4;
 }
 
 .detail-subtitle {
   margin: 7px 0 23px;
-  color: #94a3b8;
+  color: $muted;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -67,13 +69,13 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #94a3b8;
+  color: $muted;
   cursor: pointer;
 }
 
 .modal-close:hover {
-  background: #334155;
-  color: #f8fafc;
+  background: $line;
+  color: $text-strong;
 }
 
 .detail-modal dl {
@@ -86,20 +88,20 @@
 .detail-modal dl div {
   min-width: 0;
   padding: 12px;
-  border: 1px solid #334155;
+  border: 1px solid $line;
   border-radius: 9px;
-  background: rgba(15, 23, 42, 0.35);
+  background: color-mix(in srgb, $surface-deep 40%, transparent);
 }
 
 .detail-modal dt {
   margin-bottom: 6px;
-  color: #94a3b8;
+  color: $muted;
   font-size: 10px;
 }
 
 .detail-modal dd {
   margin: 0;
-  color: #e2e8f0;
+  color: $text;
   font-size: 12px;
   font-weight: 500;
   overflow-wrap: anywhere;
@@ -116,21 +118,21 @@
 }
 
 .detail-status.status-ingresado {
-  border-color: rgba(34, 197, 94, 0.3);
-  background: rgba(34, 197, 94, 0.12);
-  color: #22c55e;
+  border-color: $ok-border;
+  background: $ok-soft;
+  color: $ok;
 }
 
 .detail-status.status-rechazado {
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
+  border-color: $danger-border;
+  background: $danger-soft;
+  color: $danger;
 }
 
 .detail-status.status-finalizado {
-  border-color: rgba(56, 189, 248, 0.3);
-  background: rgba(56, 189, 248, 0.12);
-  color: #38bdf8;
+  border-color: $accent-border;
+  background: $accent-soft;
+  color: $accent;
 }
 
 .modal-done {
@@ -140,15 +142,15 @@
   padding: 0 20px;
   border: 0;
   border-radius: 8px;
-  background: #38bdf8;
-  color: #082f49;
+  background: $accent;
+  color: $on-accent;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .modal-done:hover {
-  background: #7dd3fc;
+  background: $accent-strong;
 }
 
 // Mismo breakpoint que antes, cuando estas reglas vivían en _responsive.scss

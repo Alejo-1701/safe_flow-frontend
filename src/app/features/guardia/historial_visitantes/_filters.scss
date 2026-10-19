@@ -1,9 +1,11 @@
+@use 'tokens' as *;
+
 .filters-card {
   margin-bottom: 22px;
   padding: 20px;
-  border: 1px solid #29374b;
+  border: 1px solid $line-subtle;
   border-radius: 13px;
-  background: var(--bg-card, #1e293b);
+  background: $surface;
 }
 
 .filter-inputs {
@@ -20,10 +22,10 @@
   gap: 10px;
   height: 43px;
   padding: 0 13px;
-  border: 1px solid #334155;
+  border: 1px solid $line;
   border-radius: 9px;
-  background: #111827;
-  color: #94a3b8;
+  background: $surface-deep;
+  color: $muted;
 }
 
 .search-field {
@@ -49,12 +51,12 @@
   border: 0;
   outline: 0;
   background: transparent;
-  color: #e2e8f0;
+  color: $text;
   font-size: 12px;
 }
 
 .search-field input::placeholder {
-  color: #64748b;
+  color: $subtle;
   opacity: 1;
 }
 
@@ -67,17 +69,17 @@
   flex: 0 0 auto;
   min-height: 40px;
   padding: 0 12px;
-  border: 1px solid #334155;
+  border: 1px solid $line;
   border-radius: 8px;
   background: transparent;
-  color: #94a3b8;
+  color: $muted;
   font-size: 11px;
   cursor: pointer;
 }
 
 .clear-filters:hover {
-  border-color: #38bdf8;
-  color: #38bdf8;
+  border-color: $accent;
+  color: $accent;
 }
 
 .quick-filters {
@@ -88,7 +90,7 @@
 }
 
 .quick-label {
-  color: #94a3b8;
+  color: $muted;
   font-size: 12px;
   white-space: nowrap;
 }
@@ -103,10 +105,10 @@
 .filter-group button {
   min-height: 30px;
   padding: 0 12px;
-  border: 1px solid #334155;
+  border: 1px solid $line;
   border-radius: 999px;
   background: transparent;
-  color: #94a3b8;
+  color: $muted;
   font-size: 11px;
   white-space: nowrap;
   cursor: pointer;
@@ -114,68 +116,68 @@
 }
 
 .filter-group button:hover {
-  border-color: #64748b;
-  color: #e2e8f0;
+  border-color: $subtle;
+  color: $text;
 }
 
 /* FILTROS POR TIPO */
 
 .filter-group.types button.selected {
-  border-color: rgba(56, 189, 248, 0.4);
-  background: rgba(56, 189, 248, 0.13);
-  color: #38bdf8;
+  border-color: $accent-border;
+  background: $accent-soft;
+  color: $accent;
 }
 
 /* FILTROS POR ESTADO */
 
-/* TODOS: AZUL */
+/* TODOS: ACENTO */
 .filter-group.states button.selected {
-  border-color: rgba(56, 189, 248, 0.4);
-  background: rgba(56, 189, 248, 0.13);
-  color: #38bdf8;
+  border-color: $accent-border;
+  background: $accent-soft;
+  color: $accent;
 }
 
 /* INGRESADO: VERDE */
 .filter-group.states .filter-ingresado,
 .filter-group.states .filter-ingresado:hover,
 .filter-group.states .filter-ingresado.selected {
-  color: #22c55e !important;
+  color: $ok !important;
 }
 
 .filter-group.states .filter-ingresado.selected {
-  border-color: rgba(34, 197, 94, 0.4);
-  background: rgba(34, 197, 94, 0.14);
+  border-color: $ok-border;
+  background: $ok-soft;
 }
 
 /* RECHAZADO: ROJO */
 .filter-group.states .filter-rechazado,
 .filter-group.states .filter-rechazado:hover,
 .filter-group.states .filter-rechazado.selected {
-  color: #ef4444 !important;
+  color: $danger !important;
 }
 
 .filter-group.states .filter-rechazado.selected {
-  border-color: rgba(239, 68, 68, 0.4);
-  background: rgba(239, 68, 68, 0.14);
+  border-color: $danger-border;
+  background: $danger-soft;
 }
 
-/* FINALIZADO: AZUL */
+/* FINALIZADO: ACENTO */
 .filter-group.states .filter-finalizado,
 .filter-group.states .filter-finalizado:hover,
 .filter-group.states .filter-finalizado.selected {
-  color: #38bdf8;
+  color: $accent;
 }
 
 .filter-group.states .filter-finalizado.selected {
-  border-color: rgba(56, 189, 248, 0.4);
-  background: rgba(56, 189, 248, 0.13);
+  border-color: $accent-border;
+  background: $accent-soft;
 }
 
 .filter-divider {
   width: 1px;
   height: 25px;
   margin: 0 5px;
-  background: #334155;
+  background: $line;
 }
 
 /* TABLA */

@@ -1,5 +1,7 @@
 // Styles for the visitor history page.
 // Split into partials to stay within the anyComponentStyle budget (8kB).
+// Cascade order matters: keep tokens -> base -> sections -> responsive.
+@use 'tokens';
 @use 'base';
 @use 'sidebar';
 @use 'header';
