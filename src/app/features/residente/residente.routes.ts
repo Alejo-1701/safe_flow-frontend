@@ -11,6 +11,23 @@ export const RESIDENTE_ROUTES: Routes = [
     // La navegación definitiva se definirá más adelante.
     path: 'perfil',
     loadComponent: () => import('./pages/perfil/perfil').then(m => m.Perfil)
+  },
+  {
+    // El ítem "Vehículos" del menú apunta a la sección, y hoy su única
+    // pantalla es el formulario de registro. Sin esta redirección la ruta
+    // no existía y el comodín `**` mandaba al login.
+    // Cuando exista el listado de vehículos, se sustituye por su página.
+    path: 'vehiculos',
+    pathMatch: 'full',
+    redirectTo: 'vehiculos/nuevo'
+  },
+  {
+    // Ruta provisional para visualizar la vista "Registrar Nuevo Vehículo".
+    // Es la URL que anuncia `MyVehiclesComponent.onRegister()`.
+    // La navegación definitiva se definirá más adelante.
+    path: 'vehiculos/nuevo',
+    loadComponent: () =>
+      import('./pages/registro-vehiculo/registro-vehiculo').then(m => m.RegistroVehiculo)
   }
 
   // ---------------------------------------------------------------------------

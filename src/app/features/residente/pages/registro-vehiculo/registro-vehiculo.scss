@@ -1,0 +1,177 @@
+/* ================================================================= *
+ * VISTA "REGISTRAR NUEVO VEHÍCULO" - Residente
+ * Layout: menú lateral compartido + contenido con la tarjeta del
+ * formulario, replicando los ajustes de "Mi Perfil":
+ *  - Contenido centrado (horizontal y verticalmente) con un ancho máximo.
+ *  - Escritorio: alto de ventana sin scroll de página; el scroll queda
+ *    dentro del contenido.
+ *  - Tablet / móvil: el menú pasa arriba y la página hace scroll normal.
+ *
+ * Todos los colores salen de los tokens globales de `styles.scss`.
+ * ================================================================= */
+
+:host {
+  display: block;
+  background-color: var(--bg-main);
+}
+
+.registro-layout {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+}
+
+/* El sidebar compartido define su propio ancho (260px); el layout solo
+   controla su posición y que no se estire. */
+app-sidebar {
+  flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+}
+
+.registro-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+/*
+ * Bloque con el encabezado y la tarjeta.
+ * `margin: auto` lo centra HORIZONTAL y VERTICALMENTE. Si el bloque es más
+ * alto que el área disponible, los márgenes automáticos se anulan solos y
+ * el scroll interno funciona sin recortar la parte de arriba.
+ */
+.registro-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 860px;
+  margin: auto;
+}
+
+.page-header {
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+}
+
+/* ----------------------------------------------------------------- *
+ * Tarjeta del formulario (`form-field` compartido).
+ * ----------------------------------------------------------------- */
+
+/* Icono de la cabecera: el componente recibe `iconClass` pero no aplica la
+   fuente Material Symbols, así que se inyecta el glifo desde la vista con
+   `::ng-deep`, igual que en "Mi Perfil", sin modificar el compartido. */
+:host ::ng-deep .vehicle-card .header-icon i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-accent);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep .vehicle-card .header-icon i::before {
+  content: 'directions_car';
+}
+
+/* Etiquetas en mayúsculas y más marcadas, como en el diseño. */
+:host ::ng-deep .vehicle-card .form-field-group label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ----------------------------------------------------------------- *
+ * Indicador de color del campo "Color".
+ * `form-field` no trae uno, así que se añade desde la vista con
+ * `::ng-deep` en vez de modificar el componente compartido.
+ * El relleno llega por la variable `--swatch-color` que publica el HTML
+ * con lo que el residente escribe; si no hay valor, queda solo el aro.
+ * ----------------------------------------------------------------- */
+:host ::ng-deep .vehicle-card .form-field-group:last-child .control-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0.6rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background-color: var(--swatch-color, transparent);
+  pointer-events: none;
+}
+
+/* Hueco para que el texto no quede por debajo del indicador. */
+:host ::ng-deep .vehicle-card .form-field-group:last-child .form-field-control {
+  padding-right: 2.75rem;
+}
+
+/* ----------------------------------------------------------------- *
+ * Tablet / móvil: el menú pasa arriba del contenido.
+ * ----------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .registro-layout {
+    flex-direction: column;
+  }
+
+  app-sidebar {
+    flex: 0 0 auto;
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .registro-content {
+    padding: 1rem;
+  }
+
+  .registro-inner {
+    gap: 1rem;
+  }
+}
+
+/* ----------------------------------------------------------------- *
+ * ESCRITORIO / PANTALLA COMPLETA:
+ * La vista ocupa exactamente el alto de la ventana y NO genera scroll de
+ * página. Si el contenido no cabe, el scroll queda dentro del contenido.
+ * ----------------------------------------------------------------- */
+@media (min-width: 1025px) {
+  :host {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .registro-layout {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .registro-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
