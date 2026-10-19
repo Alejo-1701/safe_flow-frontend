@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 
 export interface NavItem {
   label: string;
@@ -55,6 +57,20 @@ export class SidebarComponent {
 
   isMobileMenuOpen: boolean = false;
 
+  private readonly router = inject(Router);
+
+  /**
+   * URL actual, reactiva: se actualiza en cada navegación.
+   * Se usa para resaltar el enlace de la pantalla en la que está el usuario.
+   */
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(event => event.urlAfterRedirects)
+    ),
+    { initialValue: this.router.url }
+  );
+
   getFullRoute(route: string): string {
     if (route.startsWith('http') || route.startsWith(this.basePath)) {
       return route;
@@ -62,6 +78,35 @@ export class SidebarComponent {
     const cleanBase = this.basePath.endsWith('/') ? this.basePath.slice(0, -1) : this.basePath;
     const cleanRoute = route.startsWith('/') ? route : `/${route}`;
     return `${cleanBase}${cleanRoute}`;
+  }
+
+  /**
+   * Destino del enlace que debe aparecer resaltado, o `null` si ninguno lo está.
+   *
+   * `routerLinkActive` de Angular (con `exact: false`) marca TODOS los enlaces
+   * cuyo destino sea prefijo de la URL actual: en "/residente/perfil" encendía
+   * a la vez "Dashboard" (`/residente`) y "Mi Perfil". Aquí se elige solo el
+   * destino más específico de los que coinciden.
+   */
+  get activeRoute(): string | null {
+    const url = this.currentUrl().split('?')[0].split('#')[0];
+    let activeRoute: string | null = null;
+
+    for (const item of this.displayNavItems) {
+      const route = this.getFullRoute(item.route);
+      const matches = url === route || url.startsWith(`${route}/`);
+
+      if (matches && (activeRoute === null || route.length > activeRoute.length)) {
+        activeRoute = route;
+      }
+    }
+
+    return activeRoute;
+  }
+
+  /** Indica si el enlace corresponde a la pantalla actual. */
+  isActive(item: NavItem): boolean {
+    return this.getFullRoute(item.route) === this.activeRoute;
   }
 
   toggleMobileMenu(): void {
