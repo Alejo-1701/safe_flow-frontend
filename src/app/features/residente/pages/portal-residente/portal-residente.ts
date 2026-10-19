@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { NavbarComponent } from '../../../../shared/components/navbar/navbar';
 import { VisitorAlertComponent } from '../../components/visitor-alert/visitor-alert';
@@ -31,6 +32,8 @@ import { NuevaSolicitudComponent } from '../../components/nueva-solicitud/nueva-
 })
 export class PortalResidente {
 
+  private readonly router = inject(Router);
+
   /** Datos del residente en sesión (se completarán desde el servicio de autenticación). */
   readonly resident = {
     name: '',
@@ -60,11 +63,24 @@ export class PortalResidente {
   }
 
   /**
-   * TODO: navegar a la vista de actualización de datos del residente.
-   * Ej: this.router.navigate(['/residente/perfil']);
+   * Abre el formulario de registro de vehículo. Es el destino del botón
+   * "+ Registrar" de la tarjeta "Mis Vehículos" (`app-my-vehicles`).
+   *
+   * Nota: la ruta `/residente/vehiculos/nuevo` sigue siendo provisional.
+   */
+  onRegisterVehicle(): void {
+    this.router.navigate(['/residente/vehiculos/nuevo']);
+  }
+
+  /**
+   * Lleva a la vista "Mi Perfil". Es el destino del botón "Actualizar Datos"
+   * y del chip de usuario de `app-navbar` (ambos emiten `profileClick`).
+   *
+   * Nota: la ruta `/residente/perfil` sigue siendo provisional; cuando se
+   * defina la navegación definitiva, aquí se ajusta el destino.
    */
   onProfile(): void {
-    // Pendiente de ruteo definitivo.
+    this.router.navigate(['/residente/perfil']);
   }
 
   /**

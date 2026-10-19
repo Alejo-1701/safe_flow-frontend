@@ -22,7 +22,7 @@
 
       <!-- Columna lateral -->
       <div class="portal-col portal-col--side">
-        <app-my-vehicles></app-my-vehicles>
+        <app-my-vehicles (register)="onRegisterVehicle()"></app-my-vehicles>
         <app-my-requests (newRequest)="abrirSolicitud()"></app-my-requests>
         <app-quick-access></app-quick-access>
       </div>

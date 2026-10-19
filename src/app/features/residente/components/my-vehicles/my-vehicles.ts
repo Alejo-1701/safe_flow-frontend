@@ -24,9 +24,12 @@ export class MyVehiclesComponent {
 
   @Output() register = new EventEmitter<void>();
 
+  /**
+   * Notifica al contenedor de que se pulsó "+ Registrar".
+   * La navegación la resuelve quien conoce las rutas (`PortalResidente`, vía
+   * `(register)="onRegisterVehicle()"`); aquí solo se emite el evento.
+   */
   onRegister(): void {
-    // TODO: navegar al formulario de registro de vehículo.
-    // Ej: this.router.navigate(['/residente/vehiculos/nuevo']);
     this.register.emit();
   }
 }
