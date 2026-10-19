@@ -1,7 +1,9 @@
+@use 'tokens' as *;
+
 .history-shell {
   display: flex;
   min-height: 100vh;
-  background: var(--bg-main, #121826);
+  background: $bg;
 }
 
 /* BARRA LATERAL */
@@ -15,8 +17,8 @@
   width: 220px;
   height: 100vh;
   padding: 24px 16px;
-  background: var(--bg-card, #1e293b);
-  border-right: 1px solid #334155;
+  background: $surface;
+  border-right: 1px solid $line;
 }
 
 .brand {
@@ -34,8 +36,8 @@
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: #38bdf8;
-  color: #082f49;
+  background: $accent;
+  color: $on-accent;
 }
 
 .brand-mark .material-symbols-outlined {
@@ -49,7 +51,7 @@
 }
 
 .brand-copy strong {
-  color: #f8fafc;
+  color: $text-strong;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.3px;
@@ -58,7 +60,7 @@
 
 .brand-copy span {
   margin-top: 4px;
-  color: #94a3b8;
+  color: $muted;
   font-size: 11px;
   white-space: nowrap;
 }
@@ -79,7 +81,7 @@
   border: 1px solid transparent;
   border-radius: 9px;
   background: transparent;
-  color: #94a3b8;
+  color: $muted;
   text-align: left;
   font-size: 13px;
   cursor: pointer;
@@ -91,14 +93,14 @@
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: #e2e8f0;
+  background: $hover;
+  color: $text;
 }
 
 .nav-item.active {
-  color: #38bdf8;
-  background: rgba(56, 189, 248, 0.12);
-  border-color: rgba(56, 189, 248, 0.2);
+  color: $accent;
+  background: $accent-soft;
+  border-color: $accent-border;
 }
 
 .logout-button {
@@ -109,9 +111,9 @@
   margin-top: auto;
   padding: 17px 10px 5px;
   border: 0;
-  border-top: 1px solid #334155;
+  border-top: 1px solid $line;
   background: transparent;
-  color: #94a3b8;
+  color: $muted;
   text-align: left;
   font-size: 12px;
   cursor: pointer;
@@ -122,7 +124,7 @@
 }
 
 .logout-button:hover {
-  color: #f87171;
+  color: $danger;
 }
 
 /* CONTENIDO PRINCIPAL */

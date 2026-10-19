@@ -1,3 +1,16 @@
+/* Tipografía de iconos servida localmente.
+   Antes venía de la CDN de Google Fonts: sin red los iconos se veían como
+   texto ("dashboard", "search"...). Es la instancia estática (opsz 24,
+   wght 400, FILL 0, GRAD 0), que es como se usan los iconos en toda la app.
+   Para cambiar de ejes hay que volver a descargar el fichero desde Google. */
+@font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('/assets/fonts/material-symbols-outlined.woff2') format('woff2');
+}
+
 :root {
     --bg-main: #121826;
     --bg-card: #1E293B;
@@ -8,6 +21,33 @@
     --status-free: #22C55E;
     --status-full: #F59E0B;
     --status-danger: #EF4444;
+
+    /* Paleta ampliada: superficies hundidas, jerarquía de texto, bordes
+       y estados. Las vistas deben consumir estos tokens en vez de escribir
+       el color a mano. */
+    --bg-input: #111827;            /* campos, placas y chips */
+    --text-strong: #F8FAFC;         /* títulos */
+    --text-secondary: #CBD5E1;      /* texto de tablas */
+    --text-muted: #94A3B8;          /* texto secundario */
+    --text-subtle: #64748B;         /* placeholders y ayudas */
+    --border-subtle: #29374B;
+    --border-color: #334155;
+    --border-strong: #475569;
+    --color-accent-strong: #7DD3FC; /* hover del acento */
+    --on-accent: #082F49;           /* texto sobre el acento */
+    --color-purple: #A78BFA;        /* acento decorativo (avatares) */
+
+    /* Tintes translúcidos: estados, hover, divisores y telones. Se declaran
+       aquí para que las vistas no repitan color-mix() en cada regla. */
+    --bg-hover: rgba(255, 255, 255, 0.04);
+    --divider: rgba(148, 163, 184, 0.1);
+    --scrim: rgba(2, 6, 23, 0.78);
+    --color-accent-soft: rgba(56, 189, 248, 0.13);
+    --color-accent-border: rgba(56, 189, 248, 0.35);
+    --status-free-soft: rgba(34, 197, 94, 0.14);
+    --status-free-border: rgba(34, 197, 94, 0.35);
+    --status-danger-soft: rgba(239, 68, 68, 0.14);
+    --status-danger-border: rgba(239, 68, 68, 0.35);
 }
 
 body {

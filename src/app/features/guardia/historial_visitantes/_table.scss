@@ -1,8 +1,10 @@
+@use 'tokens' as *;
+
 .table-card {
   overflow: hidden;
-  border: 1px solid #29374b;
+  border: 1px solid $line-subtle;
   border-radius: 13px;
-  background: var(--bg-card, #1e293b);
+  background: $surface;
 }
 
 .table-heading {
@@ -15,14 +17,14 @@
 
 .table-heading h2 {
   margin: 0;
-  color: #f1f5f9;
+  color: $text-strong;
   font-size: 15px;
   font-weight: 650;
 }
 
 .table-heading p {
   margin: 5px 0 0;
-  color: #94a3b8;
+  color: $muted;
   font-size: 11px;
   line-height: 1.5;
 }
@@ -30,10 +32,10 @@
 .record-count {
   flex: 0 0 auto;
   padding: 6px 10px;
-  border: 1px solid #334155;
+  border: 1px solid $line;
   border-radius: 999px;
-  background: #111827;
-  color: #cbd5e1;
+  background: $surface-deep;
+  color: $text-secondary;
   font-size: 11px;
 }
 
@@ -47,15 +49,15 @@ table {
   width: 100%;
   min-width: 850px;
   border-collapse: collapse;
-  color: #dbe3ef;
+  color: $text-secondary;
   text-align: left;
 }
 
 thead th {
   height: 43px;
   padding: 0 10px;
-  border-bottom: 1px solid #334155;
-  color: #94a3b8;
+  border-bottom: 1px solid $line;
+  color: $muted;
   text-align: left;
   font-size: 10px;
   line-height: 1.4;
@@ -68,7 +70,7 @@ thead th {
 tbody td {
   height: 66px;
   padding: 10px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid $divider;
   font-size: 12px;
   line-height: 1.5;
   vertical-align: middle;
@@ -79,7 +81,7 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-  background: rgba(255, 255, 255, 0.025);
+  background: $hover;
 }
 
 thead th:nth-child(1) {
@@ -116,7 +118,7 @@ thead th:last-child {
 }
 
 .date-cell {
-  color: #cbd5e1;
+  color: $text-secondary;
   white-space: nowrap;
 }
 
@@ -127,21 +129,21 @@ thead th:last-child {
 .time-cell small {
   display: block;
   margin-top: 3px;
-  color: #94a3b8;
+  color: $muted;
   font-size: 11px;
 }
 
 .time-cell .denied {
-  color: #fb7185;
+  color: $danger;
 }
 
 .plate {
   display: inline-block;
   padding: 5px 7px;
-  border: 1px solid #475569;
+  border: 1px solid $line-strong;
   border-radius: 6px;
-  background: #111827;
-  color: #e2e8f0;
+  background: $surface-deep;
+  color: $text;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.6px;
@@ -157,7 +159,7 @@ thead th:last-child {
 
 .visitor-name {
   max-width: 150px;
-  color: #e2e8f0;
+  color: $text;
   overflow-wrap: anywhere;
 }
 
@@ -174,32 +176,32 @@ thead th:last-child {
 }
 
 .avatar.blue {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
+  background: $accent-soft;
+  color: $accent;
 }
 
 .avatar.gray {
-  background: rgba(148, 163, 184, 0.15);
-  color: #cbd5e1;
+  background: $divider;
+  color: $text-secondary;
 }
 
 .avatar.red {
-  background: rgba(244, 63, 94, 0.15);
-  color: #fb7185;
+  background: $danger-soft;
+  color: $danger;
 }
 
 .avatar.purple {
-  background: rgba(167, 139, 250, 0.15);
-  color: #c4b5fd;
+  background: color-mix(in srgb, $purple 15%, transparent);
+  color: $purple;
 }
 
 .avatar.green {
-  background: rgba(16, 185, 129, 0.15);
-  color: #6ee7b7;
+  background: $ok-soft;
+  color: $ok;
 }
 
 .type-label {
-  color: #cbd5e1;
+  color: $text-secondary;
   font-size: 11px;
 }
 
@@ -229,23 +231,23 @@ thead th:last-child {
 
 /* INGRESADO: VERDE */
 .status-pill.in-property {
-  border-color: rgba(34, 197, 94, 0.35);
-  background: rgba(34, 197, 94, 0.16);
-  color: #22c55e;
+  border-color: $ok-border;
+  background: $ok-soft;
+  color: $ok;
 }
 
 /* RECHAZADO: ROJO */
 .status-pill.rejected {
-  border-color: rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.16);
-  color: #ef4444;
+  border-color: $danger-border;
+  background: $danger-soft;
+  color: $danger;
 }
 
-/* FINALIZADO: AZUL */
+/* FINALIZADO: ACENTO */
 .status-pill.finished {
-  border-color: rgba(56, 189, 248, 0.35);
-  background: rgba(56, 189, 248, 0.16);
-  color: #38bdf8;
+  border-color: $accent-border;
+  background: $accent-soft;
+  color: $accent;
 }
 
 /* BOTÓN VER DETALLES */
@@ -259,7 +261,7 @@ thead th:last-child {
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #38bdf8;
+  color: $accent;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -269,21 +271,21 @@ thead th:last-child {
 }
 
 .view-button:hover {
-  background: rgba(56, 189, 248, 0.12);
+  background: $accent-soft;
 }
 
 /* SIN RESULTADOS */
 
 .empty-row {
   height: 150px;
-  color: #94a3b8;
+  color: $muted;
   text-align: center;
 }
 
 .empty-row .material-symbols-outlined {
   display: block;
   margin-bottom: 8px;
-  color: #64748b;
+  color: $subtle;
   font-size: 26px;
 }
 
@@ -294,7 +296,7 @@ thead th:last-child {
 
 .empty-row strong {
   margin-bottom: 5px;
-  color: #e2e8f0;
+  color: $text;
   font-size: 13px;
 }
 
@@ -311,8 +313,8 @@ thead th:last-child {
   gap: 15px;
   min-height: 65px;
   padding: 12px 20px;
-  border-top: 1px solid rgba(148, 163, 184, 0.1);
-  color: #94a3b8;
+  border-top: 1px solid $divider;
+  color: $muted;
   font-size: 11px;
 }
 
@@ -334,10 +336,10 @@ thead th:last-child {
   min-width: 32px;
   height: 32px;
   padding: 0 9px;
-  border: 1px solid #334155;
+  border: 1px solid $line;
   border-radius: 7px;
-  background: #1e293b;
-  color: #cbd5e1;
+  background: $surface;
+  color: $text-secondary;
   font-size: 11px;
   cursor: pointer;
 }
@@ -352,18 +354,18 @@ thead th:last-child {
 }
 
 .page-number.current {
-  border-color: #38bdf8;
-  background: #38bdf8;
-  color: #082f49;
+  border-color: $accent;
+  background: $accent;
+  color: $on-accent;
   font-weight: 700;
 }
 
 .page-number:hover:not(.current),
 .page-arrow:hover:not(:disabled) {
-  background: #334155;
+  background: $line;
 }
 
 .ellipsis {
   padding: 0 3px;
-  color: #94a3b8;
+  color: $muted;
 }
