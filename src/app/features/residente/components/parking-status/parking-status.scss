@@ -99,6 +99,12 @@
   }
 }
 
+/* El aviso de salida cierra la tarjeta, separado de los datos del vehículo. */
+app-vehicle-exit-banner {
+  display: block;
+  margin-top: 1rem;
+}
+
 @media (max-width: 560px) {
   .parking {
     flex-direction: column;
