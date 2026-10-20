@@ -26,8 +26,9 @@ export class MyVehiclesComponent {
 
   /**
    * Notifica al contenedor de que se pulsó "+ Registrar".
-   * La navegación la resuelve quien conoce las rutas (`PortalResidente`, vía
-   * `(register)="onRegisterVehicle()"`); aquí solo se emite el evento.
+   * La acción la resuelve quien conoce el flujo (`PortalResidente`, vía
+   * `(register)="onRegisterVehicle()"`), que abre el modal de registro;
+   * aquí solo se emite el evento.
    */
   onRegister(): void {
     this.register.emit();

@@ -1,0 +1,56 @@
+@if (open) {
+  <!--
+    Capa de fondo: cierra el modal al hacer click fuera del panel.
+    Mismo patrón que `nueva-solicitud` (backdrop + panel con role="dialog").
+  -->
+  <div class="registro-backdrop" (click)="onCancel()">
+    <section
+      class="registro-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="registro-title"
+      (click)="$event.stopPropagation()">
+
+      <!-- ===== Cerrar ===== -->
+      <button
+        type="button"
+        class="modal-close"
+        aria-label="Cerrar"
+        (click)="onCancel()">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+
+      <!-- ===== Encabezado (el de la vista) ===== -->
+      <header class="registro-header">
+        <span class="header-icon material-symbols-outlined" aria-hidden="true">directions_car</span>
+        <div class="header-text">
+          <h2 id="registro-title">Registrar Nuevo Vehículo</h2>
+          <p>Completa los datos del vehículo para registrarlo en tu cuenta.</p>
+        </div>
+      </header>
+
+      <!--
+        Tarjeta "Información del Vehículo" (componente compartido `form-field`).
+        Genera el grid de campos, las validaciones y la botonera
+        "Cancelar" / "REGISTRAR VEHÍCULO".
+
+        `[style.--swatch-color]` publica el color escrito para que el
+        indicador del campo "Color" lo muestre (ver el SCSS).
+        El `(input)` recoge ese valor sin tocar el componente compartido.
+      -->
+      <form-field
+        class="vehicle-card"
+        title="Información del Vehículo"
+        iconClass="directions_car"
+        [fields]="vehicleFields"
+        cancelLabel="Cancelar"
+        submitLabel="REGISTRAR VEHÍCULO"
+        [style.--swatch-color]="colorPreview()"
+        (input)="onFormInput($event)"
+        (formSubmitted)="onRegisterVehicle($event)"
+        (formCancelled)="onCancel()">
+      </form-field>
+
+    </section>
+  </div>
+}

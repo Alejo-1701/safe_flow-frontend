@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 
 import { NavbarComponent } from '../../../../shared/components/navbar/navbar';
 import { VisitorAlertComponent } from '../../components/visitor-alert/visitor-alert';
@@ -11,6 +10,8 @@ import { MyRequestsComponent } from '../../components/my-requests/my-requests';
 import { QuickAccessComponent } from '../../components/quick-access/quick-access';
 import { RecentVisitsComponent } from '../../components/recent-visits/recent-visits';
 import { NuevaSolicitudComponent } from '../../components/nueva-solicitud/nueva-solicitud';
+import { ModalPerfilComponent } from '../../components/modal-perfil/modal-perfil';
+import { ModalRegistroVehiculoComponent } from '../../components/modal-registro-vehiculo/modal-registro-vehiculo';
 
 @Component({
   selector: 'app-portal-residente',
@@ -25,14 +26,14 @@ import { NuevaSolicitudComponent } from '../../components/nueva-solicitud/nueva-
     MyRequestsComponent,
     QuickAccessComponent,
     RecentVisitsComponent,
-    NuevaSolicitudComponent
+    NuevaSolicitudComponent,
+    ModalPerfilComponent,
+    ModalRegistroVehiculoComponent
   ],
   templateUrl: './portal-residente.html',
   styleUrl: './portal-residente.scss',
 })
 export class PortalResidente {
-
-  private readonly router = inject(Router);
 
   /** Datos del residente en sesión (se completarán desde el servicio de autenticación). */
   readonly resident = {
@@ -42,6 +43,14 @@ export class PortalResidente {
 
   /** Estado de visibilidad del modal "Nueva Solicitud de Residente". */
   solicitudAbierta = false;
+
+  /**
+   * Modales que antes eran vistas con ruta propia ("Mi Perfil" y
+   * "Registrar Nuevo Vehículo"). Ahora se abren desde el portal, así que ya
+   * no hay navegación de por medio.
+   */
+  readonly perfilAbierto = signal(false);
+  readonly vehiculoAbierto = signal(false);
 
   /** Abre el modal desde el botón "Nueva Solicitud" de `app-my-requests`. */
   abrirSolicitud(): void {
@@ -63,24 +72,30 @@ export class PortalResidente {
   }
 
   /**
-   * Abre el formulario de registro de vehículo. Es el destino del botón
+   * Abre el modal "Registrar Nuevo Vehículo". Es el destino del botón
    * "+ Registrar" de la tarjeta "Mis Vehículos" (`app-my-vehicles`).
-   *
-   * Nota: la ruta `/residente/vehiculos/nuevo` sigue siendo provisional.
    */
   onRegisterVehicle(): void {
-    this.router.navigate(['/residente/vehiculos/nuevo']);
+    this.vehiculoAbierto.set(true);
+  }
+
+  /** Cierra el modal de registro de vehículo. */
+  cerrarRegistroVehiculo(): void {
+    this.vehiculoAbierto.set(false);
   }
 
   /**
-   * Lleva a la vista "Mi Perfil". Es el destino del botón "Actualizar Datos"
-   * y del chip de usuario de `app-navbar` (ambos emiten `profileClick`).
-   *
-   * Nota: la ruta `/residente/perfil` sigue siendo provisional; cuando se
-   * defina la navegación definitiva, aquí se ajusta el destino.
+   * Abre el modal "Editar Información Personal". Es el destino del botón
+   * "Actualizar Datos" y del chip de usuario de `app-navbar` (ambos emiten
+   * `profileClick`).
    */
   onProfile(): void {
-    this.router.navigate(['/residente/perfil']);
+    this.perfilAbierto.set(true);
+  }
+
+  /** Cierra el modal de perfil. */
+  cerrarPerfil(): void {
+    this.perfilAbierto.set(false);
   }
 
   /**
