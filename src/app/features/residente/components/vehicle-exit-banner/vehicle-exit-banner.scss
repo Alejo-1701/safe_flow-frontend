@@ -1,0 +1,109 @@
+/* ================================================================= *
+ * BANNER "DAR SALIDA DE MI VEHÍCULO" - Residente
+ *
+ * Barra horizontal oscura que cierra la tarjeta "Estado de Parqueadero".
+ * Reutiliza `app-button`; el color de advertencia y el icono de salida se
+ * aplican por `::ng-deep` sin tocar el componente compartido.
+ *
+ * No se declaran colores nuevos: los tintes se derivan del token de
+ * advertencia `--status-full` con `color-mix()`.
+ * ================================================================= */
+
+:host {
+  display: block;
+}
+
+/* Tintes derivados del mismo token de advertencia del sistema. */
+$warning-border: color-mix(in srgb, var(--status-full) 35%, transparent);
+$warning-hover: color-mix(in srgb, var(--status-full) 85%, var(--bg-main));
+$warning-shadow: color-mix(in srgb, var(--status-full) 30%, transparent);
+$warning-shadow-hover: color-mix(in srgb, var(--status-full) 40%, transparent);
+
+.vehicle-exit-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid $warning-border;
+  border-radius: 12px;
+  background-color: var(--bg-input);
+}
+
+/* ---------------- Aviso (izquierda) ---------------- */
+.notice-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.notice-icon {
+  flex-shrink: 0;
+  color: var(--status-full);
+  font-size: 24px;
+}
+
+.notice-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* ---------------- Acción (derecha) ---------------- */
+app-button.exit-btn {
+  flex: 0 0 auto;
+}
+
+/*
+ * `app-button` viene con el acento azul y ancho completo; acá se ajusta al
+ * ancho del texto y toma el amarillo/naranja de advertencia del sistema.
+ * El texto oscuro en negrita garantiza el contraste sobre el ámbar.
+ */
+app-button.exit-btn ::ng-deep .btn {
+  width: auto;
+  gap: 0.5rem;
+  padding: 0.7rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background-color: var(--status-full);
+  color: var(--bg-main);
+  box-shadow: 0 4px 14px $warning-shadow;
+}
+
+/* Icono de salida a la izquierda del texto (Material Symbols, como el resto). */
+app-button.exit-btn ::ng-deep .btn::before {
+  content: 'logout';
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+}
+
+app-button.exit-btn ::ng-deep .btn:hover:not(:disabled) {
+  background-color: $warning-hover;
+  box-shadow: 0 6px 20px $warning-shadow-hover;
+}
+
+app-button.exit-btn ::ng-deep .btn:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+/* ---------------- Móvil ---------------- */
+@media (max-width: 560px) {
+  .vehicle-exit-banner {
+    align-items: stretch;
+  }
+
+  app-button.exit-btn,
+  app-button.exit-btn ::ng-deep .btn {
+    width: 100%;
+  }
+}

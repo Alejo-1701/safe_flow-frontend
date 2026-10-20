@@ -1,0 +1,208 @@
+/* ================================================================= *
+ * MODAL "Editar Información Personal" - Residente
+ *
+ * Es la antigua vista `pages/perfil` dentro del diálogo del Portal:
+ * mismo encabezado, mismas tarjetas y mismo aviso de seguridad.
+ * El overlay es `position: fixed`, así que el host no genera caja.
+ *
+ * Todos los colores salen de los tokens globales de `styles.scss`.
+ * ================================================================= */
+
+:host {
+  display: contents;
+}
+
+/* ---------------- Overlay ---------------- */
+.perfil-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+}
+
+/* ---------------- Panel ---------------- */
+.perfil-modal {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 26px;
+  border: 1px solid var(--divider);
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: 0 25px 70px var(--scrim);
+  box-sizing: border-box;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ---------------- Encabezado ---------------- */
+.perfil-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-right: 40px;
+  margin-bottom: 20px;
+}
+
+.header-icon {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: 26px;
+}
+
+.header-text h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.header-text p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---------------- Tarjetas ---------------- */
+.perfil-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* ----------------------------------------------------------------- *
+ * Diálogo de confirmación (`app-modal` compartido).
+ *
+ * Se coloca por encima del panel (que tiene z-index 1000) y se lleva
+ * el botón a ancho completo, igual que en la vista original.
+ * ----------------------------------------------------------------- */
+:host ::ng-deep app-modal .modal-overlay {
+  z-index: 1100;
+}
+
+:host ::ng-deep app-modal .modal-content button {
+  width: 100%;
+  margin-top: 1.25rem;
+}
+
+/* ----------------------------------------------------------------- *
+ * Iconos Material en las cabeceras de los form-field compartidos.
+ * El componente recibe `iconClass` pero no aplica la fuente Material
+ * Symbols, así que inyectamos el glifo con `::ng-deep` (mismo patrón
+ * que usaba la vista).
+ * ----------------------------------------------------------------- */
+:host ::ng-deep form-field .header-icon i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-accent);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep .resident-card .header-icon i::before {
+  content: 'badge';
+}
+
+:host ::ng-deep .password-card .header-icon i::before {
+  content: 'lock';
+}
+
+/* Formulario limpio: sin mensajes de error estáticos. */
+:host ::ng-deep form-field .error-message {
+  display: none;
+}
+
+/* Los botones del pie nunca desbordan su tarjeta. */
+:host ::ng-deep form-field .form-field-actions button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+/* ----------------------------------------------------------------- *
+ * Banner informativo (reutiliza app-card-widget con acento lateral).
+ * ----------------------------------------------------------------- */
+:host ::ng-deep .security-note .card {
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--status-danger);
+  background-color: var(--status-danger-soft);
+}
+
+:host ::ng-deep .security-note .card:hover {
+  border-color: transparent;
+  border-left-color: var(--status-danger);
+}
+
+:host ::ng-deep .security-note .card-title-group {
+  gap: 0.5rem;
+}
+
+:host ::ng-deep .security-note .card-title-group h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--status-danger);
+}
+
+:host ::ng-deep .security-note .card-title-group i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--status-danger);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep .security-note .card-title-group i::before {
+  content: 'info';
+}
+
+:host ::ng-deep .security-note .subtitle {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* ---------------- Móvil ---------------- */
+@media (max-width: 560px) {
+  .perfil-modal {
+    padding: 20px;
+  }
+
+  .perfil-header {
+    padding-right: 34px;
+  }
+
+  .header-text h2 {
+    font-size: 17px;
+  }
+}

@@ -1,0 +1,83 @@
+@if (open) {
+  <!--
+    Capa de fondo: cierra el modal al hacer click fuera del panel.
+    Mismo patrón que `nueva-solicitud` (backdrop + panel con role="dialog").
+  -->
+  <div class="perfil-backdrop" (click)="onCancel()">
+    <section
+      class="perfil-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="perfil-title"
+      (click)="$event.stopPropagation()">
+
+      <!-- ===== Cerrar ===== -->
+      <button
+        type="button"
+        class="modal-close"
+        aria-label="Cerrar"
+        (click)="onCancel()">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+
+      <!-- ===== Encabezado (el de la vista "Mi Perfil") ===== -->
+      <header class="perfil-header">
+        <span class="header-icon material-symbols-outlined" aria-hidden="true">person</span>
+        <div class="header-text">
+          <h2 id="perfil-title">Editar Información Personal</h2>
+          <p>Actualiza tus datos de contacto y seguridad de tu cuenta.</p>
+        </div>
+      </header>
+
+      <!-- ===== Tarjetas de la vista ===== -->
+      <section class="perfil-cards">
+
+        <!-- Card 1: Datos del Residente (sin botonera) -->
+        <form-field
+          class="resident-card"
+          title="Datos del Residente"
+          iconClass="badge"
+          [fields]="residentFields"
+          submitLabel=""
+          cancelLabel=""
+          (formSubmitted)="onSaveResident($event)">
+        </form-field>
+
+        <!-- Card 2: Cambiar Contraseña -->
+        <form-field
+          class="password-card"
+          title="Cambiar Contraseña"
+          iconClass="lock"
+          [fields]="passwordFields"
+          cancelLabel="Cancelar"
+          submitLabel="Guardar Cambios"
+          (formSubmitted)="onSavePassword($event)"
+          (formCancelled)="onCancel()">
+        </form-field>
+
+        <!-- Banner informativo (reutiliza app-card-widget) -->
+        <app-card-widget
+          class="security-note"
+          icon="info"
+          title="Información de Seguridad"
+          [subtitle]="securityMessage">
+        </app-card-widget>
+
+      </section>
+    </section>
+  </div>
+
+  <!--
+    Confirmación tras guardar. Va DESPUÉS del panel y con z-index mayor
+    (ver SCSS) para quedar por encima del diálogo de la vista.
+  -->
+  @if (showSavedModal()) {
+    <app-modal
+      type="success"
+      [title]="savedModalTitle"
+      [message]="savedModalMessage"
+      buttonText="Continuar"
+      (close)="onCloseSavedModal()">
+    </app-modal>
+  }
+}

@@ -41,4 +41,19 @@
     (cerrado)="cerrarSolicitud()"
     (enviada)="enviarSolicitud($event)">
   </app-nueva-solicitud>
+
+  <!--
+    Modales de las pantallas que antes tenían ruta propia. Se abren desde el
+    portal (botón "Actualizar Datos"/chip de usuario y "+ Registrar") y
+    conservan todo el contenido de las antiguas vistas.
+  -->
+  <app-modal-perfil
+    [open]="perfilAbierto()"
+    (cerrado)="cerrarPerfil()">
+  </app-modal-perfil>
+
+  <app-modal-registro-vehiculo
+    [open]="vehiculoAbierto()"
+    (cerrado)="cerrarRegistroVehiculo()">
+  </app-modal-registro-vehiculo>
 </div>

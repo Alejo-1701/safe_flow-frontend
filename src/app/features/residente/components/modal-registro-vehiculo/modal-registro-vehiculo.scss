@@ -1,0 +1,156 @@
+/* ================================================================= *
+ * MODAL "Registrar Nuevo Vehículo" - Residente
+ *
+ * Es la antigua vista `pages/registro-vehiculo` dentro del diálogo del
+ * Portal: mismo encabezado y misma tarjeta "Información del Vehículo".
+ * El overlay es `position: fixed`, así que el host no genera caja.
+ *
+ * Todos los colores salen de los tokens globales de `styles.scss`.
+ * ================================================================= */
+
+:host {
+  display: contents;
+}
+
+/* ---------------- Overlay ---------------- */
+.registro-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+}
+
+/* ---------------- Panel ---------------- */
+.registro-modal {
+  position: relative;
+  width: min(700px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 26px;
+  border: 1px solid var(--divider);
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: 0 25px 70px var(--scrim);
+  box-sizing: border-box;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ---------------- Encabezado ---------------- */
+.registro-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-right: 40px;
+  margin-bottom: 20px;
+}
+
+.header-icon {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: 26px;
+}
+
+.header-text h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.header-text p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ----------------------------------------------------------------- *
+ * Tarjeta del formulario (`form-field` compartido).
+ * ----------------------------------------------------------------- */
+
+/* Icono de la cabecera: el componente recibe `iconClass` pero no aplica la
+   fuente Material Symbols, así que se inyecta el glifo con `::ng-deep`. */
+:host ::ng-deep .vehicle-card .header-icon i {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-accent);
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
+:host ::ng-deep .vehicle-card .header-icon i::before {
+  content: 'directions_car';
+}
+
+/* Etiquetas en mayúsculas y más marcadas, como en el diseño. */
+:host ::ng-deep .vehicle-card .form-field-group label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ----------------------------------------------------------------- *
+ * Indicador de color del campo "Color".
+ * `form-field` no trae uno, así que se añade con `::ng-deep` en vez de
+ * modificar el componente compartido. El relleno llega por la variable
+ * `--swatch-color` que publica el HTML; si no hay valor, queda el aro.
+ * ----------------------------------------------------------------- */
+:host ::ng-deep .vehicle-card .form-field-group:last-child .control-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0.6rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background-color: var(--swatch-color, transparent);
+  pointer-events: none;
+}
+
+/* Hueco para que el texto no quede por debajo del indicador. */
+:host ::ng-deep .vehicle-card .form-field-group:last-child .form-field-control {
+  padding-right: 2.75rem;
+}
+
+/* ---------------- Móvil ---------------- */
+@media (max-width: 560px) {
+  .registro-modal {
+    padding: 20px;
+  }
+
+  .registro-header {
+    padding-right: 34px;
+  }
+
+  .header-text h2 {
+    font-size: 17px;
+  }
+}

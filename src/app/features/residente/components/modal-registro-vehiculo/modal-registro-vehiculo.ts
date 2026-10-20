@@ -1,40 +1,29 @@
-import { Component, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SidebarComponent, NavItem, UserProfile } from '../../../../shared/components/sidebar/sidebar';
 import { FormFieldComponent, FieldConfig } from '../../../../shared/components/form-field/form-field';
 
+/**
+ * "Registrar Nuevo Vehículo" como modal del Portal Residente.
+ *
+ * Es la antigua vista `pages/registro-vehiculo` trasladada a un diálogo:
+ * conserva la tarjeta "Información del Vehículo", sus cinco campos, el
+ * indicador de color y la botonera Cancelar / Registrar Vehículo.
+ *
+ * El contenedor (`PortalResidente`) decide cuándo abrirlo con `[open]` y
+ * recibe `(cerrado)` cuando el residente cancela o cierra.
+ */
 @Component({
-  selector: 'app-registro-vehiculo',
+  selector: 'app-modal-registro-vehiculo',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, FormFieldComponent],
-  templateUrl: './registro-vehiculo.html',
-  styleUrl: './registro-vehiculo.scss',
+  imports: [CommonModule, FormFieldComponent],
+  templateUrl: './modal-registro-vehiculo.html',
+  styleUrl: './modal-registro-vehiculo.scss',
 })
-export class RegistroVehiculo {
+export class ModalRegistroVehiculoComponent {
 
-  /**
-   * Navegación del menú lateral.
-   * Se pasan con `[customNavItems]` (API del `app-sidebar` compartido), igual
-   * que en "Mi Perfil". Las rutas son provisionales: la navegación definitiva
-   * se definirá cuando existan el resto de las pantallas del portal.
-   */
-  navItems: NavItem[] = [
-    { label: 'Dashboard', route: '/residente', icon: 'dashboard' },
-    { label: 'Mi Perfil', route: '/residente/perfil', icon: 'person' },
-    { label: 'Vehículos', route: '/residente/vehiculos', icon: 'directions_car' },
-  ];
-
-  /**
-   * Datos del usuario en el pie del menú lateral.
-   *
-   * TODO: reemplazar por el residente autenticado.
-   * Ej: this.authService.currentUser();
-   */
-  currentUser: UserProfile = {
-    name: 'Juan Pérez',
-    role: 'Torre A - 402'
-  };
+  @Input() open = false;
+  @Output() cerrado = new EventEmitter<void>();
 
   /**
    * Campos de la tarjeta "Información del Vehículo".
@@ -120,14 +109,9 @@ export class RegistroVehiculo {
     // Lógica de backend pendiente.
   }
 
-  /**
-   * Cancela el registro y vuelve a la pantalla anterior.
-   *
-   * TODO: navegación definitiva.
-   * Ej: this.router.navigate(['/residente']);
-   */
+  /** Cierra el modal (botón "Cancelar" del formulario). */
   onCancel(): void {
-    // Ruteo pendiente.
+    this.cerrado.emit();
   }
 
   /**

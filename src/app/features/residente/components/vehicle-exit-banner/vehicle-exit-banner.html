@@ -1,0 +1,17 @@
+<div class="vehicle-exit-banner" role="note">
+  <div class="notice-info">
+    <span class="material-symbols-outlined notice-icon" aria-hidden="true">info</span>
+    <p class="notice-text">Notifique a la portería antes de retirarse con el automóvil.</p>
+  </div>
+
+  <!--
+    Acción de salida. El color de advertencia y el icono `logout` se aplican
+    al botón compartido desde el SCSS (ver vehicle-exit-banner.scss).
+  -->
+  <app-button
+    class="exit-btn"
+    text="Dar Salida de mi Vehículo"
+    colorVariant="primary"
+    (onClick)="onExit()">
+  </app-button>
+</div>
