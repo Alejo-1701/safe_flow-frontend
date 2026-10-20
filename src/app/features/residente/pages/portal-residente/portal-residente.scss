@@ -30,7 +30,7 @@ app-navbar ::ng-deep .left-section::before {
 
 app-navbar ::ng-deep .left-section::after {
   content: 'Nombre del conjunto Residencial';
-  color: var(--text-primary0);
+  color: var(--text-primary);
   font-weight: 700;
   font-size: 1.05rem;
   letter-spacing: 0.02em;
@@ -151,12 +151,24 @@ app-navbar ::ng-deep .user-profile:has(img)::before {
  * Las tarjetas de cada columna se reparten el alto disponible, de modo que las
  * dos columnas queden parejas y sin huecos. Se estiliza desde el módulo
  * residente con `::ng-deep`; los componentes compartidos no se modifican.
+ *
+ * `flex-grow: 0` + `max-height: var(--portal-card-max)`: en monitores altos las
+ * tarjetas NO se estiran sin límite (antes llegaban a duplicar su alto según la
+ * resolución). El tope por columna se define más abajo, en el bloque de
+ * escritorio, que es donde se conoce el alto real de la grilla.
  */
 .portal-col > * {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 0;
+  max-height: var(--portal-card-max);
 }
 
+/*
+ * El host de cada tarjeta es también un contenedor flex, así que su propio
+ * `min-height: 0` pisaba el suelo que se define en el bloque de escritorio
+ * (el `min-height` del padre es el que manda en el cálculo del flex).
+ * Aquí solo se deja el `display`, y el alto se resuelve más abajo.
+ */
 .portal-col app-parking-status,
 .portal-col app-preauthorize-guest,
 .portal-col app-my-vehicles,
@@ -164,7 +176,6 @@ app-navbar ::ng-deep .user-profile:has(img)::before {
 .portal-col app-quick-access {
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .portal-col ::ng-deep app-card-widget,
@@ -300,9 +311,46 @@ app-navbar ::ng-deep .user-profile:has(img)::before {
     overflow: hidden;
   }
 
+  /*
+   * Alto EXACTO de la grilla superior del portal (nav anidado por `:has`).
+   * La barra mide 71px y el contenido reserva 24px arriba/abajo; el historial
+   * se queda con el 14vh restante.
+   */
+  :host:has(app-navbar) .portal-content {
+    --portal-grid-alto: calc(100vh - 71px - 24px - 24px - 14vh);
+  }
+
   .portal-grid {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-height: 0;
+    /* Si la ventana es muy baja, la grilla se encoge con scroll interno. */
+    overflow-y: auto;
+  }
+
+  /*
+   * Tope de crecimiento de las tarjetas. En la columna lateral hay 3 tarjetas,
+   * así que cada una crece como máximo un tercio del alto de la grilla: con
+   * esto "Mis Vehículos" pasa de 212px en 1080p y 123px en 768p a un rango
+   * estable, sin importar la resolución del equipo. Las de la columna
+   * principal conservan su tamaño (no llevan tope).
+   *
+   * Suelo (`min-height`): el flex comprime las tarjetas cuando la ventana es
+   * baja y, sin él, los botones de acción ("+ Registrar", "Nueva Solicitud")
+   * quedaban recortados (se veía en 1366x768 y 1152x600). Los valores son el
+   * mínimo real medido: 259px la tarjeta del formulario y 168px las laterales.
+   * Si la suma supera el alto disponible, la columna hace scroll interno.
+   *
+   * Van al final del bloque para que no los pise el `min-height: 0` de las
+   * reglas generales de arriba (misma especificidad: gana la última).
+   */
+  .portal-col--main > * {
+    max-height: none;
+    min-height: 259px;
+  }
+
+  .portal-col--side > * {
+    max-height: calc((var(--portal-grid-alto) - 3rem) / 3);
+    min-height: 168px;
   }
 
   .portal-col {
@@ -312,8 +360,8 @@ app-navbar ::ng-deep .user-profile:has(img)::before {
   }
 
   /*
-   * En escritorio las tarjetas se reparten un alto limitado (100vh). Reducimos
-   * su padding y el espacio interno para que el botón de acción (Registrar,
+   * En escritorio las tarjetas se ajustan a un alto acotado. Reducimos su
+   * padding y el espacio interno para que el botón de acción (Registrar,
    * Nueva Solicitud) siempre quepa dentro de la tarjeta, incluso en pantallas
    * de poca altura. Si aun así no cupiera, el cuerpo hace scroll y la columna
    * también (nunca la página completa).
