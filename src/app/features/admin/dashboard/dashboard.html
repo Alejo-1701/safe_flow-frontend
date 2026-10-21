@@ -2,10 +2,7 @@
   <!-- Sidebar Reutilizable Global -->
   <app-sidebar basePath="/admin"></app-sidebar>
 
-  <!-- Contenido Principal -->
   <main class="dashboard-main">
-
-    <!-- Cabecera -->
     <header class="dashboard-header">
       <div class="header-title">
         <h1>Dashboard de Administración</h1>
@@ -14,79 +11,38 @@
 
       <div class="header-actions">
         <button type="button" class="btn-action btn-export" (click)="exportData()">
-          <span class="material-symbols-outlined icon-download">download</span>
-          Exportar
+          <span class="material-symbols-outlined icon-download">download</span> Exportar
         </button>
-
-        <app-button
-          text="Registrar Residente"
-          colorVariant="primary"
-          (onClick)="registerResident()">
-        </app-button>
+        <app-button text="Registrar Residente" colorVariant="primary" (onClick)="registerResident()"></app-button>
       </div>
     </header>
 
-    <!-- Tarjetas de Métricas -->
     <section class="stats-grid">
-      <app-stat-card
-        title="% DE OCUPACIÓN"
-        [value]="metrics.ocupacion"
-        icon="material-symbols-outlined icon-green icon-trend-up">
-      </app-stat-card>
-
-      <app-stat-card
-        title="RECAUDO HOY"
-        [value]="metrics.recaudo"
-        icon="material-symbols-outlined icon-green icon-money">
-      </app-stat-card>
-
-      <app-stat-card
-        title="ALERTAS DE SEGURIDAD"
-        [value]="metrics.alertas"
-        trend="Requiere atención"
-        trendType="negative"
-        icon="material-symbols-outlined icon-red icon-alert">
-      </app-stat-card>
-
-      <app-stat-card
-        title="VISITANTES HOY"
-        [value]="metrics.visitantes"
-        trend="Promedio 72/día"
-        trendType="neutral"
-        icon="material-symbols-outlined icon-yellow icon-location">
-      </app-stat-card>
+      <app-stat-card title="% DE OCUPACIÓN" [value]="metrics.ocupacion" icon="material-symbols-outlined icon-green icon-trend-up"></app-stat-card>
+      <app-stat-card title="RECAUDO HOY" [value]="metrics.recaudo" icon="material-symbols-outlined icon-green icon-money"></app-stat-card>
+      <app-stat-card title="ALERTAS DE SEGURIDAD" [value]="metrics.alertas" trend="Requiere atención" trendType="negative" icon="material-symbols-outlined icon-red icon-alert"></app-stat-card>
+      <app-stat-card title="VISITANTES HOY" [value]="metrics.visitantes" trend="Promedio 72/día" trendType="neutral" icon="material-symbols-outlined icon-yellow icon-location"></app-stat-card>
     </section>
 
-    <!-- Sección Central -->
     <section class="dashboard-content">
-
       <!-- Panel Izquierdo: Última Actividad -->
       <article class="activity-column">
         <div class="activity-card">
           <h2 class="activity-title">Última Actividad</h2>
-
           <div class="activity-header-labels">
-            <span>PLACA</span>
-            <span>TIPO</span>
-            <span>HORA ENTRADA</span>
+            <span>PLACA</span><span>TIPO</span><span>HORA ENTRADA</span>
           </div>
 
           <ul class="activity-list">
             <li *ngFor="let item of recentActivity" class="activity-item">
               <span class="plate-number">{{ item.placa }}</span>
-
-              <app-status-badge
-                [statusType]="item.tipo === 'RESIDENTE' ? 'info' : 'warning'"
-                [showDot]="false">
-                {{ item.tipo }}
-              </app-status-badge>
-
+              <app-status-badge [statusType]="item.tipo === 'RESIDENTE' ? 'info' : 'warning'" [showDot]="false">{{ item.tipo }}</app-status-badge>
               <span class="entry-time">{{ item.horaEntrada }}</span>
             </li>
           </ul>
 
           <div class="activity-footer">
-            <button type="button" class="btn-history-link" (click)="viewAllHistory()">
+            <button type="button" class="btn-history-link" (click)="openHistoryModal()">
               Ver todo el historial
             </button>
           </div>
@@ -98,14 +54,9 @@
         <div class="users-card">
           <div class="users-card-header">
             <h2>Gestión de Usuarios y Accesos</h2>
-
             <div class="search-box">
               <span class="material-symbols-outlined search-icon">search</span>
-              <input
-                type="text"
-                placeholder="Buscar residente o unidad..."
-                [(ngModel)]="searchTerm"
-              />
+              <input type="text" placeholder="Buscar residente o unidad..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
             </div>
           </div>
 
@@ -113,21 +64,14 @@
             <table class="custom-data-table">
               <thead>
                 <tr>
-                  <th>UNIDAD</th>
-                  <th>ESTADO</th>
-                  <th>ÚLTIMO ACCESO</th>
-                  <th>RESIDENTE</th>
+                  <th>UNIDAD</th><th>ESTADO</th><th>ÚLTIMO ACCESO</th><th>RESIDENTE</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let user of usersList">
+                <tr *ngFor="let user of paginatedUsersList" class="clickable-row" (click)="openUserDetail(user)">
                   <td class="unit-cell">{{ user.unidad }}</td>
                   <td>
-                    <app-status-badge
-                      [statusType]="user.estado === 'ACTIVO' ? 'success' : 'neutral'"
-                      [showDot]="false">
-                      {{ user.estado }}
-                    </app-status-badge>
+                    <app-status-badge [statusType]="user.estado === 'ACTIVO' ? 'success' : 'neutral'" [showDot]="false">{{ user.estado }}</app-status-badge>
                   </td>
                   <td class="access-cell">{{ user.ultimoAcceso }}</td>
                   <td class="resident-cell">
@@ -140,20 +84,216 @@
                     </div>
                   </td>
                 </tr>
+
+                <tr *ngIf="paginatedUsersList.length === 0">
+                  <td colspan="4" style="text-align: center; color: #64748b; padding: 2rem;">No se encontraron residentes.</td>
+                </tr>
               </tbody>
             </table>
           </div>
 
           <footer class="users-table-footer">
-            <span class="records-info">Mostrando 3 de 1,240 residentes</span>
+            <span class="records-info">{{ paginationText }}</span>
             <div class="pagination-controls">
-              <button type="button" class="btn-page" title="Página anterior">&lt;</button>
-              <button type="button" class="btn-page" title="Página siguiente">&gt;</button>
+              <button type="button" class="btn-page" title="Página anterior" [disabled]="currentPage === 1" (click)="prevPage()">&lt;</button>
+              <button type="button" class="btn-page" title="Página siguiente" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">&gt;</button>
             </div>
           </footer>
         </div>
       </article>
-
     </section>
   </main>
+</div>
+
+<!-- ========================================================= -->
+<!-- 1. Modal Nativa de Historial Amplio                       -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isHistoryModalOpen" (click)="closeHistoryModal()">
+  <div class="modal-container modal-large" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Historial de Accesos Completo</h2>
+      <button type="button" class="btn-close" (click)="closeHistoryModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="table-wrapper">
+        <table class="custom-data-table history-table">
+          <thead>
+            <tr>
+              <th>PLACA</th>
+              <th>TIPO</th>
+              <th>FECHA</th>
+              <th>HORA ENTRADA</th>
+              <th>HORA SALIDA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of fullHistory">
+              <td class="font-bold text-white">{{ entry.placa }}</td>
+              <td>
+                <app-status-badge [statusType]="entry.tipo === 'RESIDENTE' ? 'info' : 'warning'" [showDot]="false">
+                  {{ entry.tipo }}
+                </app-status-badge>
+              </td>
+              <td class="access-cell">{{ entry.fechaEntrada }}</td>
+              <td class="access-cell">{{ entry.horaEntrada }}</td>
+              <td class="access-cell">{{ entry.horaSalida }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 2. Modal Nativa de Formulario (Registro)                  -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isRegisterModalOpen" (click)="closeRegisterModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Registrar Nuevo Residente</h2>
+      <button type="button" class="btn-close" (click)="closeRegisterModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <form (ngSubmit)="submitRegisterResident()" class="modal-form">
+      <div class="modal-body">
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>TIPO DOCUMENTO *</label>
+            <select [(ngModel)]="newResident.tipoDocumento" name="tipoDocumento">
+              <option value="CC">Cédula de Ciudadanía (CC)</option>
+              <option value="CE">Cédula de Extranjería (CE)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>NÚMERO DOCUMENTO *</label>
+            <input type="text" placeholder="Ej: 1020304050" [(ngModel)]="newResident.numDocumento" name="numDocumento" required />
+          </div>
+        </div>
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>PRIMER NOMBRE *</label>
+            <input type="text" placeholder="Ej: Juan" [(ngModel)]="newResident.primerNombre" name="primerNombre" required />
+          </div>
+          <div class="form-group">
+            <label>SEGUNDO NOMBRE</label>
+            <input type="text" placeholder="Ej: Carlos" [(ngModel)]="newResident.segundoNombre" name="segundoNombre" />
+          </div>
+        </div>
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>PRIMER APELLIDO *</label>
+            <input type="text" placeholder="Ej: Pérez" [(ngModel)]="newResident.primerApellido" name="primerApellido" required />
+          </div>
+          <div class="form-group">
+            <label>SEGUNDO APELLIDO</label>
+            <input type="text" placeholder="Ej: Gómez" [(ngModel)]="newResident.segundoApellido" name="segundoApellido" />
+          </div>
+        </div>
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>CORREO ELECTRÓNICO *</label>
+            <input type="email" placeholder="correo@ejemplo.com" [(ngModel)]="newResident.email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label>TELÉFONO *</label>
+            <input type="text" placeholder="Ej: 3001234567" [(ngModel)]="newResident.telefono" name="telefono" required />
+          </div>
+        </div>
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>TORRE *</label>
+            <select [(ngModel)]="newResident.torre" name="torre">
+              <option value="Torre A">Torre A</option>
+              <option value="Torre B">Torre B</option>
+              <option value="Torre C">Torre C</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>NÚMERO APARTAMENTO *</label>
+            <input type="text" placeholder="Ej: 402" [(ngModel)]="newResident.numeroApto" name="numeroApto" required />
+          </div>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeRegisterModal()">Cancelar</button>
+        <button type="submit" class="btn-submit">Guardar Residente</button>
+      </footer>
+    </form>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 3. Componente Modal de Confirmación de Éxito              -->
+<!-- ========================================================= -->
+<app-modal
+  *ngIf="isSuccessModalOpen"
+  title="¡Registro Exitoso!"
+  message="El residente ha sido registrado y habilitado en el sistema correctamente."
+  type="success"
+  buttonText="Aceptar"
+  (close)="closeSuccessModal()">
+</app-modal>
+
+<!-- ========================================================= -->
+<!-- 4. Modal Nativa de Detalles / Edición de Residente        -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isUserDetailModalOpen && selectedUser" (click)="closeUserDetail()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Detalles del Residente</h2>
+      <button type="button" class="btn-close" (click)="closeUserDetail()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <form (ngSubmit)="updateResident()" class="modal-form">
+      <div class="modal-body">
+        <div class="user-detail-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <div class="avatar" style="width: 50px; height: 50px; border-radius: 8px; background-color: #334155; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;">
+            {{ selectedUser.residenteIniciales }}
+          </div>
+          <div style="flex: 1;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: #e2e8f0;">{{ selectedUser.residenteNombre }}</h3>
+            <span style="font-size: 0.8rem; color: #94a3b8;">Último acceso: {{ selectedUser.ultimoAcceso }}</span>
+          </div>
+          <select [(ngModel)]="selectedUser.estado" name="estadoUsuario" style="background-color: #0f172a; border: 1px solid #334155; padding: 0.4rem; border-radius: 6px; color: #e2e8f0; outline: none; cursor: pointer;">
+            <option value="ACTIVO">ACTIVO</option>
+            <option value="INACTIVO">INACTIVO</option>
+          </select>
+        </div>
+
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>NÚMERO DOCUMENTO</label>
+            <input type="text" [(ngModel)]="selectedUser.documento" name="detDocumento" />
+          </div>
+          <div class="form-group">
+            <label>UNIDAD (TORRE - APTO)</label>
+            <input type="text" [(ngModel)]="selectedUser.unidad" name="detUnidad" />
+          </div>
+        </div>
+
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>CORREO ELECTRÓNICO</label>
+            <input type="email" [(ngModel)]="selectedUser.residenteEmail" name="detEmail" />
+          </div>
+          <div class="form-group">
+            <label>TELÉFONO</label>
+            <input type="text" [(ngModel)]="selectedUser.telefono" name="detTelefono" />
+          </div>
+        </div>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeUserDetail()">Cancelar</button>
+        <button type="submit" class="btn-submit">Guardar Cambios</button>
+      </footer>
+    </form>
+  </div>
 </div>

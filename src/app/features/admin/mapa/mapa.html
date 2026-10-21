@@ -1,184 +1,140 @@
 <div class="app-layout">
-  <!-- Sidebar Reutilizable Global -->
   <app-sidebar basePath="/admin"></app-sidebar>
 
-  <!-- Contenido Principal -->
   <main class="main-content">
 
-    <!-- Encabezado con Buscador y Nuevo Ingreso -->
-    <header class="page-header">
-      <h1>Mapa de Parqueo</h1>
+    <header class="page-header-flex">
+      <div>
+        <h1>Mapa de Parqueo</h1>
+        <p>Control visual y asignación de celdas en tiempo real</p>
+      </div>
 
       <div class="header-actions">
-        <div class="search-box">
-          <span class="material-symbols-outlined search-icon">search</span>
-          <input
-            type="text"
-            placeholder="Buscar placa..."
-            [(ngModel)]="searchPlaca"
-          />
+        <div class="view-filter-tabs">
+          <button type="button" [class.active]="viewFilter === 'TODOS'" (click)="setFilter('TODOS')">Todos</button>
+          <button type="button" [class.active]="viewFilter === 'CARROS'" (click)="setFilter('CARROS')">Carros</button>
+          <button type="button" [class.active]="viewFilter === 'MOTOS'" (click)="setFilter('MOTOS')">Motos</button>
         </div>
 
-        <app-button
-          text="+ Nuevo Ingreso"
-          colorVariant="primary"
-          (onClick)="nuevoIngreso()">
-        </app-button>
+        <button type="button" class="btn-primary-action" (click)="openNewEntryModal()">
+          <span class="material-symbols-outlined">add</span>
+          Nuevo Ingreso
+        </button>
       </div>
     </header>
 
-    <!-- Tarjetas Métricas Superiores -->
-    <section class="stats-grid">
+    <!-- Estadísticas -->
+    <section class="stats-grid-map">
+      <app-stat-card
+        title="OCUPACIÓN CARROS"
+        [value]="totalCarrosOcupadosAsignados + '/100'"
+        [trend]="porcentajeCarros + '% LLENO'"
+        trendType="neutral"
+        icon="material-symbols-outlined icon-blue icon-car">
+      </app-stat-card>
 
-      <!-- Ocupación Carros -->
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="material-symbols-outlined icon-type">directions_car</span>
-          <span class="metric-title">OCUPACIÓN CARROS</span>
-        </div>
+      <app-stat-card
+        title="OCUPACIÓN MOTOS"
+        [value]="totalMotosOcupadasAsignadas + '/150'"
+        [trend]="porcentajeMotos + '% LLENO'"
+        trendType="neutral"
+        icon="material-symbols-outlined icon-blue icon-moto">
+      </app-stat-card>
 
-        <div class="metric-body">
-          <div class="metric-value">
-            <span class="big-number">{{ summary.ocupadosCarros }}</span>
-            <span class="total-number">/{{ summary.totalCarros }}</span>
-          </div>
-
-          <div class="status-pill warning">
-            {{ porcentajeCarros }}% LLENO
-          </div>
-        </div>
-
-        <span class="metric-footer-text">{{ libresCarros }} espacios libres</span>
-      </div>
-
-      <!-- Ocupación Motos -->
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="material-symbols-outlined icon-type">two_wheeler</span>
-          <span class="metric-title">OCUPACIÓN MOTOS</span>
-        </div>
-
-        <div class="metric-body">
-          <div class="metric-value">
-            <span class="big-number">{{ summary.ocupadosMotos }}</span>
-            <span class="total-number">/{{ summary.totalMotos }}</span>
-          </div>
-
-          <div class="status-pill success">
-            {{ porcentajeMotos }}% LLENO
-          </div>
-        </div>
-
-        <span class="metric-footer-text">{{ libresMotos }} espacios libres</span>
-      </div>
-
-      <!-- Próximas Salidas -->
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="material-symbols-outlined icon-type">schedule</span>
-          <span class="metric-title">PRÓXIMAS SALIDAS</span>
-        </div>
-
-        <div class="metric-body">
-          <div class="metric-value">
-            <span class="big-number">{{ summary.proximasSalidas }}</span>
-          </div>
-          <span class="material-symbols-outlined trend-icon">trending_up</span>
-        </div>
-
-        <span class="metric-footer-text">En los próximos 30 min</span>
-      </div>
-
+      <app-stat-card
+        title="PRÓXIMAS SALIDAS"
+        value="8"
+        trend="En los próximos 30 min"
+        trendType="neutral"
+        icon="material-symbols-outlined icon-yellow icon-schedule">
+      </app-stat-card>
     </section>
 
-    <!-- Plano Principal Nivel 1 -->
-    <section class="map-card">
+    <!-- Plano Principal -->
+    <section class="map-container-card">
       <div class="map-card-header">
         <h2>Plano Nivel 1</h2>
 
-        <!-- Leyenda de Estados -->
-        <div class="map-legend">
-          <div class="legend-item">
-            <span class="dot libre"></span>
-            <span>Libre</span>
-          </div>
-          <div class="legend-item">
-            <span class="dot ocupado"></span>
-            <span>Ocupado</span>
-          </div>
-          <div class="legend-item">
-            <span class="dot asignado"></span>
-            <span>Asignado</span>
-          </div>
+        <div class="color-legend">
+          <div class="legend-item"><span class="dot green"></span><span>Libre</span></div>
+          <div class="legend-item"><span class="dot yellow"></span><span>Asignado (Fuera)</span></div>
+          <div class="legend-item"><span class="dot blue"></span><span>Ocupado (Dentro)</span></div>
         </div>
       </div>
 
-      <!-- Secciones de Parqueo: Carros y Motos -->
-      <div class="map-zones-container">
+      <div class="dual-zones-grid">
 
         <!-- ZONA CARROS -->
-        <div class="zone-column zone-cars">
-          <span class="zone-title">ZONA CARROS</span>
-
-          <div class="slots-grid car-grid">
-            <div
-              *ngFor="let slot of carSlots"
-              class="parking-slot"
-              [ngClass]="slot.estado.toLowerCase()"
-              (click)="selectSlot(slot)">
-
-              <span class="slot-number">{{ slot.numero }}</span>
-              <span class="material-symbols-outlined vehicle-icon">directions_car</span>
-
-              <span class="slot-plate" *ngIf="slot.placa">{{ slot.placa }}</span>
+        <div class="zone-column" *ngIf="viewFilter === 'TODOS' || viewFilter === 'CARROS'">
+          <div class="zone-header-row">
+            <div class="zone-title">ZONA CARROS (100 Espacios)</div>
+            <div class="pagination-mini">
+              <button type="button" class="btn-page" [disabled]="currentCarPage === 1" (click)="prevCarPage()">&lt;</button>
+              <span>{{ currentCarPage }} / {{ totalCarPages }}</span>
+              <button type="button" class="btn-page" [disabled]="currentCarPage === totalCarPages" (click)="nextCarPage()">&gt;</button>
             </div>
           </div>
 
-          <!-- Paginación Zona Carros -->
-          <div class="zone-pagination">
-            <button
-              type="button"
-              class="btn-page"
-              [disabled]="currentCarPage === 1"
-              (click)="prevCarPage()">&lt;</button>
-            <span>{{ currentCarPage }} / {{ totalCarPages }}</span>
-            <button
-              type="button"
-              class="btn-page"
-              [disabled]="currentCarPage === totalCarPages"
-              (click)="nextCarPage()">&gt;</button>
+          <div class="spaces-grid-square">
+            <div
+              class="space-cell-tall"
+              *ngFor="let space of carSlots"
+              [ngClass]="{
+                'cell-libre': space.estado === 'libre',
+                'cell-asignado': space.estado === 'asignado',
+                'cell-ocupado': space.estado === 'ocupado'
+              }"
+              (click)="onSpaceClick(space)">
+
+              <div class="cell-top">
+                <span class="cell-number">{{ space.numero }}</span>
+                <span class="material-symbols-outlined cell-icon">directions_car</span>
+              </div>
+
+              <div class="cell-content-center">
+                <span class="cell-status-text" *ngIf="space.estado === 'libre'">LIBRE</span>
+                <span class="cell-plate" *ngIf="space.vehiculo">{{ space.vehiculo.placa }}</span>
+              </div>
+
+              <div class="cell-footer-type" *ngIf="space.vehiculo">CARRO</div>
+            </div>
           </div>
         </div>
 
         <!-- ZONA MOTOS -->
-        <div class="zone-column zone-motos">
-          <span class="zone-title">ZONA MOTOS</span>
-
-          <div class="slots-grid moto-grid">
-            <div
-              *ngFor="let slot of motoSlots"
-              class="parking-slot moto-slot"
-              [ngClass]="slot.estado.toLowerCase()"
-              (click)="selectSlot(slot)">
-
-              <span class="slot-number">{{ slot.numero }}</span>
-              <span class="material-symbols-outlined vehicle-icon">two_wheeler</span>
+        <div class="zone-column" *ngIf="viewFilter === 'TODOS' || viewFilter === 'MOTOS'">
+          <div class="zone-header-row">
+            <div class="zone-title">ZONA MOTOS (150 Espacios)</div>
+            <div class="pagination-mini">
+              <button type="button" class="btn-page" [disabled]="currentMotoPage === 1" (click)="prevMotoPage()">&lt;</button>
+              <span>{{ currentMotoPage }} / {{ totalMotoPages }}</span>
+              <button type="button" class="btn-page" [disabled]="currentMotoPage === totalMotoPages" (click)="nextMotoPage()">&gt;</button>
             </div>
           </div>
 
-          <!-- Paginación Zona Motos -->
-          <div class="zone-pagination">
-            <button
-              type="button"
-              class="btn-page"
-              [disabled]="currentMotoPage === 1"
-              (click)="prevMotoPage()">&lt;</button>
-            <span>{{ currentMotoPage }} / {{ totalMotoPages }}</span>
-            <button
-              type="button"
-              class="btn-page"
-              [disabled]="currentMotoPage === totalMotoPages"
-              (click)="nextMotoPage()">&gt;</button>
+          <div class="spaces-grid-square">
+            <div
+              class="space-cell-tall"
+              *ngFor="let space of motoSlots"
+              [ngClass]="{
+                'cell-libre': space.estado === 'libre',
+                'cell-asignado': space.estado === 'asignado',
+                'cell-ocupado': space.estado === 'ocupado'
+              }"
+              (click)="onSpaceClick(space)">
+
+              <div class="cell-top">
+                <span class="cell-number">{{ space.numero }}</span>
+                <span class="material-symbols-outlined cell-icon">two_wheeler</span>
+              </div>
+
+              <div class="cell-content-center">
+                <span class="cell-status-text" *ngIf="space.estado === 'libre'">LIBRE</span>
+                <span class="cell-plate" *ngIf="space.vehiculo">{{ space.vehiculo.placa }}</span>
+              </div>
+
+              <div class="cell-footer-type" *ngIf="space.vehiculo">MOTO</div>
+            </div>
           </div>
         </div>
 
@@ -186,4 +142,148 @@
     </section>
 
   </main>
+</div>
+
+<!-- Modal Detalles -->
+<div class="modal-backdrop" *ngIf="isDetailModalOpen && selectedSpace && selectedSpace.vehiculo" (click)="closeDetailModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Celda #{{ selectedSpace.numero }} - Detalles de Asignación</h2>
+      <button type="button" class="btn-close" (click)="closeDetailModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="status-banner" [ngClass]="selectedSpace.estado">
+        <span class="material-symbols-outlined">
+          {{ selectedSpace.estado === 'ocupado' ? 'local_parking' : 'event_available' }}
+        </span>
+        <span>{{ selectedSpace.estado === 'ocupado' ? 'Vehículo presente en el parqueadero (Dentro)' : 'Espacio asignado, vehículo fuera' }}</span>
+      </div>
+
+      <div class="section-block">
+        <h3>Información del Vehículo</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">PLACA</span>
+            <span class="value highlight-plate">{{ selectedSpace.vehiculo.placa }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">TIPO / LÍNEA</span>
+            <span class="value">{{ selectedSpace.vehiculo.tipo }} - {{ selectedSpace.vehiculo.linea }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">MODELO / COLOR</span>
+            <span class="value">{{ selectedSpace.vehiculo.modelo }} / {{ selectedSpace.vehiculo.color }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <h3>Propietario / Residente Asignado</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">NOMBRE COMPLETO</span>
+            <span class="value">{{ selectedSpace.vehiculo.propietarioNombre }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">UNIDAD (APARTAMENTO)</span>
+            <span class="value">{{ selectedSpace.vehiculo.unidad }}</span>
+          </div>
+          <div class="info-item" style="grid-column: span 2;">
+            <span class="label">TELÉFONO DE CONTACTO</span>
+            <span class="value">{{ selectedSpace.vehiculo.telefono }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeDetailModal()">Cerrar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal Nuevo Ingreso -->
+<div class="modal-backdrop" *ngIf="isNewEntryModalOpen" (click)="closeNewEntryModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Registro de Ingreso y Ubicación de Celda</h2>
+      <button type="button" class="btn-close" (click)="closeNewEntryModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <form (ngSubmit)="submitNewEntry()" class="modal-form">
+      <div class="modal-body">
+
+        <div class="form-group highlight-box">
+          <label>IMPORTAR DESDE MÓDULO DE SOLICITUDES</label>
+          <select [(ngModel)]="selectedRequestId" name="selectedRequestId" (ngModelChange)="onRequestSelect()">
+            <option [ngValue]="null">-- Seleccionar solicitud pendiente --</option>
+            <option *ngFor="let req of pendingRequests" [ngValue]="req.id">
+              Solicitud #{{ req.id }} - {{ req.residenteNombre }} ({{ req.placaVehiculo }})
+            </option>
+          </select>
+        </div>
+
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>PLACA DEL VEHÍCULO (Máx. 6 Caracteres) *</label>
+            <input
+              type="text"
+              placeholder="Ej: ABC123"
+              [(ngModel)]="newEntryForm.placa"
+              name="placa"
+              maxlength="6"
+              (input)="onPlacaInput($event)"
+              style="text-transform: uppercase;"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>NÚMERO DE CELDA (Ej: 15) *</label>
+            <input type="text" placeholder="Ej: 15" [(ngModel)]="newEntryForm.celdaAsignada" name="celdaAsignada" required />
+          </div>
+        </div>
+
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>TIPO DE VEHÍCULO *</label>
+            <select [(ngModel)]="newEntryForm.tipo" name="tipo">
+              <option value="CARRO">Carro</option>
+              <option value="MOTO">Moto</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>ESTADO / UBICACIÓN INICIAL *</label>
+            <select [(ngModel)]="newEntryForm.estadoInicial" name="estadoInicial">
+              <option value="ocupado">Ocupado / Dentro del conjunto (Azul)</option>
+              <option value="asignado">Asignado / Fuera (Amarillo)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>NOMBRE DEL PROPIETARIO</label>
+            <input type="text" [(ngModel)]="newEntryForm.propietarioNombre" name="propietarioNombre" />
+          </div>
+          <div class="form-group">
+            <label>UNIDAD (TORRE - APTO)</label>
+            <input type="text" [(ngModel)]="newEntryForm.unidad" name="unidad" />
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeNewEntryModal()">Cancelar</button>
+        <button type="submit" class="btn-submit">Guardar Asignación</button>
+      </footer>
+    </form>
+  </div>
 </div>
