@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -34,6 +34,9 @@ export class SidebarComponent {
   @Input() customNavItems?: NavItem[];
   @Input() navItems?: NavItem[];
 
+  // Nuevo: Output para permitir que cada módulo controle su propia salida sin afectar a los demás
+  @Output() onLogout = new EventEmitter<void>();
+
   defaultNavItems: NavItem[] = [
     { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
     { label: 'Residentes', route: '/residentes', icon: 'groups' },
@@ -44,7 +47,6 @@ export class SidebarComponent {
     { label: 'Configuración', route: '/configuracion', icon: 'settings' }
   ];
 
-  // Si no se pasa ninguna lista personalizada, devuelve el menú de administración por defecto
   get displayNavItems(): NavItem[] {
     if (this.customNavItems && this.customNavItems.length > 0) {
       return this.customNavItems;
@@ -59,10 +61,6 @@ export class SidebarComponent {
 
   private readonly router = inject(Router);
 
-  /**
-   * URL actual, reactiva: se actualiza en cada navegación.
-   * Se usa para resaltar el enlace de la pantalla en la que está el usuario.
-   */
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -80,14 +78,6 @@ export class SidebarComponent {
     return `${cleanBase}${cleanRoute}`;
   }
 
-  /**
-   * Destino del enlace que debe aparecer resaltado, o `null` si ninguno lo está.
-   *
-   * `routerLinkActive` de Angular (con `exact: false`) marca TODOS los enlaces
-   * cuyo destino sea prefijo de la URL actual: en "/residente/perfil" encendía
-   * a la vez "Dashboard" (`/residente`) y "Mi Perfil". Aquí se elige solo el
-   * destino más específico de los que coinciden.
-   */
   get activeRoute(): string | null {
     const url = this.currentUrl().split('?')[0].split('#')[0];
     let activeRoute: string | null = null;
@@ -104,7 +94,6 @@ export class SidebarComponent {
     return activeRoute;
   }
 
-  /** Indica si el enlace corresponde a la pantalla actual. */
   isActive(item: NavItem): boolean {
     return this.getFullRoute(item.route) === this.activeRoute;
   }
@@ -118,6 +107,13 @@ export class SidebarComponent {
   }
 
   logout(): void {
-    console.log('Cerrando sesión...');
+    if (this.onLogout.observed) {
+      // Si el componente padre (tu módulo) está escuchando el evento, lo emite
+      this.onLogout.emit();
+    } else {
+      // Comportamiento por defecto seguro para tus compañeros
+      console.log('Cerrando sesión predeterminada...');
+      this.router.navigate(['/auth']);
+    }
   }
 }

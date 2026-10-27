@@ -22,12 +22,12 @@
             <h2>Parámetros Económicos</h2>
           </div>
           <button type="button" class="btn-link" (click)="toggleTariffEdit()">
-            {{ isEditingTariffs ? 'Guardar' : 'Editar todo' }}
+            {{ isEditingTariffs ? 'Guardar Cambios' : 'Editar todo' }}
           </button>
         </div>
 
         <div class="card-body">
-          <!-- Tabla de Tarifas -->
+          <!-- Tabla de Tarifas con Lógica de Cobros -->
           <table class="config-table">
             <thead>
               <tr>
@@ -40,22 +40,29 @@
               <tr *ngFor="let item of tarifas">
                 <td class="font-semibold">{{ item.tipoVehiculo }}</td>
                 <td>
-                  <input
-                    *ngIf="isEditingTariffs; else textTarifa"
-                    type="text"
-                    [(ngModel)]="item.tarifaMinuto"
-                    class="inline-input"
-                  />
-                  <ng-template #textTarifa>{{ item.tarifaMinuto }}</ng-template>
+                  <div *ngIf="isEditingTariffs; else textTarifa" style="display: flex; align-items: center; gap: 4px;">
+                    <span>$</span>
+                    <input
+                      type="number"
+                      [(ngModel)]="item.tarifaMinuto"
+                      class="inline-input"
+                      min="1"
+                    />
+                    <span style="font-size: 0.75rem; color: #94a3b8;">COP</span>
+                  </div>
+                  <ng-template #textTarifa>${{ item.tarifaMinuto | number }} COP</ng-template>
                 </td>
                 <td>
-                  <input
-                    *ngIf="isEditingTariffs; else textGracia"
-                    type="text"
-                    [(ngModel)]="item.tiempoGracia"
-                    class="inline-input"
-                  />
-                  <ng-template #textGracia>{{ item.tiempoGracia }}</ng-template>
+                  <div *ngIf="isEditingTariffs; else textGracia" style="display: flex; align-items: center; gap: 4px;">
+                    <input
+                      type="number"
+                      [(ngModel)]="item.tiempoGracia"
+                      class="inline-input"
+                      min="0"
+                    />
+                    <span style="font-size: 0.75rem; color: #94a3b8;">min</span>
+                  </div>
+                  <ng-template #textGracia>{{ item.tiempoGracia }} min</ng-template>
                 </td>
               </tr>
             </tbody>
@@ -91,7 +98,7 @@
         </div>
 
         <div class="card-body">
-          <!-- Interruptores de Alertas -->
+          <!-- Interruptores de Alertas Funcionales -->
           <div class="toggle-list">
             <div class="toggle-item">
               <div class="toggle-info">
@@ -126,7 +133,7 @@
             <div class="form-row">
               <div class="form-group">
                 <label>TIEMPO (HORAS)</label>
-                <input type="number" [(ngModel)]="umbralesMalUso.tiempoHoras" />
+                <input type="number" [(ngModel)]="umbralesMalUso.tiempoHoras" min="1" />
               </div>
 
               <div class="form-group">
@@ -173,7 +180,7 @@
                     <div class="avatar">{{ user.iniciales }}</div>
                     <div class="details">
                       <span class="name">{{ user.nombre }}</span>
-                      <span class="subtext">{{ user.turno }}</span>
+                      <span class="subtext">{{ user.turno }} | Cédula: {{ user.cedula }}</span>
                     </div>
                   </div>
                 </td>
@@ -185,7 +192,7 @@
                 <td class="text-right">
                   <button
                     type="button"
-                    class="btn-text-danger"
+                    [ngClass]="user.activo ? 'btn-text-danger' : 'btn-text-success'"
                     (click)="toggleUserStatus(user)">
                     {{ user.activo ? 'Inhabilitar' : 'Habilitar' }}
                   </button>
@@ -272,4 +279,65 @@
     </footer>
 
   </main>
+</div>
+
+<!-- ========================================================= -->
+<!-- Modal: Registrar Nuevo Usuario / Vigilante                -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isNewUserModalOpen" (click)="closeNewUserModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Registrar Nuevo Usuario / Personal</h2>
+      <button type="button" class="btn-close" (click)="closeNewUserModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label>NOMBRE Y APELLIDO *</label>
+        <input type="text" [(ngModel)]="nuevoUsuarioForm.nombre" placeholder="Ej. Carlos Alberto Pérez" />
+      </div>
+
+      <div class="form-group">
+        <label>CÉDULA / DOCUMENTO DE IDENTIDAD *</label>
+        <input type="text" [(ngModel)]="nuevoUsuarioForm.cedula" placeholder="Ej. 1045678901" />
+      </div>
+
+      <div class="form-row-modal">
+        <div class="form-group">
+          <label>ROL EN EL SISTEMA *</label>
+          <div class="custom-select-wrapper">
+            <select [(ngModel)]="nuevoUsuarioForm.rol">
+              <option value="GUARDA">Guarda / Vigilante</option>
+              <option value="ADMIN">Administrador</option>
+            </select>
+            <span class="material-symbols-outlined select-chevron">expand_more</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>TURNO ASIGNADO *</label>
+          <div class="custom-select-wrapper">
+            <select [(ngModel)]="nuevoUsuarioForm.turno">
+              <option value="Turno: Mañana">Turno: Mañana (6am - 2pm)</option>
+              <option value="Turno: Tarde">Turno: Tarde (2pm - 10pm)</option>
+              <option value="Turno: Noche">Turno: Noche (10pm - 6am)</option>
+            </select>
+            <span class="material-symbols-outlined select-chevron">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>CONTRASEÑA TEMPORAL DE ACCESO *</label>
+        <input type="password" [(ngModel)]="nuevoUsuarioForm.password" placeholder="••••••••" />
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeNewUserModal()">Cancelar</button>
+      <button type="button" class="btn-submit" (click)="registrarNuevoUsuario()">Guardar y Registrar</button>
+    </footer>
+  </div>
 </div>
