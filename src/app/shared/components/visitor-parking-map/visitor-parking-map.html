@@ -1,0 +1,116 @@
+<div class="visitor-map-wrapper">
+  <!-- Leyenda de Estados -->
+  <div class="map-legend">
+    <div class="legend-item">
+      <span class="dot grey"></span>
+      <span>Disponible (Libre)</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot green-yellow"></span>
+      <span>Ocupado (Visitante en celda)</span>
+    </div>
+    <div class="mode-badge" [class.guardia]="mode === 'guardia'">
+      {{ mode === 'guardia' ? 'Modo Operativo (Guardia)' : 'Tiempo Real (Vista Residente)' }}
+    </div>
+  </div>
+
+  <!-- ZONA CARROS -->
+  <div class="zone-title">ZONA CARROS (Visitantes)</div>
+  <div class="visitor-grid">
+    <div
+      class="visitor-cell"
+      *ngFor="let slot of slots"
+      [hidden]="slot.tipo !== 'CARRO'"
+      [ngClass]="{
+        'cell-libre': slot.estado === 'libre',
+        'cell-ocupado': slot.estado === 'ocupado',
+        'clickable': mode === 'guardia'
+      }"
+      (click)="onSlotClick(slot)">
+
+      <div class="cell-header">
+        <span class="slot-id">{{ slot.id }}</span>
+        <span class="material-symbols-outlined slot-icon">directions_car</span>
+      </div>
+
+      <div class="cell-body">
+        @if (slot.estado === 'libre') {
+          <span class="status-text">DISPONIBLE</span>
+        } @else {
+          @if (mode === 'guardia') {
+            <span class="plate-text">{{ slot.placa }}</span>
+            <span class="time-text">Ingreso: {{ slot.horaIngreso }}</span>
+          } @else {
+            <span class="status-occupied">OCUPADO</span>
+          }
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONA MOTOS -->
+  <div class="zone-title" style="margin-top: 1.5rem;">ZONA MOTOS (Visitantes)</div>
+  <div class="visitor-grid">
+    <div
+      class="visitor-cell"
+      *ngFor="let slot of slots"
+      [hidden]="slot.tipo !== 'MOTO'"
+      [ngClass]="{
+        'cell-libre': slot.estado === 'libre',
+        'cell-ocupado': slot.estado === 'ocupado',
+        'clickable': mode === 'guardia'
+      }"
+      (click)="onSlotClick(slot)">
+
+      <div class="cell-header">
+        <span class="slot-id">{{ slot.id }}</span>
+        <span class="material-symbols-outlined slot-icon">two_wheeler</span>
+      </div>
+
+      <div class="cell-body">
+        @if (slot.estado === 'libre') {
+          <span class="status-text">DISPONIBLE</span>
+        } @else {
+          @if (mode === 'guardia') {
+            <span class="plate-text">{{ slot.placa }}</span>
+            <span class="time-text">Ingreso: {{ slot.horaIngreso }}</span>
+          } @else {
+            <span class="status-occupied">OCUPADO</span>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Registro de Ingreso (Exclusivo para el Guardia) -->
+<div class="modal-backdrop" *ngIf="isModalOpen" (click)="cerrarModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Asignar Celda de Visitante: {{ selectedSlot?.id }}</h2>
+      <button type="button" class="btn-close" (click)="cerrarModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <p class="modal-desc">Ingrese los datos del vehículo visitante que está ingresando al conjunto:</p>
+
+      <div class="form-group">
+        <label>PLACA DEL VEHÍCULO *</label>
+        <input
+          type="text"
+          [(ngModel)]="placaInput"
+          placeholder="Ej: XYZ-123"
+          autofocus
+          class="input-plate"
+        />
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+      <button type="button" class="btn-submit" (click)="confirmarIngreso()">Registrar Entrada</button>
+    </footer>
+  </div>
+</div>
