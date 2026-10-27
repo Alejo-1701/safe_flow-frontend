@@ -1,103 +1,94 @@
-<div class="app-layout">
-  <!-- Sidebar Reutilizable Global -->
+<div class="app-layout" (click)="closeActionMenu()">
+  <!-- Sidebar Reutilizable -->
   <app-sidebar basePath="/admin"></app-sidebar>
 
   <!-- Contenido Principal -->
   <main class="main-content">
 
     <!-- Encabezado -->
-    <header class="page-header">
-      <div class="header-title">
+    <header class="page-header-flex">
+      <div>
         <h1>Gestión de Reportes de Incidencias</h1>
-        <p>Monitoreo y administración de accesos y convivencia residencial.</p>
+        <p>Monitoreo y administración de accesos y convivencia residencial</p>
       </div>
 
-      <div class="header-actions">
-        <button type="button" class="btn-action btn-export" (click)="exportReportes()">
-          <span class="material-symbols-outlined icon-download">download</span>
-          Exportar
-        </button>
-      </div>
+      <button type="button" class="btn-primary-action" (click)="exportarExcel()">
+        <span class="material-symbols-outlined">download</span>
+        Exportar Reportes
+      </button>
     </header>
 
-    <!-- Métricas -->
-    <section class="stats-grid">
-
-      <div class="metric-card metric-card-total">
-        <div class="metric-content">
-          <span class="metric-label">TOTAL REPORTES</span>
-          <div class="metric-value-row">
-            <span class="metric-number">{{ metrics.totalReportes | number }}</span>
-            <span class="metric-trend positive">+12% vs. mes anterior</span>
-          </div>
+    <!-- Tarjetas de Métricas Superiores -->
+    <section class="stats-grid-reportes">
+      <div class="stat-card-box">
+        <div class="stat-info">
+          <span class="label">TOTAL REPORTES</span>
+          <span class="value">{{ totalReportesCount }}</span>
+          <span class="trend positive">+12% vs. mes anterior</span>
         </div>
-        <div class="metric-icon-box">
+        <div class="icon-box blue">
           <span class="material-symbols-outlined">description</span>
         </div>
       </div>
 
-      <div class="metric-card metric-card-pending">
-        <div class="metric-content">
-          <span class="metric-label">PENDIENTES</span>
-          <div class="metric-value-row">
-            <span class="metric-number">{{ metrics.pendientes }}</span>
-            <span class="metric-subtext warning">Atención inmediata</span>
-          </div>
+      <div class="stat-card-box alert">
+        <div class="stat-info">
+          <span class="label">PENDIENTES</span>
+          <span class="value text-warning">{{ pendientesCount }}</span>
+          <span class="trend warning">Atención inmediata</span>
+        </div>
+        <div class="icon-box orange">
+          <span class="material-symbols-outlined">warning</span>
         </div>
       </div>
 
-      <div class="metric-card metric-card-resolved">
-        <div class="metric-content">
-          <span class="metric-label">RESUELTOS</span>
-          <div class="metric-value-row">
-            <span class="metric-number green">{{ metrics.resueltos | number }}</span>
-            <span class="metric-subtext green">{{ metrics.efectividadPorcentaje }}% efectividad</span>
-          </div>
+      <div class="stat-card-box">
+        <div class="stat-info">
+          <span class="label">RESUELTOS</span>
+          <span class="value text-success">{{ resueltosCount }}</span>
+          <span class="trend positive">94.2% efectividad</span>
+        </div>
+        <div class="icon-box green">
+          <span class="material-symbols-outlined">check_circle</span>
         </div>
       </div>
-
     </section>
 
-    <!-- Toolbar de Filtros -->
-    <section class="filter-toolbar">
-      <div class="filter-dropdown">
-        <span class="material-symbols-outlined filter-icon">filter_list</span>
-        <select [(ngModel)]="selectedPrioridad">
-          <option value="TODAS">Todas las Prioridades</option>
-          <option value="ALTA">Alta</option>
-          <option value="MEDIA">Media</option>
-          <option value="BAJA">Baja</option>
-        </select>
-        <span class="material-symbols-outlined chevron-icon">expand_more</span>
-      </div>
+    <!-- Barra de Filtros -->
+    <section class="filter-card">
+      <div class="filter-controls-flex">
+        <div class="select-wrapper">
+          <select [(ngModel)]="filtroPrioridad">
+            <option value="TODAS">Todas las Prioridades</option>
+            <option value="BAJA">Baja</option>
+            <option value="MEDIA">Media</option>
+            <option value="ALTA">Alta</option>
+            <option value="CRÍTICA">Crítica</option>
+          </select>
+          <span class="material-symbols-outlined chevron">expand_more</span>
+        </div>
 
-      <div class="filter-dropdown">
-        <select [(ngModel)]="selectedCategoria">
-          <option value="TODAS">Todas las Categorías</option>
-          <option value="Parqueadero">Parqueadero</option>
-          <option value="Convivencia">Convivencia</option>
-          <option value="Mantenimiento">Mantenimiento</option>
-        </select>
-        <span class="material-symbols-outlined chevron-icon">expand_more</span>
-      </div>
+        <div class="select-wrapper">
+          <select [(ngModel)]="filtroCategoria">
+            <option value="TODAS">Todas las Categorías</option>
+            <option value="Parqueadero">Parqueadero</option>
+            <option value="Convivencia">Convivencia</option>
+            <option value="Seguridad">Seguridad</option>
+          </select>
+          <span class="material-symbols-outlined chevron">expand_more</span>
+        </div>
 
-      <div class="filter-actions">
-        <button type="button" class="btn-clear" (click)="resetFilters()">
-          Limpiar Filtros
-        </button>
-
-        <app-button
-          text="Aplicar"
-          colorVariant="primary"
-          (onClick)="applyFilters()">
-        </app-button>
+        <div class="filter-actions">
+          <button type="button" class="btn-clear" (click)="limpiarFiltros()">Limpiar</button>
+          <button type="button" class="btn-apply" (click)="aplicarFiltros()">Aplicar</button>
+        </div>
       </div>
     </section>
 
-    <!-- Tabla Principal -->
-    <section class="reports-table-card">
+    <!-- Tabla de Incidencias -->
+    <section class="table-card-reportes">
       <div class="table-wrapper">
-        <table class="custom-data-table">
+        <table class="reportes-table">
           <thead>
             <tr>
               <th>ID REPORTE</th>
@@ -110,62 +101,165 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of filteredIncidencias">
+            <tr *ngFor="let item of paginatedIncidencias">
+              <td class="font-bold text-accent">{{ item.id }}</td>
+              <td class="text-secondary">{{ item.fecha }}</td>
               <td>
-                <span class="report-id">{{ item.id }}</span>
-              </td>
-
-              <td class="date-cell">{{ item.fecha }}</td>
-
-              <td>
-                <div class="sender-info">
-                  <span class="sender-unit">{{ item.remitenteUbicacion }}</span>
-                  <span class="sender-name">{{ item.remitenteNombre }}</span>
+                <div class="remitente-cell">
+                  <span class="font-bold">{{ item.torreApto }}</span>
+                  <span class="subtext">{{ item.remitente }}</span>
                 </div>
               </td>
-
-              <td class="subject-cell">{{ item.asunto }}</td>
-
+              <td class="asunto-cell">{{ item.asunto }}</td>
               <td>
                 <span class="priority-badge" [ngClass]="item.prioridad.toLowerCase()">
                   {{ item.prioridad }}
                 </span>
               </td>
-
               <td>
-                <div class="status-indicator">
-                  <span class="status-dot" [ngClass]="item.estado.toLowerCase().replace(' ', '-')"></span>
-                  <span class="status-text">{{ item.estado }}</span>
-                </div>
+                <span class="status-badge" [ngClass]="item.estado === 'Resuelto' ? 'resuelto' : 'en-proceso'">
+                  {{ item.estado }}
+                </span>
               </td>
-
-              <td>
-                <button type="button" class="btn-manage" (click)="gestionarIncidencia(item)">
+              <td class="action-cell">
+                <button type="button" class="btn-gestion" (click)="toggleActionMenu(item.id, $event)">
                   Gestionar
+                  <span class="material-symbols-outlined">expand_more</span>
                 </button>
+
+                <!-- Menú Desplegable de Opciones de Gestión -->
+                <div class="dropdown-menu" *ngIf="isActionMenuOpenId === item.id" (click)="$event.stopPropagation()">
+                  <button type="button" (click)="openGestionModal(item)">
+                    <span class="material-symbols-outlined">visibility</span> Ver & Gestionar
+                  </button>
+                  <button type="button" (click)="openCitacionModal(item)">
+                    <span class="material-symbols-outlined">mail</span> Citación a Administración
+                  </button>
+                  <button type="button" (click)="contactarPorTelefono(item)">
+                    <span class="material-symbols-outlined">call</span> Contactar Residente
+                  </button>
+                  <button type="button" class="success-action" (click)="openGestionModal(item)">
+                    <span class="material-symbols-outlined">edit_note</span> Agregar Bitácora
+                  </button>
+                </div>
               </td>
             </tr>
 
-            <tr *ngIf="filteredIncidencias.length === 0">
-              <td colspan="7" class="no-data">
-                No se encontraron reportes con los filtros seleccionados.
+            <tr *ngIf="paginatedIncidencias.length === 0">
+              <td colspan="7" class="text-center-empty">
+                No se encontraron incidencias con los filtros seleccionados.
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Pie de Tabla -->
-      <footer class="reports-table-footer">
-        <span class="records-info">
-          MOSTRANDO {{ filteredIncidencias.length }} DE {{ metrics.totalReportes | number }} INCIDENTES
-        </span>
+      <!-- Paginación con conteo dinámico real -->
+      <footer class="table-footer">
+        <span class="records-text">Mostrando página {{ currentPage }} de {{ totalPages }} ({{ filteredIncidencias.length }} incidentes totales)</span>
         <div class="pagination-controls">
-          <button type="button" class="btn-page" title="Página anterior">&lt;</button>
-          <button type="button" class="btn-page" title="Página siguiente">&gt;</button>
+          <button type="button" class="btn-page" [disabled]="currentPage === 1" (click)="prevPage()">&lt;</button>
+          <button type="button" class="btn-page active">{{ currentPage }}</button>
+          <button type="button" class="btn-page" [disabled]="currentPage === totalPages" (click)="nextPage()">&gt;</button>
         </div>
       </footer>
     </section>
 
   </main>
+</div>
+
+<!-- ========================================================= -->
+<!-- 1. Modal de Gestión Integral y Bitácora                   -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isGestionModalOpen && selectedIncidencia" (click)="closeGestionModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Gestión de Incidencia - {{ selectedIncidencia.id }}</h2>
+      <button type="button" class="btn-close" (click)="closeGestionModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="info-banner">
+        <p><strong>Remitente:</strong> {{ selectedIncidencia.remitente }} ({{ selectedIncidencia.torreApto }})</p>
+        <p><strong>Fecha:</strong> {{ selectedIncidencia.fecha }}</p>
+        <p><strong>Asunto:</strong> {{ selectedIncidencia.asunto }}</p>
+      </div>
+
+      <!-- Cambiar Estado Directo -->
+      <div class="form-group">
+        <label>CAMBIAR ESTADO OPERATIVO</label>
+        <div class="state-buttons">
+          <button type="button" class="btn-state" [class.active]="selectedIncidencia.estado === 'Pendiente'" (click)="cambiarEstado('Pendiente')">Pendiente</button>
+          <button type="button" class="btn-state" [class.active]="selectedIncidencia.estado === 'En Proceso'" (click)="cambiarEstado('En Proceso')">En Proceso</button>
+          <button type="button" class="btn-state" [class.active]="selectedIncidencia.estado === 'Resuelto'" (click)="cambiarEstado('Resuelto')">Resuelto</button>
+        </div>
+      </div>
+
+      <!-- Bitácora y Observaciones -->
+      <div class="section-block">
+        <h3>Bitácora de Observaciones y Seguimiento</h3>
+        <div class="observations-list">
+          <div class="obs-item" *ngFor="let obs of selectedIncidencia.observaciones; let i = index">
+            <span>{{ obs }}</span>
+            <button type="button" class="btn-del-obs" title="Eliminar observación" (click)="eliminarObservacion(i)">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="add-obs-box">
+          <input type="text" placeholder="Agregar nueva nota u observación..." [(ngModel)]="nuevaObservacionText" />
+          <button type="button" class="btn-add" (click)="agregarObservacion()">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-submit" (click)="closeGestionModal()">Guardar y Cerrar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 2. Modal de Citación a Administración por Correo          -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isCitacionModalOpen && selectedIncidencia" (click)="closeCitacionModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Enviar Citación Formal - {{ selectedIncidencia.remitente }}</h2>
+      <button type="button" class="btn-close" (click)="closeCitacionModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label>ASUNTO DEL CORREO</label>
+        <input type="text" [(ngModel)]="citacionForm.asunto" />
+      </div>
+
+      <div class="form-grid-modal">
+        <div class="form-group">
+          <label>FECHA DE CITACIÓN *</label>
+          <input type="date" [(ngModel)]="citacionForm.fechaCita" />
+        </div>
+        <div class="form-group">
+          <label>HORA DE CITACIÓN *</label>
+          <input type="time" [(ngModel)]="citacionForm.horaCita" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>MENSAJE / MOTIVO DE LA CITACIÓN</label>
+        <textarea rows="4" [(ngModel)]="citacionForm.mensaje"></textarea>
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeCitacionModal()">Cancelar</button>
+      <button type="button" class="btn-submit" (click)="enviarCitacionCorreo()">Enviar Correo de Citación</button>
+    </footer>
+  </div>
 </div>

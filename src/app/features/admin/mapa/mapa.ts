@@ -1,29 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
-// Componentes compartidos reutilizables
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
-import { ButtonComponent } from '@shared/components/button/button';
-
-export type SlotStatus = 'LIBRE' | 'OCUPADO' | 'ASIGNADO';
-export type VehicleType = 'CARRO' | 'MOTO';
-
-export interface ParkingSlot {
-  id: string;
-  numero: string;
-  tipo: VehicleType;
-  estado: SlotStatus;
-  placa?: string;
-}
-
-export interface OcupacionSummary {
-  ocupadosCarros: number;
-  totalCarros: number;
-  ocupadosMotos: number;
-  totalMotos: number;
-  proximasSalidas: number;
-}
+import { StatCardComponent } from '@shared/components/stat-card/stat-card';
+import { ParkingService, ParkingSlot } from '@shared/services/parking.service';
 
 @Component({
   selector: 'app-mapa',
@@ -32,129 +15,109 @@ export interface OcupacionSummary {
     CommonModule,
     FormsModule,
     SidebarComponent,
-    ButtonComponent
+    StatCardComponent
   ],
   templateUrl: './mapa.html',
   styleUrls: ['./mapa.scss']
 })
-export class MapaComponent implements OnInit {
-  searchPlaca: string = '';
-  isLoading: boolean = false;
+export class MapaComponent implements OnInit, OnDestroy {
+  // Suscripciones a nuestro "Cerebro" centralizado
+  private carSub!: Subscription;
+  private motoSub!: Subscription;
 
-  // Estado de Paginación Zona Carros
-  currentCarPage: number = 1;
-  totalCarPages: number = 9;
-
-  // Estado de Paginación Zona Motos
-  currentMotoPage: number = 1;
-  totalMotoPages: number = 16;
-
-  // Métricas
-  summary: OcupacionSummary = {
-    ocupadosCarros: 42,
-    totalCarros: 150,
-    ocupadosMotos: 60,
-    totalMotos: 450,
-    proximasSalidas: 8
-  };
-
-  // Celdas visibles en pantalla
+  // Almacenamiento local de todos los espacios sincronizados
   carSlots: ParkingSlot[] = [];
   motoSlots: ParkingSlot[] = [];
 
+  // Variables de Paginación
+  pageSize: number = 8;
+  currentCarPage: number = 1;
+  currentMotoPage: number = 1;
+
+  // Control de Modales y Búsqueda
+  isDetailModalOpen: boolean = false;
+  selectedSpace: ParkingSlot | null = null;
+  searchQuery: string = '';
+
+  constructor(
+    private parkingService: ParkingService,
+    private router: Router // Inyectamos el Router para redireccionar
+  ) {}
+
   ngOnInit(): void {
-    this.updateCarSlots();
-    this.updateMotoSlots();
-  }
+    // 1. Suscripción Zona de Carros
+    this.carSub = this.parkingService.carSlots$.subscribe((cars: ParkingSlot[]) => {
+      this.carSlots = cars;
+    });
 
-  // --- Navegación Zona Carros ---
-  prevCarPage(): void {
-    if (this.currentCarPage > 1) {
-      this.currentCarPage--;
-      this.updateCarSlots();
-    }
-  }
-
-  nextCarPage(): void {
-    if (this.currentCarPage < this.totalCarPages) {
-      this.currentCarPage++;
-      this.updateCarSlots();
-    }
-  }
-
-  updateCarSlots(): void {
-    const offset = (this.currentCarPage - 1) * 18;
-    const states: SlotStatus[] = ['OCUPADO', 'LIBRE', 'ASIGNADO'];
-    const samplePlates = ['ABC-123', 'XYZ-987', 'VIP-001', 'JKL-456', 'QWE-456', 'RTY-789', 'ZXC-111'];
-
-    this.carSlots = Array.from({ length: 18 }, (_, index) => {
-      const slotNumber = offset + index + 1;
-      const estado = states[(slotNumber + this.currentCarPage) % 3];
-      const placa = estado !== 'LIBRE' ? samplePlates[(slotNumber * 2) % samplePlates.length] : undefined;
-
-      return {
-        id: `c_${slotNumber}`,
-        numero: `${slotNumber}`,
-        tipo: 'CARRO',
-        estado,
-        placa
-      };
+    // 2. Suscripción Zona de Motos
+    this.motoSub = this.parkingService.motoSlots$.subscribe((motos: ParkingSlot[]) => {
+      this.motoSlots = motos;
     });
   }
 
-  // --- Navegación Zona Motos ---
-  prevMotoPage(): void {
-    if (this.currentMotoPage > 1) {
-      this.currentMotoPage--;
-      this.updateMotoSlots();
+  ngOnDestroy(): void {
+    if (this.carSub) this.carSub.unsubscribe();
+    if (this.motoSub) this.motoSub.unsubscribe();
+  }
+
+  // --- Redirección a Solicitudes ---
+  goToSolicitudes(): void {
+    this.router.navigate(['/admin/solicitudes']);
+  }
+
+  // --- Getters Reactivos para las Vistas (Paginación) ---
+
+  get visibleCarSlots(): ParkingSlot[] {
+    const offset = (this.currentCarPage - 1) * this.pageSize;
+    return this.carSlots.slice(offset, offset + this.pageSize);
+  }
+
+  get visibleMotoSlots(): ParkingSlot[] {
+    const offset = (this.currentMotoPage - 1) * this.pageSize;
+    return this.motoSlots.slice(offset, offset + this.pageSize);
+  }
+
+  get totalCarPages(): number {
+    return Math.ceil(this.carSlots.length / this.pageSize) || 1;
+  }
+
+  get totalMotoPages(): number {
+    return Math.ceil(this.motoSlots.length / this.pageSize) || 1;
+  }
+
+  // --- Getters Reactivos para las Tarjetas de Estadísticas ---
+
+  get occupiedCarsCount(): number {
+    return this.carSlots.filter(s => s.estado !== 'libre').length;
+  }
+
+  get occupiedMotosCount(): number {
+    return this.motoSlots.filter(s => s.estado !== 'libre').length;
+  }
+
+  // --- Controles de Paginación ---
+
+  prevCarPage(): void { if (this.currentCarPage > 1) this.currentCarPage--; }
+  nextCarPage(): void { if (this.currentCarPage < this.totalCarPages) this.currentCarPage++; }
+  prevMotoPage(): void { if (this.currentMotoPage > 1) this.currentMotoPage--; }
+  nextMotoPage(): void { if (this.currentMotoPage < this.totalMotoPages) this.currentMotoPage++; }
+
+  // --- Interacción con Celdas ---
+
+  onSpaceClick(space: ParkingSlot): void {
+    if (space.estado === 'libre') {
+      // Si la celda está libre, redirigimos a solicitudes para asignar
+      this.goToSolicitudes();
+    } else {
+      // Si está ocupada/asignada, mostramos el modal de detalle
+      this.selectedSpace = space;
+      this.isDetailModalOpen = true;
     }
   }
 
-  nextMotoPage(): void {
-    if (this.currentMotoPage < this.totalMotoPages) {
-      this.currentMotoPage++;
-      this.updateMotoSlots();
-    }
-  }
-
-  updateMotoSlots(): void {
-    const offset = (this.currentMotoPage - 1) * 28;
-    const states: SlotStatus[] = ['OCUPADO', 'LIBRE', 'ASIGNADO'];
-
-    this.motoSlots = Array.from({ length: 28 }, (_, index) => {
-      const slotNumber = offset + index + 1;
-      const estado = states[(slotNumber + this.currentMotoPage) % 3];
-
-      return {
-        id: `m_${slotNumber}`,
-        numero: `${slotNumber}`,
-        tipo: 'MOTO',
-        estado
-      };
-    });
-  }
-
-  get libresCarros(): number {
-    return this.summary.totalCarros - this.summary.ocupadosCarros;
-  }
-
-  get porcentajeCarros(): number {
-    return Math.round((this.summary.ocupadosCarros / this.summary.totalCarros) * 100);
-  }
-
-  get libresMotos(): number {
-    return this.summary.totalMotos - this.summary.ocupadosMotos;
-  }
-
-  get porcentajeMotos(): number {
-    return Math.round((this.summary.ocupadosMotos / this.summary.totalMotos) * 100);
-  }
-
-  nuevoIngreso(): void {
-    console.log('Abriendo modal para nuevo ingreso...');
-  }
-
-  selectSlot(slot: ParkingSlot): void {
-    console.log('Celda seleccionada:', slot);
+  closeDetailModal(): void {
+    this.isDetailModalOpen = false;
+    this.selectedSpace = null;
   }
 }

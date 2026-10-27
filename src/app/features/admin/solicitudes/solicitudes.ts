@@ -1,133 +1,154 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
-// Componentes compartidos reutilizables
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
-import { ButtonComponent } from '@shared/components/button/button';
-
-export interface SolicitudItem {
-  id: number;
-  posicion: number;
-  nombre: string;
-  torreApto: string;
-  tipoVehiculo: string;
-  vehiculoDetalle?: string;
-  fecha: string;
-  estado: 'PENDIENTE' | 'EN ESPERA';
-  iconoVehiculo: string;
-}
+import { ParkingService, SolicitudItem, ParkingSlot } from '@shared/services/parking.service';
 
 @Component({
   selector: 'app-solicitudes',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    SidebarComponent,
-    ButtonComponent
-  ],
+  imports: [CommonModule, FormsModule, SidebarComponent],
   templateUrl: './solicitudes.html',
   styleUrls: ['./solicitudes.scss']
 })
-export class SolicitudesComponent {
-  searchTerm: string = '';
-  selectedEstado: string = 'TODOS';
-  selectedTipoVehiculo: string = 'TODOS';
+export class SolicitudesComponent implements OnInit, OnDestroy {
+  private solicitudesSub!: Subscription;
+  private carSub!: Subscription;
+  private motoSub!: Subscription;
 
-  // Datos del residente en turno especial
-  nextInTurn = {
-    nombre: 'Carlos Rodríguez',
-    torreApto: 'Torre 4 - Apto 502',
-    vehiculoDetalle: 'Automóvil (BMW X3 - KLS-482)'
-  };
+  solicitudesActivas: SolicitudItem[] = [];
+  espaciosDisponiblesParaAsignar: ParkingSlot[] = [];
 
-  // Lista de espera de parqueaderos (Mock basado en el diseño)
-  solicitudesList: SolicitudItem[] = [
-    {
-      id: 1,
-      posicion: 1,
-      nombre: 'Carlos Rodríguez',
-      torreApto: 'Torre 4 - 502',
-      tipoVehiculo: 'Automóvil',
-      vehiculoDetalle: 'BMW X3 - KLS-482',
-      fecha: '12 Oct, 2023',
-      estado: 'PENDIENTE',
-      iconoVehiculo: 'directions_car'
-    },
-    {
-      id: 2,
-      posicion: 2,
-      nombre: 'Marta Gómez',
-      torreApto: 'Torre 1 - 203',
-      tipoVehiculo: 'Motocicleta',
-      fecha: '15 Oct, 2023',
-      estado: 'EN ESPERA',
-      iconoVehiculo: 'two_wheeler'
-    },
-    {
-      id: 3,
-      posicion: 3,
-      nombre: 'Jorge Martínez',
-      torreApto: 'Torre 6 - 1104',
-      tipoVehiculo: 'Camioneta',
-      fecha: '20 Oct, 2023',
-      estado: 'EN ESPERA',
-      iconoVehiculo: 'directions_car'
-    },
-    {
-      id: 4,
-      posicion: 4,
-      nombre: 'Andrea Castro',
-      torreApto: 'Torre 2 - 401',
-      tipoVehiculo: 'Automóvil',
-      fecha: '22 Oct, 2023',
-      estado: 'EN ESPERA',
-      iconoVehiculo: 'directions_car'
-    }
-  ];
+  totalCarrosLibres: number = 0;
+  totalMotosLibres: number = 0;
 
-  // Métricas inferiores
-  metrics = {
-    espaciosDisponibles: '04',
-    solicitudesEnEspera: '24',
-    promedioEspera: '30 Días'
-  };
+  searchQuery: string = '';
+  filtroEstado: string = 'TODOS';
+  filtroTipoVehiculo: string = 'TODOS';
 
-  get filteredSolicitudes(): SolicitudItem[] {
-    return this.solicitudesList.filter(item => {
-      const matchesSearch =
-        item.nombre.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        item.torreApto.toLowerCase().includes(this.searchTerm.toLowerCase());
+  isAsignarModalOpen: boolean = false;
+  isPerfilModalOpen: boolean = false;
+  isActionMenuOpenId: number | null = null;
+  selectedSolicitud: SolicitudItem | null = null;
+  selectedEspacioCelda: string = '';
 
-      const matchesEstado =
-        this.selectedEstado === 'TODOS' || item.estado === this.selectedEstado;
+  constructor(private parkingService: ParkingService) {}
 
-      const matchesVehiculo =
-        this.selectedTipoVehiculo === 'TODOS' ||
-        item.tipoVehiculo.toLowerCase() === this.selectedTipoVehiculo.toLowerCase();
+  ngOnInit(): void {
+    this.solicitudesSub = this.parkingService.solicitudes$.subscribe(todas => {
+      this.solicitudesActivas = todas;
+    });
 
-      return matchesSearch && matchesEstado && matchesVehiculo;
+    this.carSub = this.parkingService.carSlots$.subscribe(cars => {
+      this.totalCarrosLibres = cars.filter(c => c.estado === 'libre').length;
+    });
+
+    this.motoSub = this.parkingService.motoSlots$.subscribe(motos => {
+      this.totalMotosLibres = motos.filter(m => m.estado === 'libre').length;
     });
   }
 
-  // --- Funciones de interacción ---
-
-  assignSpace(solicitud?: SolicitudItem): void {
-    const target = solicitud ? solicitud.nombre : this.nextInTurn.nombre;
-    alert(`Iniciando proceso de asignación de espacio disponible para: ${target}`);
+  ngOnDestroy(): void {
+    if (this.solicitudesSub) this.solicitudesSub.unsubscribe();
+    if (this.carSub) this.carSub.unsubscribe();
+    if (this.motoSub) this.motoSub.unsubscribe();
   }
 
-  viewProfile(solicitud?: SolicitudItem): void {
-    const target = solicitud ? solicitud.nombre : this.nextInTurn.nombre;
-    alert(`Cargando información del perfil de: ${target}`);
+  get siguienteEnTurno(): SolicitudItem | null {
+    return this.solicitudesActivas.find(s => s.estado === 'PENDIENTE' || s.estado === 'EN ESPERA') || null;
   }
 
-  openActionMenu(solicitud: SolicitudItem): void {
-    alert(`Opciones de gestión para la solicitud de ${solicitud.nombre}:\n\n1. Asignar parqueadero\n2. Mover turno al final\n3. Cancelar solicitud`);
+  get espaciosDisponiblesCount(): number {
+    return this.totalCarrosLibres + this.totalMotosLibres;
   }
 
-  applyFilters(): void {
-    console.log('Filtros de lista de espera aplicados.');
+  get solicitudesEnEsperaCount(): number {
+    return this.solicitudesActivas.filter(s => s.estado !== 'APROBADA').length;
+  }
+
+  get filteredSolicitudes(): SolicitudItem[] {
+    return this.solicitudesActivas.filter(item => {
+      const matchSearch = item.residenteNombre.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                          item.placaVehiculo.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                          item.torreApto.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+      const matchEstado = this.filtroEstado === 'TODOS' || item.estado === this.filtroEstado;
+      const matchTipo = this.filtroTipoVehiculo === 'TODOS' || item.tipoVehiculo.toLowerCase() === this.filtroTipoVehiculo.toLowerCase();
+
+      return matchSearch && matchEstado && matchTipo && item.estado !== 'APROBADA';
+    });
+  }
+
+  toggleActionMenu(id: number, event: Event): void {
+    event.stopPropagation();
+    this.isActionMenuOpenId = this.isActionMenuOpenId === id ? null : id;
+  }
+
+  closeActionMenu(): void {
+    this.isActionMenuOpenId = null;
+  }
+
+  openAsignarModal(solicitud: SolicitudItem | null = this.siguienteEnTurno): void {
+    if (!solicitud) {
+      alert('No hay solicitudes pendientes.');
+      return;
+    }
+
+    this.selectedSolicitud = solicitud;
+    this.selectedEspacioCelda = '';
+
+    this.espaciosDisponiblesParaAsignar = this.parkingService.getAvailableSpaces(solicitud.categoriaEspacio)
+      .sort((a, b) => Number(a.numero) - Number(b.numero));
+
+    this.isAsignarModalOpen = true;
+    this.closeActionMenu();
+  }
+
+  closeAsignarModal(): void {
+    this.isAsignarModalOpen = false;
+    this.selectedSolicitud = null;
+  }
+
+  confirmarAsignacion(): void {
+    if (!this.selectedSolicitud || !this.selectedEspacioCelda) {
+      alert('Debe seleccionar un espacio disponible.');
+      return;
+    }
+
+    const exito = this.parkingService.asignarEspacio(this.selectedSolicitud.id, this.selectedEspacioCelda);
+
+    if (exito) {
+      alert(`¡Asignación exitosa al espacio #${this.selectedEspacioCelda}! Sincronizado con el Mapa.`);
+      this.closeAsignarModal();
+    } else {
+      alert('Error: El espacio seleccionado ya no está disponible.');
+    }
+  }
+
+  openPerfilModal(solicitud: SolicitudItem | null = this.siguienteEnTurno): void {
+    if (!solicitud) return;
+    this.selectedSolicitud = solicitud;
+    this.isPerfilModalOpen = true;
+    this.closeActionMenu();
+  }
+
+  closePerfilModal(): void {
+    this.isPerfilModalOpen = false;
+    this.selectedSolicitud = null;
+  }
+
+  contactarResidente(solicitud: SolicitudItem): void {
+    alert(`Abriendo canal de comunicación con ${solicitud.residenteNombre} al teléfono ${solicitud.telefono}...`);
+    this.closeActionMenu();
+  }
+
+  rechazarSolicitud(solicitud: SolicitudItem): void {
+    if (confirm(`¿Está seguro de rechazar la solicitud de parqueadero para ${solicitud.residenteNombre}?`)) {
+      solicitud.estado = 'APROBADA';
+      alert('Solicitud rechazada y archivada.');
+    }
+    this.closeActionMenu();
   }
 }

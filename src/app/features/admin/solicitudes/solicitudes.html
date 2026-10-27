@@ -1,90 +1,82 @@
-<div class="app-layout">
-  <!-- Sidebar Reutilizable Global -->
+<div class="app-layout" (click)="closeActionMenu()">
+  <!-- Barra Lateral Reutilizable -->
   <app-sidebar basePath="/admin"></app-sidebar>
 
   <!-- Contenido Principal -->
   <main class="main-content">
 
-    <!-- Encabezado con Buscador -->
-    <header class="page-header">
-      <h1>Gestión de Solicitudes</h1>
+    <!-- Encabezado de la Página con Buscador Integrado -->
+    <header class="page-header-flex">
+      <div>
+        <h1>Gestión de Solicitudes</h1>
+        <p>Lista de espera, asignación de celdas y validación de residentes</p>
+      </div>
 
-      <div class="header-actions">
-        <div class="search-box">
-          <span class="material-symbols-outlined search-icon">search</span>
-          <input
-            type="text"
-            placeholder="Buscar residente..."
-            [(ngModel)]="searchTerm"
-          />
-        </div>
+      <!-- Buscador General -->
+      <div class="search-box">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input
+          type="text"
+          placeholder="Buscar residente o placa..."
+          [(ngModel)]="searchQuery"
+        />
       </div>
     </header>
 
-    <!-- Tarjeta Destacada: Siguiente en Turno -->
-    <section class="next-turn-card">
-      <div class="next-turn-info">
+    <!-- Banner "Siguiente en Turno" -->
+    <section class="next-turn-banner" *ngIf="siguienteEnTurno">
+      <div class="turn-left">
         <div class="turn-icon-box">
           <span class="material-symbols-outlined">priority_high</span>
         </div>
-
-        <div class="turn-details">
-          <span class="turn-label">SIGUIENTE EN TURNO</span>
-          <h2 class="turn-name">{{ nextInTurn.nombre }}</h2>
-          <p class="turn-subtext">
-            {{ nextInTurn.torreApto }} | Vehículo: {{ nextInTurn.vehiculoDetalle }}
-          </p>
+        <div class="turn-info">
+          <span class="badge-label">SIGUIENTE EN TURNO</span>
+          <h2>{{ siguienteEnTurno.residenteNombre }}</h2>
+          <p>{{ siguienteEnTurno.torreApto }} | Vehículo: {{ siguienteEnTurno.tipoVehiculo }} ({{ siguienteEnTurno.marcaVehiculo }} - {{ siguienteEnTurno.placaVehiculo }})</p>
         </div>
       </div>
 
       <div class="turn-actions">
-        <button type="button" class="btn-secondary-action" (click)="viewProfile()">
+        <button type="button" class="btn-secondary-profile" (click)="openPerfilModal()">
           Ver Perfil
         </button>
-
-        <button type="button" class="btn-primary-cyan" (click)="assignSpace()">
-          <span class="material-symbols-outlined icon-check">check_circle</span>
+        <button type="button" class="btn-primary-assign" (click)="openAsignarModal()">
+          <span class="material-symbols-outlined" style="font-size: 1rem; vertical-align: middle; margin-right: 2px;">add_circle</span>
           Asignar Espacio
         </button>
       </div>
     </section>
 
-    <!-- Tabla Lista de Espera de Parqueaderos -->
-    <section class="waiting-list-card">
-      <div class="table-card-header">
+    <!-- Sección de la Tabla de Solicitudes -->
+    <section class="table-card-solicitudes">
+      <div class="filters-bar">
         <h2>Lista de Espera de Parqueaderos</h2>
 
-        <!-- Filtros de la tabla -->
-        <div class="table-filters">
-          <div class="filter-dropdown">
-            <select [(ngModel)]="selectedEstado">
-              <option value="TODOS">Todos</option>
-              <option value="PENDIENTE">Pendientes</option>
+        <!-- Filtros de Estado y Vehículo -->
+        <div class="filter-controls">
+          <div class="select-wrapper">
+            <select class="filter-select" [(ngModel)]="filtroEstado">
+              <option value="TODOS">Estado: Todos</option>
+              <option value="PENDIENTE">Pendiente</option>
               <option value="EN ESPERA">En Espera</option>
             </select>
-            <span class="material-symbols-outlined chevron-icon">expand_more</span>
+            <span class="material-symbols-outlined chevron">expand_more</span>
           </div>
 
-          <div class="filter-dropdown">
-            <select [(ngModel)]="selectedTipoVehiculo">
-              <option value="TODOS">Tipo Vehículo</option>
+          <div class="select-wrapper">
+            <select class="filter-select" [(ngModel)]="filtroTipoVehiculo">
+              <option value="TODOS">Vehículo: Todos</option>
               <option value="Automóvil">Automóvil</option>
               <option value="Motocicleta">Motocicleta</option>
               <option value="Camioneta">Camioneta</option>
             </select>
-            <span class="material-symbols-outlined chevron-icon">expand_more</span>
+            <span class="material-symbols-outlined chevron">expand_more</span>
           </div>
-
-          <button type="button" class="btn-filter" (click)="applyFilters()">
-            <span class="material-symbols-outlined">filter_list</span>
-            Filtrar
-          </button>
         </div>
       </div>
 
-      <!-- Tabla de Datos -->
       <div class="table-wrapper">
-        <table class="custom-data-table">
+        <table class="solicitudes-table">
           <thead>
             <tr>
               <th>POSICIÓN</th>
@@ -93,65 +85,61 @@
               <th>TIPO DE VEHÍCULO</th>
               <th>FECHA DE SOLICITUD</th>
               <th>ESTADO</th>
-              <th class="text-center">ACCIÓN</th>
+              <th>ACCIÓN</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of filteredSolicitudes">
-              <!-- Posición / Badge circular -->
               <td>
-                <span
-                  class="position-badge"
-                  [class.pos-first]="item.posicion === 1">
-                  {{ item.posicion }}
-                </span>
+                <span class="position-badge">{{ item.posicion }}</span>
               </td>
-
-              <!-- Residente con Avatar de Icono -->
               <td>
-                <div class="resident-cell">
-                  <div class="avatar-icon">
-                    <span class="material-symbols-outlined">person</span>
-                  </div>
-                  <span class="resident-name">{{ item.nombre }}</span>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="material-symbols-outlined" style="color: #64748b;">person</span>
+                  <span class="font-bold">{{ item.residenteNombre }}</span>
                 </div>
               </td>
-
-              <!-- Torre / Apto -->
               <td class="text-secondary">{{ item.torreApto }}</td>
-
-              <!-- Tipo de Vehículo con Icono -->
               <td>
-                <div class="vehicle-cell">
-                  <span class="material-symbols-outlined vehicle-icon">{{ item.iconoVehiculo }}</span>
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span class="material-symbols-outlined" style="color: #38bdf8; font-size: 1.1rem;">
+                    {{ item.categoriaEspacio === 'CARRO' ? 'directions_car' : 'two_wheeler' }}
+                  </span>
                   <span>{{ item.tipoVehiculo }}</span>
                 </div>
               </td>
-
-              <!-- Fecha -->
-              <td class="text-secondary">{{ item.fecha }}</td>
-
-              <!-- Badge de Estado -->
+              <td class="text-secondary">{{ item.fechaSolicitud }}</td>
               <td>
-                <span
-                  class="status-pill"
-                  [class.pendiente]="item.estado === 'PENDIENTE'"
-                  [class.en-espera]="item.estado === 'EN ESPERA'">
+                <span class="status-badge" [ngClass]="item.estado === 'PENDIENTE' ? 'pendiente' : 'en-espera'">
                   {{ item.estado }}
                 </span>
               </td>
-
-              <!-- Botón de Acción Menú (...) -->
-              <td class="text-center">
-                <button type="button" class="btn-more-actions" (click)="openActionMenu(item)" title="Más opciones">
+              <td class="action-cell">
+                <button type="button" class="btn-dots" (click)="toggleActionMenu(item.id, $event)" title="Opciones">
                   <span class="material-symbols-outlined">more_horiz</span>
                 </button>
+
+                <!-- Menú Desplegable de Acciones -->
+                <div class="dropdown-menu" *ngIf="isActionMenuOpenId === item.id" (click)="$event.stopPropagation()">
+                  <button type="button" (click)="openAsignarModal(item)">
+                    <span class="material-symbols-outlined">local_parking</span> Asignar Espacio
+                  </button>
+                  <button type="button" (click)="openPerfilModal(item)">
+                    <span class="material-symbols-outlined">account_circle</span> Ver Perfil
+                  </button>
+                  <button type="button" (click)="contactarResidente(item)">
+                    <span class="material-symbols-outlined">chat</span> Contactar
+                  </button>
+                  <button type="button" class="danger" (click)="rechazarSolicitud(item)">
+                    <span class="material-symbols-outlined">cancel</span> Rechazar
+                  </button>
+                </div>
               </td>
             </tr>
 
             <tr *ngIf="filteredSolicitudes.length === 0">
-              <td colspan="7" class="no-data">
-                No se encontraron solicitudes en la lista de espera.
+              <td colspan="7" class="text-center-empty">
+                No se encontraron solicitudes registradas con los filtros actuales.
               </td>
             </tr>
           </tbody>
@@ -159,43 +147,119 @@
       </div>
     </section>
 
-    <!-- Tarjetas Métricas Inferiores -->
-    <section class="stats-grid">
-
-      <!-- Espacios Disponibles -->
-      <div class="metric-card">
-        <div class="metric-icon-box green">
+    <!-- Tarjetas de Métricas Inferiores -->
+    <section class="stats-grid-solicitudes">
+      <div class="stat-card-box">
+        <div class="stat-info">
+          <span class="label">ESPACIOS DISPONIBLES</span>
+          <span class="value" style="color: #22c55e;">{{ espaciosDisponiblesCount }}</span>
+        </div>
+        <div class="icon-box green">
           <span class="material-symbols-outlined">check_circle</span>
         </div>
-        <div class="metric-info">
-          <span class="metric-title">Espacios Disponibles</span>
-          <span class="metric-value">{{ metrics.espaciosDisponibles }}</span>
+      </div>
+
+      <div class="stat-card-box">
+        <div class="stat-info">
+          <span class="label">SOLICITUDES EN ESPERA</span>
+          <span class="value" style="color: #f59e0b;">{{ solicitudesEnEsperaCount | number:'2.0-0' }}</span>
+        </div>
+        <div class="icon-box orange">
+          <span class="material-symbols-outlined">hourglass_top</span>
         </div>
       </div>
 
-      <!-- Solicitudes en Espera -->
-      <div class="metric-card">
-        <div class="metric-icon-box yellow">
-          <span class="material-symbols-outlined">hourglass_empty</span>
+      <div class="stat-card-box">
+        <div class="stat-info">
+          <span class="label">PROMEDIO DE ESPERA</span>
+          <span class="value" style="color: #38bdf8;">3 Días</span>
         </div>
-        <div class="metric-info">
-          <span class="metric-title">Solicitudes en Espera</span>
-          <span class="metric-value">{{ metrics.solicitudesEnEspera }}</span>
-        </div>
-      </div>
-
-      <!-- Promedio de Espera -->
-      <div class="metric-card">
-        <div class="metric-icon-box blue">
-          <span class="material-symbols-outlined">calendar_month</span>
-        </div>
-        <div class="metric-info">
-          <span class="metric-title">Promedio de Espera</span>
-          <span class="metric-value">{{ metrics.promedioEspera }}</span>
+        <div class="icon-box blue">
+          <span class="material-symbols-outlined">schedule</span>
         </div>
       </div>
-
     </section>
 
   </main>
+</div>
+
+<!-- ========================================================= -->
+<!-- Modal 1: Asignar Espacio de Parqueo                       -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isAsignarModalOpen && selectedSolicitud" (click)="closeAsignarModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Asignar Parqueadero - {{ selectedSolicitud.residenteNombre }}</h2>
+      <button type="button" class="btn-close" (click)="closeAsignarModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="info-banner">
+        <p><strong>Vehículo:</strong> {{ selectedSolicitud.tipoVehiculo }} ({{ selectedSolicitud.marcaVehiculo }} - {{ selectedSolicitud.placaVehiculo }})</p>
+        <p><strong>Ubicación:</strong> {{ selectedSolicitud.torreApto }}</p>
+        <p><strong>Categoría requerida:</strong> Espacio para {{ selectedSolicitud.categoriaEspacio }}</p>
+      </div>
+
+      <div class="form-group">
+        <label>SELECCIONAR CELDA DISPONIBLE (DEL MAPA) *</label>
+        <select class="modal-select" [(ngModel)]="selectedEspacioCelda">
+          <option value="" disabled selected>-- Seleccione una celda libre --</option>
+          <option *ngFor="let slot of espaciosDisponiblesParaAsignar" [value]="slot.numero">
+            Celda #{{ slot.numero }} ({{ slot.tipo }})
+          </option>
+        </select>
+        <p class="help-text" *ngIf="espaciosDisponiblesParaAsignar.length === 0">
+          No hay celdas libres disponibles para este tipo de vehículo en el mapa.
+        </p>
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeAsignarModal()">Cancelar</button>
+      <button type="button" class="btn-submit" [disabled]="!selectedEspacioCelda" (click)="confirmarAsignacion()">
+        Confirmar Asignación
+      </button>
+    </footer>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- Modal 2: Ver Perfil del Residente                         -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isPerfilModalOpen && selectedSolicitud" (click)="closePerfilModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Perfil del Residente - {{ selectedSolicitud.residenteNombre }}</h2>
+      <button type="button" class="btn-close" (click)="closePerfilModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <div class="profile-details-grid">
+        <div class="profile-item">
+          <span class="label">NOMBRE COMPLETO</span>
+          <span class="value">{{ selectedSolicitud.residenteNombre }}</span>
+        </div>
+        <div class="profile-item">
+          <span class="label">TORRE Y APARTAMENTO</span>
+          <span class="value">{{ selectedSolicitud.torreApto }}</span>
+        </div>
+        <div class="profile-item">
+          <span class="label">TELÉFONO DE CONTACTO</span>
+          <span class="value">{{ selectedSolicitud.telefono }}</span>
+        </div>
+        <div class="profile-item">
+          <span class="label">PLACA DEL VEHÍCULO</span>
+          <span class="value" style="color: #38bdf8; font-weight: 700;">{{ selectedSolicitud.placaVehiculo }}</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-submit" (click)="closePerfilModal()">Cerrar</button>
+    </footer>
+  </div>
 </div>
