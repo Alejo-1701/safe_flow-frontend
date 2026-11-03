@@ -1,0 +1,21 @@
+<!--
+  Código de verificación de visitantes. Se usa en la barra del residente y en
+  su pantalla de inicio de sesión; la apariencia la ajusta quien lo consume.
+-->
+<div class="code-block" role="group" [attr.aria-label]="heading || 'Código de verificación de visitantes'">
+
+  <span class="code-heading" *ngIf="heading">{{ heading }}</span>
+
+  <div class="code-row">
+    <!-- El lector de pantalla anuncia el valor cada vez que rota. -->
+    <span class="code-value" aria-live="polite">{{ code() }}</span>
+
+    <button type="button" class="code-copy" (click)="copyCode()"
+            [attr.aria-label]="copiado ? 'Código copiado' : 'Copiar código'">
+      <span class="code-copy-label">{{ copiado ? 'Copiado' : copyLabel }}</span>
+      <span class="code-timer" *ngIf="showCountdown" aria-hidden="true">{{ countdown() }}</span>
+    </button>
+  </div>
+
+  <span class="code-note" *ngIf="note">{{ note }}</span>
+</div>

@@ -3,6 +3,13 @@
     <input *ngIf="showSearch" type="text" placeholder="Buscar..." class="search-input">
   </div>
 
+  <!--
+    Código de verificación de visitantes. Solo se muestra cuando la vista lo
+    habilita con [showVerificationCode] (portal del residente); portería la
+    deja apagado. Rota únicamente al agotarse su ventana de tiempo.
+  -->
+  <app-verification-code *ngIf="showVerificationCode"></app-verification-code>
+
   <div class="right-section">
     <button (click)="onProfile()">Actualizar Datos</button>
     <button (click)="onLogout()">Cerrar Sesión</button>

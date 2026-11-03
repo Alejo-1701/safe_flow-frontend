@@ -5,9 +5,15 @@
   <app-navbar
     [userName]="resident.name || 'Usuario'"
     [userRole]="resident.role || 'Residente'"
+    [showVerificationCode]="true"
     (profileClick)="onProfile()"
     (logoutClick)="onLogout()">
   </app-navbar>
+
+  <!--
+    El código de verificación de visitantes vive DENTRO del navbar y solo se
+    enciende desde este portal; la vista de portería no activa el flag.
+  -->
 
   <main class="portal-content">
     <!-- Notificación superior: visitante en portería -->

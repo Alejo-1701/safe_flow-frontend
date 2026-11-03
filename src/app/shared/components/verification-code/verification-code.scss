@@ -1,0 +1,87 @@
+/* ================================================================= *
+ * CÓDIGO DE VERIFICACIÓN DE VISITANTES
+ *
+ * Aspecto base: pensado para encajar en la barra superior del residente,
+ * donde el espacio es escaso. La pantalla de login lo agranda desde su
+ * propio SCSS con `::ng-deep`, sin tocar este archivo.
+ *
+ * Colores por tokens globales de `styles.scss`.
+ * ================================================================= */
+
+:host {
+  display: block;
+}
+
+.code-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.9rem;
+  border: 1px solid var(--color-accent-border);
+  border-radius: 10px;
+  background: var(--color-accent-soft);
+}
+
+.code-heading {
+  color: var(--text-subtle);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.code-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.code-value {
+  color: var(--text-primary);
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.22em;
+  line-height: 1;
+}
+
+/* El botón lleva el tiempo restante debajo de la etiqueta: el código no se
+   puede cambiar a mano, solo rota al agotarse la ventana. */
+.code-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  margin-left: auto;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--color-accent-border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--color-accent);
+  cursor: pointer;
+  line-height: 1.1;
+}
+
+.code-copy:hover {
+  background: var(--color-accent);
+  color: var(--on-accent);
+}
+
+.code-copy-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.code-timer {
+  font-size: 0.65rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.code-note {
+  padding-right: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}

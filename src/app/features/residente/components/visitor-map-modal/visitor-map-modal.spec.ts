@@ -82,7 +82,6 @@ describe('VisitorMapModalComponent', () => {
 
     expect(emitido).toBe(true);
   });
-
   it('emite cerrado al hacer click en el fondo', async () => {
     let emitido = false;
     component.cerrado.subscribe(() => (emitido = true));
