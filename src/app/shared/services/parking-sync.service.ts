@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface VisitorParkingSlot {
@@ -14,7 +15,9 @@ export interface VisitorParkingSlot {
   providedIn: 'root'
 })
 export class ParkingSyncService {
-  // Configuración exacta: 5 espacios de Carros y 6 espacios de Motos para visitantes
+  private platformId = inject(PLATFORM_ID);
+  private storageKey = 'safe_flow_visitor_slots';
+
   private initialSlots: VisitorParkingSlot[] = [
     // --- ZONA CARROS (5 espacios) ---
     { id: 'V-C01', numero: 1, tipo: 'CARRO', estado: 'ocupado', placa: 'ABC-123', horaIngreso: '14:30' },
@@ -32,19 +35,55 @@ export class ParkingSyncService {
     { id: 'V-M06', numero: 6, tipo: 'MOTO', estado: 'libre' }
   ];
 
-  private slotsSubject = new BehaviorSubject<VisitorParkingSlot[]>(this.initialSlots);
-  public slots$: Observable<VisitorParkingSlot[]> = this.slotsSubject.asObservable();
+  private slotsSubject: BehaviorSubject<VisitorParkingSlot[]>;
+  public slots$: Observable<VisitorParkingSlot[]>;
+
+  constructor() {
+    let initial = this.initialSlots;
+
+    // Validamos que estemos ejecutando en el navegador antes de usar localStorage
+    if (isPlatformBrowser(this.platformId)) {
+      const saved = localStorage.getItem(this.storageKey);
+      if (saved) {
+        try {
+          initial = JSON.parse(saved);
+        } catch (e) {
+          console.error('Error al leer localStorage', e);
+        }
+      }
+    }
+
+    this.slotsSubject = new BehaviorSubject<VisitorParkingSlot[]>(initial);
+    this.slots$ = this.slotsSubject.asObservable();
+  }
+
+  private persistAndEmit(slots: VisitorParkingSlot[]): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.storageKey, JSON.stringify(slots));
+    }
+    this.slotsSubject.next([...slots]);
+  }
 
   registrarIngresoVisitante(slotId: string, placaVehiculo: string): boolean {
     const currentSlots = this.slotsSubject.getValue();
-    const slot = currentSlots.find(s => s.id === slotId);
+    const slotIndex = currentSlots.findIndex(s => s.id === slotId);
 
-    if (slot && slot.estado === 'libre') {
-      slot.estado = 'ocupado';
-      slot.placa = placaVehiculo.toUpperCase();
-      slot.horaIngreso = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (slotIndex !== -1 && currentSlots[slotIndex].estado === 'libre') {
+      const horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      this.slotsSubject.next([...currentSlots]);
+      const updatedSlots = currentSlots.map((slot, index) => {
+        if (index === slotIndex) {
+          return {
+            ...slot,
+            estado: 'ocupado' as const,
+            placa: placaVehiculo.toUpperCase(),
+            horaIngreso: horaActual
+          };
+        }
+        return slot;
+      });
+
+      this.persistAndEmit(updatedSlots);
       return true;
     }
     return false;
@@ -52,13 +91,19 @@ export class ParkingSyncService {
 
   liberarEspacio(slotId: string): void {
     const currentSlots = this.slotsSubject.getValue();
-    const slot = currentSlots.find(s => s.id === slotId);
 
-    if (slot) {
-      slot.estado = 'libre';
-      slot.placa = undefined;
-      slot.horaIngreso = undefined;
-      this.slotsSubject.next([...currentSlots]);
-    }
+    const updatedSlots = currentSlots.map(slot => {
+      if (slot.id === slotId) {
+        return {
+          ...slot,
+          estado: 'libre' as const,
+          placa: undefined,
+          horaIngreso: undefined
+        };
+      }
+      return slot;
+    });
+
+    this.persistAndEmit(updatedSlots);
   }
 }

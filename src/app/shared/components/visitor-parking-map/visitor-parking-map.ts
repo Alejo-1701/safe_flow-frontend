@@ -13,9 +13,8 @@ import { ParkingSyncService, VisitorParkingSlot } from '@shared/services/parking
 })
 export class VisitorParkingMapComponent implements OnInit, OnDestroy {
   /**
-   * Define el modo de visualización:
-   * - 'guardia': Permite hacer clic en espacios libres para registrar placas y gestionar entradas.
-   * - 'residente': Muestra la disponibilidad en tiempo real pero oculta las placas (privacidad).
+   * - 'guardia': Permite hacer clic en espacios libres para registrar placas y liberar celdas.
+   * - 'residente': Muestra la disponibilidad en tiempo real ocultando las placas por privacidad.
    */
   @Input() mode: 'guardia' | 'residente' = 'residente';
 
@@ -31,7 +30,8 @@ export class VisitorParkingMapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub = this.parkingSync.slots$.subscribe(data => {
-      this.slots = data;
+      // Forzamos la nueva referencia de arreglo para que Angular redibuje la pantalla de inmediato
+      this.slots = [...data];
     });
   }
 
@@ -39,36 +39,37 @@ export class VisitorParkingMapComponent implements OnInit, OnDestroy {
     if (this.sub) this.sub.unsubscribe();
   }
 
-  // Clic en celda
   onSlotClick(slot: VisitorParkingSlot): void {
     if (this.mode === 'guardia') {
       if (slot.estado === 'libre') {
-        // Abrir modal para registrar ingreso
         this.selectedSlot = slot;
         this.placaInput = '';
         this.isModalOpen = true;
       } else {
-        // Opcional: Permitir liberar celda si el carro ya salió
         if (confirm(`¿El vehículo ${slot.placa} ha salido del parqueadero de visitantes?`)) {
           this.parkingSync.liberarEspacio(slot.id);
         }
       }
-    } else {
-      // Modo residente: Solo informativa, no interactiva por seguridad
-      console.log('Vista de residente: Espacio', slot.id, slot.estado);
     }
   }
 
+  // Limita, quita caracteres especiales y convierte a mayúsculas automáticamente (Formato Colombia: 6 caracteres)
+  onPlacaInput(event: any): void {
+    const valorLimpio = event.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 6);
+    this.placaInput = valorLimpio;
+    event.target.value = valorLimpio;
+  }
+
   confirmarIngreso(): void {
-    if (!this.placaInput.trim()) {
-      alert('Por favor ingrese la placa del vehículo visitante.');
+    if (!this.placaInput.trim() || this.placaInput.length !== 6) {
+      alert('La placa en Colombia debe contener exactamente 6 caracteres (ej: ABC123 o XYZ12A).');
       return;
     }
 
     if (this.selectedSlot) {
       const exito = this.parkingSync.registrarIngresoVisitante(this.selectedSlot.id, this.placaInput);
       if (exito) {
-        alert(`Vehículo ${this.placaInput.toUpperCase()} asignado a la celda ${this.selectedSlot.id}`);
+        alert(`Vehículo ${this.placaInput} asignado con éxito a la celda ${this.selectedSlot.id}`);
         this.cerrarModal();
       } else {
         alert('Error al asignar el espacio.');

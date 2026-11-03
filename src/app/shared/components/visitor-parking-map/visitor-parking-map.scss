@@ -52,6 +52,14 @@
   }
 }
 
+.zone-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
 .visitor-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -132,7 +140,7 @@
   }
 }
 
-/* Modal interno de registro */
+/* Modal de registro de entrada */
 .modal-backdrop {
   position: fixed;
   top: 0; left: 0;
@@ -208,9 +216,9 @@
         border-radius: 8px;
         padding: 0.6rem 0.85rem;
         color: #fff;
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 700;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
         outline: none;
 
@@ -249,5 +257,4 @@
       &:hover { background-color: #0284c7; color: #fff; }
     }
   }
-  .zone-title { font-size: 0.85rem; font-weight: 700; color: #38bdf8; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
 }
