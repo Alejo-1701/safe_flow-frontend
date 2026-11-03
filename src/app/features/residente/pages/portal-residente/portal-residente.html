@@ -24,7 +24,7 @@
       <div class="portal-col portal-col--side">
         <app-my-vehicles (register)="onRegisterVehicle()"></app-my-vehicles>
         <app-my-requests (newRequest)="abrirSolicitud()"></app-my-requests>
-        <app-quick-access></app-quick-access>
+        <app-quick-access (navigate)="onQuickAccess($event)"></app-quick-access>
       </div>
     </div>
 
@@ -56,4 +56,13 @@
     [open]="vehiculoAbierto()"
     (cerrado)="cerrarRegistroVehiculo()">
   </app-modal-registro-vehiculo>
+
+  <!--
+    Mapa de parqueaderos de visitantes en modo residente: solo lectura.
+    Se abre desde el acceso rápido "Mapa".
+  -->
+  <app-visitor-map-modal
+    [open]="mapaAbierto()"
+    (cerrado)="cerrarMapa()">
+  </app-visitor-map-modal>
 </div>
