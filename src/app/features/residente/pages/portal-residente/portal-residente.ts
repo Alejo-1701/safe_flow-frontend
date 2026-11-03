@@ -7,11 +7,12 @@ import { ParkingStatusComponent } from '../../components/parking-status/parking-
 import { PreauthorizeGuestComponent } from '../../components/preauthorize-guest/preauthorize-guest';
 import { MyVehiclesComponent } from '../../components/my-vehicles/my-vehicles';
 import { MyRequestsComponent } from '../../components/my-requests/my-requests';
-import { QuickAccessComponent } from '../../components/quick-access/quick-access';
+import { QuickAccessComponent, QuickAccessTarget } from '../../components/quick-access/quick-access';
 import { RecentVisitsComponent } from '../../components/recent-visits/recent-visits';
 import { NuevaSolicitudComponent } from '../../components/nueva-solicitud/nueva-solicitud';
 import { ModalPerfilComponent } from '../../components/modal-perfil/modal-perfil';
 import { ModalRegistroVehiculoComponent } from '../../components/modal-registro-vehiculo/modal-registro-vehiculo';
+import { VisitorMapModalComponent } from '../../components/visitor-map-modal/visitor-map-modal';
 
 @Component({
   selector: 'app-portal-residente',
@@ -28,7 +29,8 @@ import { ModalRegistroVehiculoComponent } from '../../components/modal-registro-
     RecentVisitsComponent,
     NuevaSolicitudComponent,
     ModalPerfilComponent,
-    ModalRegistroVehiculoComponent
+    ModalRegistroVehiculoComponent,
+    VisitorMapModalComponent
   ],
   templateUrl: './portal-residente.html',
   styleUrl: './portal-residente.scss',
@@ -51,6 +53,31 @@ export class PortalResidente {
    */
   readonly perfilAbierto = signal(false);
   readonly vehiculoAbierto = signal(false);
+
+  /**
+   * Modal "Mapa de Parqueaderos de Visitantes". Se abre desde el acceso
+   * rápido "Mapa" y muestra el mapa compartido en modo residente (solo
+   * lectura: sin placas y sin interacción sobre las celdas).
+   */
+  readonly mapaAbierto = signal(false);
+
+  /** Router de los accesos rápidos: hoy solo "Mapa" tiene destino real. */
+  onQuickAccess(target: QuickAccessTarget): void {
+    if (target === 'mapa') {
+      this.abrirMapa();
+    }
+    // TODO: navegar a "Documentos" y "Reglamento" cuando existan sus vistas.
+  }
+
+  /** Abre el modal del mapa desde el acceso rápido "Mapa". */
+  abrirMapa(): void {
+    this.mapaAbierto.set(true);
+  }
+
+  /** Cierra el modal del mapa. */
+  cerrarMapa(): void {
+    this.mapaAbierto.set(false);
+  }
 
   /** Abre el modal desde el botón "Nueva Solicitud" de `app-my-requests`. */
   abrirSolicitud(): void {

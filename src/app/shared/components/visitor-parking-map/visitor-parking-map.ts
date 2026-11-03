@@ -39,7 +39,25 @@ export class VisitorParkingMapComponent implements OnInit, OnDestroy {
     if (this.sub) this.sub.unsubscribe();
   }
 
+  /**
+   * Espacios de cada zona.
+   *
+   * Se filtran en el componente y NO con `[hidden]` en la plantilla: el
+   * atributo `hidden` solo aplica `display: none` mientras ninguna regla de
+   * autor cambie el `display`, y `.visitor-cell` usa `display: flex`. Con
+   * `[hidden]` cada grilla terminaba renderizando los 11 espacios, con los
+   * ids y los iconos duplicados entre zonas.
+   */
+  get carSlots(): VisitorParkingSlot[] {
+    return this.slots.filter(slot => slot.tipo === 'CARRO');
+  }
+
+  get motoSlots(): VisitorParkingSlot[] {
+    return this.slots.filter(slot => slot.tipo === 'MOTO');
+  }
+
   onSlotClick(slot: VisitorParkingSlot): void {
+    // Modo residente: la vista es informativa y no debe modificar nada.
     if (this.mode === 'guardia') {
       if (slot.estado === 'libre') {
         this.selectedSlot = slot;
