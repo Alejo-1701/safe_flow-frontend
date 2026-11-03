@@ -244,6 +244,86 @@
 
 .error-text { font-size: 0.78rem; line-height: 1.5; color: #f87171; }
 
+/* Selector de tipo de usuario */
+.input-wrapper select {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 13px 44px;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--bg-dark);
+  border: none;
+  border-bottom: 2px solid #1e293b;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-wrapper select:focus {
+  border-bottom-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+/* Flecha del select, dibujada con un borde para no depender de otra fuente. */
+.input-wrapper:has(select)::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid #64748b;
+  border-bottom: 2px solid #64748b;
+  transform: translateY(-2px) rotate(45deg);
+  pointer-events: none;
+}
+
+/* ---------------- Código de verificación (solo residente) ----------------
+   El componente trae el aspecto compacto de la barra; acá se agranda para la
+   pantalla de login. `::ng-deep` porque las clases son del componente
+   compartido, que no se modifica para esto. */
+
+.login-verification-code {
+  margin-bottom: 4px;
+}
+
+.login-verification-code ::ng-deep .code-block {
+  gap: 0.6rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+}
+
+.login-verification-code ::ng-deep .code-heading {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.login-verification-code ::ng-deep .code-value {
+  font-size: 2.1rem;
+  letter-spacing: 0.3em;
+}
+
+.login-verification-code ::ng-deep .code-copy {
+  padding: 0.5rem 1rem;
+  border-radius: 9px;
+}
+
+.login-verification-code ::ng-deep .code-copy-label {
+  font-size: 0.8rem;
+}
+
+.login-verification-code ::ng-deep .code-timer {
+  font-size: 0.72rem;
+}
+
+.login-verification-code ::ng-deep .code-note {
+  padding-right: 0;
+  font-size: 0.78rem;
+}
+
 /* Checkbox */
 .form-checkbox-group { margin-top: 4px; }
 
@@ -321,6 +401,12 @@
   .form-footer-support { margin-top: 24px; padding-top: 20px; }
 
   .input-wrapper input {
+    min-height: 48px;
+    padding-block: 14px;
+    font-size: 16px; /* evita el zoom automático en iOS */
+  }
+
+  .input-wrapper select {
     min-height: 48px;
     padding-block: 14px;
     font-size: 16px; /* evita el zoom automático en iOS */

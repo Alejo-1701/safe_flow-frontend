@@ -20,6 +20,40 @@
         <p>Bienvenido de nuevo al sistema Safe Flow</p>
       </div>
 
+      <!--
+        Tipo de usuario. Mientras no exista backend es la única forma de saber
+        quién entra; el código de visitantes depende de esta elección.
+      -->
+      <div class="form-group">
+        <label for="userType">TIPO DE USUARIO</label>
+
+        <div class="input-wrapper">
+          <span class="input-icon material-symbols-outlined" aria-hidden="true">badge</span>
+
+          <select
+            id="userType"
+            name="userType"
+            [(ngModel)]="userType"
+            (ngModelChange)="onUserTypeChange($event)"
+          >
+            @for (tipo of userTypes; track tipo.value) {
+              <option [ngValue]="tipo.value">{{ tipo.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!--
+        Código de verificación de visitantes: SOLO para el residente. Al elegir
+        cualquier otro tipo de usuario el bloque no se renderiza.
+      -->
+      <app-verification-code
+        *ngIf="isResidente"
+        class="login-verification-code"
+        heading="Tu código de verificación"
+        note="Díctale este código a tu visitante para que ingrese en portería."
+      ></app-verification-code>
+
       <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form" novalidate>
 
         <!-- Correo o usuario -->
