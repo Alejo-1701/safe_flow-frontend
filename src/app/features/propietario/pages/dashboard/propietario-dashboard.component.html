@@ -1,0 +1,98 @@
+<app-navbar 
+  [userName]="userName" 
+  userRole="Propietario" 
+  (profileClick)="abrirModalActualizacion()">
+</app-navbar>
+
+<app-modal *ngIf="showUpdateModal" title="Actualizar Datos Personales" (close)="cerrarModalActualizacion()" buttonText="">
+  <p class="modal-subtitle">Mantenga su información de contacto actualizada para recibir notificaciones importantes del conjunto residencial.</p>
+  <form (submit)="$event.preventDefault(); guardarDatos()" class="update-form">
+    
+    <div class="form-card">
+        <h4 class="section-title"><i class="fa-solid fa-lock"></i> Identificación (No editable)</h4>
+        <div class="form-grid">
+            <div><label>Tipo de Documento</label><input type="text" value="Cédula de Ciudadanía" disabled></div>
+            <div><label>Número de Documento</label><input type="text" value="1.023.456.789" disabled></div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <h4 class="section-title"><i class="fa-solid fa-pen"></i> Información Personal</h4>
+        <div class="form-grid">
+            <div><label>Primer Nombre</label><input type="text" [(ngModel)]="primerNombre" name="primerNombre" placeholder="Ej: Carlos"></div>
+            <div><label>Segundo Nombre</label><input type="text" [(ngModel)]="segundoNombre" name="segundoNombre" placeholder="Ej: Alberto"></div>
+            <div><label>Primer Apellido</label><input type="text" [(ngModel)]="primerApellido" name="primerApellido" placeholder="Ej: Ruiz"></div>
+            <div><label>Segundo Apellido</label><input type="text" [(ngModel)]="segundoApellido" name="segundoApellido" placeholder="Ej: Mendoza"></div>
+            <div><label>Teléfono</label><input type="text" placeholder="+57 300 000 0000"></div>
+            <div><label>Correo Electrónico (Gmail)</label><input type="email" placeholder="usuario@gmail.com"></div>
+        </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="cerrarModalActualizacion()">Cancelar</button>
+      <button type="button" class="save-btn" (click)="guardarDatos()">Guardar Cambios</button>
+    </div>
+  </form>
+
+</app-modal>
+
+<app-modal *ngIf="showSuccessModal" title="¡Datos Actualizados!" type="success" buttonText="Entendido" (close)="cerrarModalExito()">
+  <p style="text-align: center; color: var(--text-secondary, #94a3b8);">Su información personal ha sido actualizada correctamente en el sistema.</p>
+</app-modal>
+
+<main class="dashboard-content">
+  <app-stat-card title="TOTAL PROPIEDADES" value="3" trend="Sin cambios este mes" trendType="neutral"
+    icon="fa-solid fa-building">
+  </app-stat-card>
+
+  <section class="main-sections">
+    <!-- SECCIÓN MIS PROPIEDADES -->
+    <div class="properties-section">
+      <header class="section-header">
+        <h3>Mis Propiedades</h3>
+        <a routerLink="/propietario/todas">Ver todas</a>
+      </header>
+
+      <div class="cards-grid">
+        <app-card-widget *ngFor="let prop of propiedades" [title]="prop.nombre" icon="fa-solid fa-building"
+          [actionLabel]="prop.ocupado ? 'GESTIONAR' : 'ASIGNAR INQUILINO'"
+          (actionClick)="prop.ocupado ? router.navigate(['/propietario/unidad', prop.id]) : router.navigate(['/propietario/asignar', prop.id], { queryParams: { unidad: prop.nombre } })">
+
+          <!-- Badge en el header del widget -->
+          <app-status-badge header-badge [statusType]="prop.ocupado ? 'success' : 'neutral'">
+            {{ prop.ocupado ? 'OCUPADO' : 'VACANTE' }}
+          </app-status-badge>
+
+          <!-- Detalles del residente e ID en el cuerpo -->
+          <div class="card-details">
+            <p class="detail-row">
+              <i class="fa-regular fa-user"></i>
+              <span>{{ prop.ocupado ? 'Residente: ' + prop.residente : 'Sin residente asignado' }}</span>
+            </p>
+            <p class="detail-row">
+              <i class="fa-regular fa-id-card"></i>
+              <span>ID: {{ prop.id }}</span>
+            </p>
+          </div>
+
+        </app-card-widget>
+      </div>
+    </div>
+
+    <!-- SECCIÓN GESTIÓN DE RESIDENTES -->
+    <aside class="residents-section">
+      <h3>Gestión de Residentes</h3>
+      <app-card-widget actionLabel="ADMINISTRAR TODOS LOS INQUILINOS" actionStyle="outline" (actionClick)="onAdministrarInquilinos()">
+        <div class="card-details">
+          <div class="resident-item" *ngFor="let res of residentes">
+            <i class="fa-solid fa-user-circle"></i>
+            <div>
+              <strong>{{ res.nombre }}</strong><br>
+              <small>{{ res.rol }} - {{ res.apt }}</small>
+            </div>
+          </div>
+        </div>
+      </app-card-widget>
+    </aside>
+  </section>
+</main>
