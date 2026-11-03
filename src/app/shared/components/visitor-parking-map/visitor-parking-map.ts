@@ -39,23 +39,38 @@ export class VisitorParkingMapComponent implements OnInit, OnDestroy {
     if (this.sub) this.sub.unsubscribe();
   }
 
+  /**
+   * Espacios de cada zona.
+   *
+   * Se filtran en el componente y NO con `[hidden]` en la plantilla: el
+   * atributo `hidden` solo aplica `display: none` mientras ninguna regla de
+   * autor cambie el `display`, y `.visitor-cell` usa `display: flex`. Con
+   * `[hidden]` cada grilla terminaba renderizando los 11 espacios, con los
+   * ids y los iconos duplicados entre zonas.
+   */
+  get carSlots(): VisitorParkingSlot[] {
+    return this.slots.filter(slot => slot.tipo === 'CARRO');
+  }
+
+  get motoSlots(): VisitorParkingSlot[] {
+    return this.slots.filter(slot => slot.tipo === 'MOTO');
+  }
+
   // Clic en celda
   onSlotClick(slot: VisitorParkingSlot): void {
-    if (this.mode === 'guardia') {
-      if (slot.estado === 'libre') {
-        // Abrir modal para registrar ingreso
-        this.selectedSlot = slot;
-        this.placaInput = '';
-        this.isModalOpen = true;
-      } else {
-        // Opcional: Permitir liberar celda si el carro ya salió
-        if (confirm(`¿El vehículo ${slot.placa} ha salido del parqueadero de visitantes?`)) {
-          this.parkingSync.liberarEspacio(slot.id);
-        }
-      }
+    // Modo residente: la vista es informativa y no debe modificar nada.
+    if (this.mode !== 'guardia') return;
+
+    if (slot.estado === 'libre') {
+      // Abrir modal para registrar ingreso
+      this.selectedSlot = slot;
+      this.placaInput = '';
+      this.isModalOpen = true;
     } else {
-      // Modo residente: Solo informativa, no interactiva por seguridad
-      console.log('Vista de residente: Espacio', slot.id, slot.estado);
+      // Opcional: Permitir liberar celda si el carro ya salió
+      if (confirm(`¿El vehículo ${slot.placa} ha salido del parqueadero de visitantes?`)) {
+        this.parkingSync.liberarEspacio(slot.id);
+      }
     }
   }
 

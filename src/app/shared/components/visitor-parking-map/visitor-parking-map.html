@@ -19,8 +19,7 @@
   <div class="visitor-grid">
     <div
       class="visitor-cell"
-      *ngFor="let slot of slots"
-      [hidden]="slot.tipo !== 'CARRO'"
+      *ngFor="let slot of carSlots"
       [ngClass]="{
         'cell-libre': slot.estado === 'libre',
         'cell-ocupado': slot.estado === 'ocupado',
@@ -53,8 +52,7 @@
   <div class="visitor-grid">
     <div
       class="visitor-cell"
-      *ngFor="let slot of slots"
-      [hidden]="slot.tipo !== 'MOTO'"
+      *ngFor="let slot of motoSlots"
       [ngClass]="{
         'cell-libre': slot.estado === 'libre',
         'cell-ocupado': slot.estado === 'ocupado',
