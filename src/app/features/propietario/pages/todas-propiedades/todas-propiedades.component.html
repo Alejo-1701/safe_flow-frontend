@@ -1,0 +1,30 @@
+<app-navbar userName="Ricardo Sosa" userRole="Propietario"></app-navbar>
+
+<main class="todas-propiedades-container">
+  <div class="header">
+    <a routerLink="/propietario" class="back-link">&larr; Volver al Dashboard</a>
+    <h1>Todas mis Propiedades</h1>
+  </div>
+
+  <div class="cards-grid">
+    <app-card-widget *ngFor="let prop of propiedades" [title]="prop.nombre" icon="fa-solid fa-building"
+      [actionLabel]="prop.ocupado ? 'GESTIONAR' : 'ASIGNAR INQUILINO'"
+      (actionClick)="prop.ocupado ? router.navigate(['/propietario/unidad', prop.id]) : router.navigate(['/propietario/asignar', prop.id], { queryParams: { unidad: prop.nombre } })">
+      
+      <app-status-badge header-badge [statusType]="prop.ocupado ? 'success' : 'neutral'">
+        {{ prop.ocupado ? 'OCUPADO' : 'VACANTE' }}
+      </app-status-badge>
+
+      <div class="card-details">
+        <p class="detail-row">
+          <i class="fa-regular fa-user"></i>
+          <span>{{ prop.ocupado ? 'Residente: ' + prop.residente : 'Sin residente asignado' }}</span>
+        </p>
+        <p class="detail-row">
+          <i class="fa-regular fa-id-card"></i>
+          <span>ID: {{ prop.id }}</span>
+        </p>
+      </div>
+    </app-card-widget>
+  </div>
+</main>
