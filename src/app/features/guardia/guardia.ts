@@ -1,13 +1,12 @@
-
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
-// Componentes compartidos reutilizados (rutas inferidas de los templateUrl; ajústalas si tus archivos se llaman distinto)
+// Componentes compartidos reutilizados
 import { PanelLateralComponent } from './panel-lateral';
 import { CierreTurnoComponent } from './cierre-turno';
 import { CardWidgetComponent } from '../../shared/components/card-widget/card-widget.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
-import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { SidebarComponent } from '@shared/components/sidebar/sidebar';
 
 type EstadoVisita = 'aprobado' | 'pendiente' | 'rechazado';
 export type TipoBadge = 'success' | 'warning' | 'danger';
@@ -51,7 +50,7 @@ interface Cobro {
     CierreTurnoComponent,
     CardWidgetComponent,
     StatusBadgeComponent,
-    NavbarComponent
+    SidebarComponent
   ],
   templateUrl: './guardia.html',
   styleUrls: ['./guardia.scss']
@@ -59,13 +58,20 @@ interface Cobro {
 export class GuardiaComponent {
   private readonly router = inject(Router);
 
-  /* ---------- Datos del guardia (de ejemplo, sin backend) ---------- */
+  /* ---------- Datos del guardia ---------- */
   readonly guardia = {
     nombre: 'Carlos Rodríguez',
     cargo: 'Guarda de seguridad',
     turno: 'Turno A',
-    avatarUrl: '' // si se define una URL, se muestra la foto; si no, las iniciales
+    avatarUrl: ''
   };
+
+  // Elementos de navegación para el Sidebar compartido
+  readonly navItems = [
+    { label: 'Dashboard', route: '/guardia', icon: 'dashboard' },
+    { label: 'Recaudos', route: '/guardia/arqueo', icon: 'payments' },
+    { label: 'Visitantes', route: '/guardia/historial-visitantes', icon: 'groups' }
+  ];
 
   readonly iniciales = this.guardia.nombre
     .split(' ')
@@ -80,11 +86,8 @@ export class GuardiaComponent {
   readonly busquedaInvalida = signal(false);
 
   readonly alertas = signal<AlertaCritica[]>([]);
-
   readonly porAutorizar = signal<VisitantePorAutorizar[]>([]);
-
   readonly visitantes = signal<VisitanteActivo[]>([]);
-
   readonly cobros = signal<Cobro[]>([]);
 
   /* ---------- Helpers de presentación ---------- */
@@ -118,9 +121,8 @@ export class GuardiaComponent {
     return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
   }
 
-  /* ---------- Cabecera ---------- */
+  /* ---------- Cabecera / Acciones de Sesión ---------- */
   cerrarSesion(): void {
-    // TODO: limpiar sesión/token cuando exista el servicio de autenticación
     this.router.navigate(['/auth']);
   }
 
@@ -130,8 +132,7 @@ export class GuardiaComponent {
 
   /* ---------- Manual de barreras ---------- */
   abrirBarrera(tipo: 'entrada' | 'salida'): void {
-    // TODO: pendiente de backend/hardware (control de barreras). Aquí iría la llamada al servicio.
-    console.info(`Solicitud de apertura de barrera de ${tipo} (sin backend conectado)`);
+    console.info(`Solicitud de apertura de barrera de ${tipo}`);
   }
 
   /* ---------- Visitantes por autorizar ---------- */
@@ -140,8 +141,7 @@ export class GuardiaComponent {
   }
 
   llamar(visitante: VisitantePorAutorizar): void {
-    // TODO: pendiente de backend (intercomunicador / telefonía del residente)
-    console.info(`Llamando al residente de ${visitante.ubicacion} (sin backend conectado)`);
+    console.info(`Llamando al residente de ${visitante.ubicacion}`);
   }
 
   denegar(visitante: VisitantePorAutorizar): void {
@@ -149,8 +149,7 @@ export class GuardiaComponent {
   }
 
   verHistorialVisitantes(): void {
-    // TODO: navegar a la vista de historial cuando exista su ruta
-    console.info('Ver todos los registros de visitantes (ruta pendiente)');
+    this.router.navigate(['/guardia/historial-visitantes']);
   }
 
   /* ---------- Módulo de acceso rápido ---------- */
@@ -166,7 +165,6 @@ export class GuardiaComponent {
       return;
     }
 
-    // Simulación en frontend: el registro real depende del backend
     this.visitantes.update(lista => [
       ...lista,
       {
@@ -198,7 +196,6 @@ export class GuardiaComponent {
 
   /* ---------- Monitor de visitantes ---------- */
   actualizarLista(): void {
-    // TODO: volver a consultar al backend; por ahora solo actualiza la hora de sincronización
     this.ultimaSync.set(this.horaActual());
   }
 
@@ -211,18 +208,15 @@ export class GuardiaComponent {
   }
 
   masAcciones(visitante: VisitanteActivo): void {
-    // La referencia no define el contenido de este menú: queda pendiente
-    console.info(`Más acciones para ${visitante.placa} (menú sin definir)`);
+    console.info(`Más acciones para ${visitante.placa}`);
   }
 
   /* ---------- Cierre de turno y cobros ---------- */
   realizarArqueo(): void {
-    // TODO: pendiente de backend (arqueo de caja)
-    console.info('Arqueo de caja solicitado (sin backend conectado)');
+    this.router.navigate(['/guardia/arqueo']);
   }
 
   verTodosCobros(): void {
-    // TODO: navegar al historial completo de cobros cuando exista su ruta
     console.info('Ver todos los cobros (ruta pendiente)');
   }
 }

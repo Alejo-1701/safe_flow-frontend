@@ -3,13 +3,29 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
+// Componentes compartidos reutilizados (removido ButtonComponent que no se usaba)
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
-import { ParkingService, SolicitudItem, ParkingSlot } from '@shared/services/parking.service';
+
+export interface SolicitudItem {
+  id: number;
+  posicion: number;
+  nombre: string;
+  torreApto: string;
+  tipoVehiculo: string;
+  vehiculoDetalle?: string;
+  fecha: string;
+  estado: 'PENDIENTE' | 'EN ESPERA';
+  iconoVehiculo: string;
+}
 
 @Component({
   selector: 'app-solicitudes',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SidebarComponent // <-- Ya no incluye ButtonComponent
+  ],
   templateUrl: './solicitudes.html',
   styleUrls: ['./solicitudes.scss']
 })

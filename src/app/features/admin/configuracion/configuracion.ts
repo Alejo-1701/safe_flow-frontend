@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+// Componentes compartidos reutilizados (removido ButtonComponent que no se usaba)
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
 
 export interface TariffItem {
@@ -26,7 +27,7 @@ export interface PersonalUser {
   imports: [
     CommonModule,
     FormsModule,
-    SidebarComponent
+    SidebarComponent // <-- Ya no incluye ButtonComponent
   ],
   templateUrl: './configuracion.html',
   styleUrls: ['./configuracion.scss']

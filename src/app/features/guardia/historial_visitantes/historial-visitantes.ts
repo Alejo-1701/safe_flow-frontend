@@ -363,7 +363,8 @@ export class HistorialVisitantesComponent {
     } else if (seccion === 'Visitantes') {
       this.router.navigate(['/guardia/historial-visitantes']);
     } else if (seccion === 'Recaudos') {
-      console.info('La ruta de Recaudos está pendiente de configurar.');
+      // ✅ Redirección corregida al módulo de arqueo y recaudos
+      this.router.navigate(['/guardia/arqueo']);
     }
   }
 }
