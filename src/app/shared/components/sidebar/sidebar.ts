@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, Output, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -34,36 +34,8 @@ export class SidebarComponent {
   @Input() customNavItems?: NavItem[];
   @Input() navItems?: NavItem[];
 
-  /**
-   * Apariencia del menú:
-   *  - 'default': la de siempre (logo "Safe Flow").
-   *  - 'panel': diseño de Historial de visitantes.
-   *  - 'guardia': diseño adaptado y compacto para la vista de guardia.
-   */
-  @Input() variant: 'default' | 'panel' | 'guardia' = 'default';
-
-  /** Textos de la marca (se muestran en variantes 'panel' y 'guardia'). */
-  @Input() brandName: string = 'SafeFlow';
-  @Input() brandSubtitle: string = 'Parking System';
-
-  /** Muestra el botón "Actualizar datos" en el pie (opcional). */
-  @Input() showUpdateData: boolean = false;
-
-  @Output() updateDataClick = new EventEmitter<void>();
-
-  /** Si la vista escucha este evento, ella decide qué hacer al cerrar sesión. */
-  @Output() logoutClick = new EventEmitter<void>();
-
-  /** Marca el elemento host para poder aplicarle estilos según la variante. */
-  @HostBinding('class.panel')
-  get isPanel(): boolean {
-    return this.variant === 'panel';
-  }
-
-  @HostBinding('class.guardia')
-  get isGuardia(): boolean {
-    return this.variant === 'guardia';
-  }
+  // Nuevo: Output para permitir que cada módulo controle su propia salida sin afectar a los demás
+  @Output() onLogout = new EventEmitter<void>();
 
   defaultNavItems: NavItem[] = [
     { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
@@ -106,9 +78,6 @@ export class SidebarComponent {
     return `${cleanBase}${cleanRoute}`;
   }
 
-  /**
-   * Destino del enlace que debe aparecer resaltado, o `null` si ninguno lo está.
-   */
   get activeRoute(): string | null {
     const url = this.currentUrl().split('?')[0].split('#')[0];
     let activeRoute: string | null = null;
@@ -138,10 +107,13 @@ export class SidebarComponent {
   }
 
   logout(): void {
-    if (this.logoutClick.observed) {
-      this.logoutClick.emit();
+    if (this.onLogout.observed) {
+      // Si el componente padre (tu módulo) está escuchando el evento, lo emite
+      this.onLogout.emit();
     } else {
-      console.log('Cerrando sesión...');
+      // Comportamiento por defecto seguro para tus compañeros
+      console.log('Cerrando sesión predeterminada...');
+      this.router.navigate(['/auth']);
     }
   }
 }

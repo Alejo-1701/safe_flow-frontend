@@ -28,21 +28,10 @@
 <!-- Panel Sidebar principal -->
 <aside [class.mobile-open]="isMobileMenuOpen">
   <div class="sidebar-header">
-    @if (variant === 'panel' || variant === 'guardia') {
-      <div class="brand-mark">
-        <span class="material-symbols-outlined" aria-hidden="true">local_parking</span>
-      </div>
-
-      <div class="brand-copy">
-        <strong>{{ brandName }}</strong>
-        <span>{{ brandSubtitle }}</span>
-      </div>
-    } @else {
-      <div class="brand-logo">
-        <img src="assets/images/logo.png" alt="Safe Flow Logo" class="logo-img" />
-      </div>
-      <h1>Safe Flow</h1>
-    }
+    <div class="brand-logo">
+      <img src="assets/images/logo.png" alt="Safe Flow Logo" class="logo-img" />
+    </div>
+    <h1>Safe Flow</h1>
 
     <button type="button" class="btn-close-mobile" (click)="closeMobileMenu()" aria-label="Cerrar menú">
       <span class="material-symbols-outlined">close</span>
@@ -74,16 +63,8 @@
       </div>
     </div>
 
-    @if (showUpdateData) {
-      <button type="button" class="btn-update-data" (click)="updateDataClick.emit()">
-        <span class="material-symbols-outlined nav-icon" aria-hidden="true">edit</span>
-        <span>Actualizar datos</span>
-      </button>
-    }
-
-    <button (click)="logout()" type="button" class="btn-logout" title="Cerrar sesión">
+    <button (click)="logout()" type="button" title="Cerrar sesión">
       <span class="material-symbols-outlined logout-icon" aria-hidden="true">logout</span>
-      <span class="logout-label">Cerrar sesión</span>
     </button>
   </div>
 </aside>
