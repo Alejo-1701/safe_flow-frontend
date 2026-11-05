@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// Componentes compartidos reutilizables
+// Componentes compartidos reutilizados (removido StatCardComponent que no se usaba)
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
-import { StatCardComponent } from '@shared/components/stat-card/stat-card';
 import { ButtonComponent } from '@shared/components/button/button';
 
 export interface Incidencia {
@@ -32,8 +31,7 @@ export interface MetricSummary {
     CommonModule,
     FormsModule,
     SidebarComponent,
-    StatCardComponent,
-    ButtonComponent
+    ButtonComponent // <-- Ya no incluye StatCardComponent
   ],
   templateUrl: './reportes.html',
   styleUrls: ['./reportes.scss']
