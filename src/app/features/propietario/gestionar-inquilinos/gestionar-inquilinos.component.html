@@ -1,0 +1,47 @@
+<main class="management-container">
+  <header class="header">
+    <div class="header-top">
+      <h1>Administración de Mis Inquilinos</h1>
+      <a routerLink="/propietario" class="back-link">&larr; Volver al Portal</a>
+    </div>
+    <p class="subtitle">Gestiona la información y el acceso de los inquilinos en tus propiedades.</p>
+  </header>
+
+  <section class="card">
+    <table class="inquilinos-table">
+      <thead>
+        <tr>
+          <th>INQUILINO</th>
+          <th>UNIDAD</th>
+          <th>CONTACTO</th>
+          <th>ESTADO</th>
+          <th>ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inquilino of inquilinos">
+          <td class="cell-inquilino">
+            <div class="avatar"></div>
+            <span>{{ inquilino.nombre }}</span>
+          </td>
+          <td>{{ inquilino.unidad }}</td>
+          <td class="cell-contacto">
+            <div>{{ inquilino.email }}</div>
+            <small>{{ inquilino.telefono }}</small>
+          </td>
+          <td>
+            <app-status-badge [statusType]="inquilino.estado === 'Activo' ? 'success' : 'danger'">
+              {{ inquilino.estado | uppercase }}
+            </app-status-badge>
+          </td>
+          <td>
+            <a [routerLink]="['/propietario/unidad', inquilino.idUnidad]" class="btn-gestionar">Gestionar</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <footer class="table-footer">
+      Mostrando {{ inquilinos.length }} inquilinos
+    </footer>
+  </section>
+</main>

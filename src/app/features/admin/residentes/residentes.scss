@@ -61,7 +61,7 @@ app-sidebar {
   }
 }
 
-/* Toolbar de Filtros Ajustada para Responsive */
+/* Toolbar de Filtros */
 .search-toolbar {
   display: flex;
   gap: 1rem;
@@ -271,9 +271,14 @@ app-sidebar {
         border-radius: 4px;
         cursor: pointer;
 
-        &:hover {
+        &:hover:not(:disabled) {
           color: #e2e8f0;
           border-color: #38bdf8;
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
         }
       }
     }
@@ -286,3 +291,238 @@ app-sidebar {
 
 .icon-blue { color: var(--color-accent, #38bdf8); }
 .icon-group::before { content: 'group'; }
+
+/* =============================================================================
+   ESTILOS DE LA VENTANA MODAL (Detalles y Edición de Residentes)
+   ============================================================================= */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.modal-container {
+  background-color: var(--bg-card, #1e293b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary, #e2e8f0);
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+      border-radius: 6px;
+
+      &:hover {
+        color: #e2e8f0;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 140px);
+
+    .resident-profile-preview {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+      .avatar-large {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #334155;
+        color: var(--text-primary, #e2e8f0);
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .profile-main-info {
+        h3 {
+          margin: 0;
+          font-size: 1.15rem;
+          color: var(--text-primary, #e2e8f0);
+        }
+        p {
+          margin: 0.2rem 0 0;
+          font-size: 0.85rem;
+          color: #94a3b8;
+        }
+      }
+    }
+
+    .info-grid-modal {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+
+      .info-item {
+        background-color: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        .label {
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #64748b;
+          letter-spacing: 0.05em;
+        }
+
+        .value {
+          font-size: 0.9rem;
+          color: var(--text-primary, #e2e8f0);
+          font-weight: 600;
+        }
+      }
+    }
+
+    .vehicles-section-modal {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.05em;
+      }
+    }
+
+    .form-grid-modal {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+
+      @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+
+      label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.05em;
+      }
+
+      input, select {
+        background-color: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 0.55rem 0.85rem;
+        color: var(--text-primary, #e2e8f0);
+        font-size: 0.85rem;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+
+        &:focus {
+          border-color: #38bdf8;
+        }
+      }
+
+      select {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: rgba(15, 23, 42, 0.5);
+
+    .btn-cancel {
+      background-color: transparent;
+      border: 1px solid #334155;
+      color: var(--text-primary, #e2e8f0);
+      border-radius: 8px;
+      padding: 0.55rem 1.15rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #334155;
+      }
+    }
+
+    .btn-submit {
+      background-color: #38bdf8;
+      color: #0f172a;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+
+      &:hover {
+        background-color: #0284c7;
+        color: #ffffff;
+      }
+    }
+  }
+}

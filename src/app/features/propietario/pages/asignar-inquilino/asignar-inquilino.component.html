@@ -1,0 +1,72 @@
+<main class="asignar-container">
+  <!-- Modal de Éxito -->
+  <app-modal *ngIf="showSuccessModal" 
+             title="Asignación Exitosa" 
+             message="El residente ha sido asignado correctamente a la unidad. Se ha enviado una invitación al correo electrónico."
+             type="success"
+             (close)="cerrarModalExito()">
+  </app-modal>
+
+  <button class="back-btn" (click)="volver()">← Volver a mis propiedades</button>
+  <h1>Asignar Inquilino - {{ unidadNombre }}</h1>
+  <p>Complete la información para registrar al nuevo residente de la unidad.</p>
+
+  <section class="form-card">
+    <h3>Información Personal</h3>
+    <div class="form-grid">
+      <div class="field">
+        <label>Tipo de Documento</label>
+        <select>
+          <option>Cédula de Ciudadanía</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Número de Identificación</label>
+        <input type="text" [(ngModel)]="documento" placeholder="Ingrese el número de documento">
+      </div>
+    </div>
+    <button class="import-btn" (click)="buscarResidente()" [disabled]="buscando">
+      {{ buscando ? 'Buscando...' : 'Importar Datos' }}
+    </button>
+    <p *ngIf="mensajeError" class="error-msg">{{ mensajeError }}</p>
+  </section>
+
+  <section class="form-card" *ngIf="residenteEncontrado">
+    <h3>Información del Residente Importada</h3>
+    <div class="residente-info">
+      <p><strong>Nombre:</strong> {{ residenteEncontrado.nombre }}</p>
+      <p><strong>Correo:</strong> {{ residenteEncontrado.correo }}</p>
+      <p><strong>Teléfono:</strong> {{ residenteEncontrado.telefono }}</p>
+    </div>
+  </section>
+
+  <section class="form-card" *ngIf="residenteEncontrado">
+    <h3>Detalles del Contrato</h3>
+    <div class="form-grid">
+      <div class="field">
+        <label>Fecha de Inicio</label>
+        <input type="date">
+      </div>
+      <div class="field">
+        <label>Duración del Contrato</label>
+        <select>
+          <option>1 Mes</option>
+          <option>3 Meses</option>
+          <option>6 Meses</option>
+          <option>12 Meses</option>
+          <option>24 Meses</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <div class="form-actions" *ngIf="residenteEncontrado">
+    <button class="btn-cancel" (click)="cancelar()">Cancelar</button>
+    <button class="btn-confirm" (click)="confirmar()">Confirmar Asignación</button>
+  </div>
+
+  <div class="info-banner" *ngIf="residenteEncontrado">
+    Al confirmar la asignación, el sistema enviará automáticamente una invitación por correo electrónico al nuevo
+    inquilino para que pueda acceder al portal y comenzar el proceso de mudanza.
+  </div>
+</main>

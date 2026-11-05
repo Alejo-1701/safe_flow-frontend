@@ -1,0 +1,56 @@
+<app-navbar userName="Ricardo Sosa" userRole="Propietario" [showProfileButton]="false"></app-navbar>
+
+<app-modal *ngIf="showInhabilitarModal" 
+           title="Inhabilitar Inquilino" 
+           type="success" 
+           buttonText="Aceptar" 
+           (close)="confirmarInhabilitacion()">
+  <p style="text-align: center; color: var(--text-secondary, #94a3b8);">El inquilino ha sido inhabilitado correctamente y la propiedad ha quedado libre.</p>
+</app-modal>
+
+<main class="detalle-container">
+  <div class="breadcrumb">
+    <a routerLink="/propietario">&larr; Volver a propiedades</a> / Detalle de Unidad
+  </div>
+
+  <header class="unidad-header">
+    <h1>{{ unidad.nombre }}</h1>
+    <div class="meta">
+      <span>ID: {{ unidad.id }}</span>
+      <span class="status-badge">{{ unidad.estado }}</span>
+    </div>
+  </header>
+
+  <section class="detalle-content" *ngIf="unidad">
+    <div class="info-card">
+      <h3>Información del Residente</h3>
+      <div class="residente-info" *ngIf="unidad.residente && unidad.residente.nombre; else noResidente">
+        <div class="avatar-placeholder"></div>
+        <div class="info-text" *ngIf="unidad.residente">
+          <p class="rol">{{ unidad.residente?.rol }}</p>
+          <p class="nombre">{{ unidad.residente?.nombre }}</p>
+          <p class="tipo">{{ unidad.residente?.tipo }}</p>
+        </div>
+        <div class="contact-info" *ngIf="unidad.residente">
+          <p><i class="fa-solid fa-phone"></i> {{ unidad.residente?.telefono }}</p>
+          <p><i class="fa-solid fa-envelope"></i> {{ unidad.residente?.email }}</p>
+          <p><i class="fa-solid fa-calendar"></i> Inicio: {{ unidad.residente?.inicio }}</p>
+        </div>
+      </div>
+      <ng-template #noResidente>
+        <p>No hay residente asignado actualmente.</p>
+      </ng-template>
+    </div>
+
+    <aside class="acciones-card">
+      <h3>Acciones de Gestión</h3>
+      <button class="action-btn danger" (click)="inhabilitarInquilino()" [disabled]="!unidad.residente">
+        <i class="fa-solid fa-user-slash"></i> Inhabilitar Inquilino
+      </button>
+      <button class="action-btn" [routerLink]="['/propietario/asignar', unidad.id]" [queryParams]="{unidad: unidad.nombre}" [disabled]="unidad.residente">
+        <i class="fa-solid fa-user-plus"></i> Asignar Nuevo Residente
+      </button>
+      <p class="hint" *ngIf="unidad.residente">No se puede asignar residente mientras la unidad esté ocupada.</p>
+    </aside>
+  </section>
+</main>

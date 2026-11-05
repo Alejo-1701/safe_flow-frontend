@@ -1,0 +1,49 @@
+@if (open) {
+  <!--
+    Capa de fondo: cierra el modal al hacer click fuera del panel.
+    Mismo patrón que `nueva-solicitud` y `modal-perfil` (backdrop + panel
+    con role="dialog").
+  -->
+  <div class="map-backdrop" (click)="onClose()">
+    <section
+      class="map-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="map-modal-title"
+      (click)="$event.stopPropagation()">
+
+      <!-- ===== Cerrar ===== -->
+      <button
+        type="button"
+        class="modal-close"
+        aria-label="Cerrar"
+        (click)="onClose()">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+
+      <!-- ===== Encabezado ===== -->
+      <header class="map-header">
+        <span class="header-icon material-symbols-outlined" aria-hidden="true">local_parking</span>
+        <div class="header-text">
+          <h2 id="map-modal-title">Mapa de Parqueaderos de Visitantes</h2>
+          <p>
+            Consulta la disponibilidad de las zonas de carros y motos de visitantes
+            en tiempo real.
+          </p>
+        </div>
+      </header>
+
+      <!-- ===== Mapa en solo lectura ===== -->
+      <app-visitor-parking-map mode="residente"></app-visitor-parking-map>
+
+      <!-- ===== Aviso de solo lectura ===== -->
+      <footer class="map-footer">
+        <span class="read-only-note" role="note">
+          <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+          Solo lectura: la asignación de celdas la gestiona la portería.
+        </span>
+      </footer>
+
+    </section>
+  </div>
+}

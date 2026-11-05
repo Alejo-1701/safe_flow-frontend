@@ -5,7 +5,12 @@
   "compilerOptions": {
     "types": [
       "vitest/globals"
-    ]
+    ],
+    "ignoreDeprecations": "6.0",
+    "baseUrl": "./",
+    "paths": {
+      "@shared/*": ["src/app/shared/*"]
+    }
   },
   "include": [
     "src/**/*.d.ts",

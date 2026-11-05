@@ -23,7 +23,19 @@ export const routes: Routes = [
   {
     path: 'propietario',
     loadChildren: () => import('./features/propietario/propietario.routes').then(m => m.PROPIETARIO_ROUTES),
-    // canActivate: [PropietarioGuard]
+  },
+  {
+    path: 'propietario-nuevo', // Adding as requested path example
+    children: [
+      { path: '', redirectTo: 'gestionar-inquilinos', pathMatch: 'full' },
+      {
+        path: 'gestionar-inquilinos',
+        loadComponent: () =>
+          import('./features/propietario/gestionar-inquilinos/gestionar-inquilinos.component').then(
+            (m) => m.GestionarInquilinosComponent
+          ),
+      },
+    ],
   },
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
   { path: '**', redirectTo: 'auth' }

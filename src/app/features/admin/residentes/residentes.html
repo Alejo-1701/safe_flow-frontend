@@ -19,11 +19,12 @@
           type="text"
           placeholder="Buscar residente por nombre o apto..."
           [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
         />
       </div>
 
       <div class="filter-dropdown">
-        <select [(ngModel)]="selectedTorre">
+        <select [(ngModel)]="selectedTorre" (ngModelChange)="onSearchChange()">
           <option value="TODAS">Todas las Torres</option>
           <option value="Torre 1">Torre 1</option>
           <option value="Torre 2">Torre 2</option>
@@ -55,7 +56,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let resident of filteredResidents">
+            <tr *ngFor="let resident of paginatedResidents">
               <!-- Nombre con Avatar de Iniciales -->
               <td>
                 <div class="resident-cell">
@@ -93,16 +94,22 @@
                 </button>
               </td>
             </tr>
+
+            <tr *ngIf="paginatedResidents.length === 0">
+              <td colspan="6" style="text-align: center; color: #64748b; padding: 2rem;">
+                No se encontraron residentes registrados.
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Pie de Tabla -->
+      <!-- Pie de Tabla con Paginación Funcional -->
       <footer class="table-footer">
-        <span class="records-text">Mostrando {{ filteredResidents.length }} de 248 residentes</span>
+        <span class="records-text">{{ paginationText }}</span>
         <div class="pagination-controls">
-          <button type="button" class="btn-page" title="Anterior">&lt;</button>
-          <button type="button" class="btn-page" title="Siguiente">&gt;</button>
+          <button type="button" class="btn-page" title="Anterior" [disabled]="currentPage === 1" (click)="prevPage()">&lt;</button>
+          <button type="button" class="btn-page" title="Siguiente" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">&gt;</button>
         </div>
       </footer>
     </section>
@@ -117,4 +124,110 @@
     </section>
 
   </main>
+</div>
+
+<!-- ========================================================= -->
+<!-- Modal de Visualización y Edición de Residente             -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isDetailModalOpen && editableResident" (click)="closeDetailModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>{{ isEditing ? 'Modificar Residente' : 'Información del Residente' }}</h2>
+      <button type="button" class="btn-close" (click)="closeDetailModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <!-- MODO VISUALIZACIÓN -->
+    <div class="modal-body" *ngIf="!isEditing">
+      <div class="resident-profile-preview">
+        <div class="avatar-large">{{ editableResident.iniciales }}</div>
+        <div class="profile-main-info">
+          <h3>{{ editableResident.nombre }}</h3>
+          <p>{{ editableResident.email || 'correo@ejemplo.com' }}</p>
+        </div>
+      </div>
+
+      <div class="info-grid-modal">
+        <div class="info-item">
+          <span class="label">DOCUMENTO</span>
+          <span class="value">{{ editableResident.documento || 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">TELÉFONO</span>
+          <span class="value">{{ editableResident.telefono }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">TORRE</span>
+          <span class="value">{{ editableResident.torre }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">APARTAMENTO</span>
+          <span class="value">{{ editableResident.apto }}</span>
+        </div>
+      </div>
+
+      <div class="vehicles-section-modal">
+        <span class="label">VEHÍCULOS REGISTRADOS</span>
+        <div class="vehicles-container" *ngIf="editableResident.vehiculos.length > 0; else noVehicleModal">
+          <span class="plate-pill" *ngFor="let plate of editableResident.vehiculos">{{ plate }}</span>
+        </div>
+        <ng-template #noVehicleModal>
+          <span class="no-vehicle-text">Sin vehículos registrados en el sistema.</span>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- MODO EDICIÓN (Estilo Dashboard) -->
+    <form (ngSubmit)="saveResidentChanges()" class="modal-form" *ngIf="isEditing">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>NOMBRE COMPLETO *</label>
+          <input type="text" [(ngModel)]="editableResident.nombre" name="nombre" required />
+        </div>
+
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>NÚMERO DOCUMENTO</label>
+            <input type="text" [(ngModel)]="editableResident.documento" name="documento" />
+          </div>
+          <div class="form-group">
+            <label>TELÉFONO *</label>
+            <input type="text" [(ngModel)]="editableResident.telefono" name="telefono" required />
+          </div>
+        </div>
+
+        <div class="form-grid-modal">
+          <div class="form-group">
+            <label>TORRE *</label>
+            <select [(ngModel)]="editableResident.torre" name="torre">
+              <option value="Torre 1">Torre 1</option>
+              <option value="Torre 2">Torre 2</option>
+              <option value="Torre 3">Torre 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>APARTAMENTO *</label>
+            <input type="text" [(ngModel)]="editableResident.apto" name="apto" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>CORREO ELECTRÓNICO</label>
+          <input type="email" [(ngModel)]="editableResident.email" name="email" />
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+        <button type="submit" class="btn-submit">Guardar Cambios</button>
+      </footer>
+    </form>
+
+    <!-- Footer para el modo visualización -->
+    <footer class="modal-footer" *ngIf="!isEditing">
+      <button type="button" class="btn-cancel" (click)="closeDetailModal()">Salir</button>
+      <button type="button" class="btn-submit" (click)="enableEditMode()">Modificar</button>
+    </footer>
+  </div>
 </div>

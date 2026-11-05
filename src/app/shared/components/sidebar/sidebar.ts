@@ -75,7 +75,6 @@ export class SidebarComponent {
     { label: 'Configuración', route: '/configuracion', icon: 'settings' }
   ];
 
-  // Si no se pasa ninguna lista personalizada, devuelve el menú de administración por defecto
   get displayNavItems(): NavItem[] {
     if (this.customNavItems && this.customNavItems.length > 0) {
       return this.customNavItems;
@@ -90,10 +89,6 @@ export class SidebarComponent {
 
   private readonly router = inject(Router);
 
-  /**
-   * URL actual, reactiva: se actualiza en cada navegación.
-   * Se usa para resaltar el enlace de la pantalla en la que está el usuario.
-   */
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -130,7 +125,6 @@ export class SidebarComponent {
     return activeRoute;
   }
 
-  /** Indica si el enlace corresponde a la pantalla actual. */
   isActive(item: NavItem): boolean {
     return this.getFullRoute(item.route) === this.activeRoute;
   }
