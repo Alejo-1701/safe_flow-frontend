@@ -53,6 +53,19 @@
   </nav>
 
   <div class="sidebar-footer">
+
+    <!-- Botón de actualización de datos condicional (solo aparece en tu pantalla de guardia) -->
+    <div *ngIf="showUpdateData" class="update-data-container" style="margin-bottom: 12px; padding: 0 8px;">
+      <button
+        type="button"
+        class="btn-update-data"
+        (click)="triggerUpdateData()"
+        style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 10px; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">
+        <span class="material-symbols-outlined" aria-hidden="true">sync</span>
+        <span>Actualizar Datos</span>
+      </button>
+    </div>
+
     <div class="sidebar-profile">
       <div class="profile-avatar">
         <span class="material-symbols-outlined footer-icon" aria-hidden="true">person</span>

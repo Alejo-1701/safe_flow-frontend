@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 
 export const GUARDIA_ROUTES: Routes = [
@@ -9,8 +8,14 @@ export const GUARDIA_ROUTES: Routes = [
   },
   {
     path: 'historial-visitantes',
-    loadComponent: () =>
-      import('./historial_visitantes/historial-visitantes')
-        .then(m => m.HistorialVisitantesComponent)
+    loadChildren: () =>
+      import('./historial_visitantes/historial-visitantes.routes')
+        .then(m => m.HISTORIAL_VISITANTES_ROUTES)
+  },
+  {
+    path: 'arqueo',
+    loadChildren: () =>
+      import('./arqueo/arqueo.routes')
+        .then(m => m.ARQUEO_ROUTES)
   }
 ];
