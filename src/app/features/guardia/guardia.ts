@@ -10,6 +10,9 @@ import { CardWidgetComponent } from '../../shared/components/card-widget/card-wi
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar';
 
+// 1. IMPORTAR EL COMPONENTE COMPARTIDO DEL MAPA DE VISITANTES
+import { VisitorParkingMapComponent } from '../../shared/components/visitor-parking-map/visitor-parking-map';
+
 type EstadoVisita = 'aprobado' | 'pendiente' | 'rechazado';
 export type TipoBadge = 'success' | 'warning' | 'danger';
 
@@ -54,7 +57,9 @@ interface Cobro {
     CierreTurnoComponent,
     CardWidgetComponent,
     StatusBadgeComponent,
-    SidebarComponent
+    SidebarComponent,
+    // 2. AGREGARLO EN LOS IMPORTS DEL DECORADOR
+    VisitorParkingMapComponent
   ],
   templateUrl: './guardia.html',
   styleUrls: ['./guardia.scss']
