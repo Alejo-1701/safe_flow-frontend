@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 // Componentes compartidos y locales
@@ -9,8 +8,6 @@ import { CierreTurnoComponent } from './cierre-turno';
 import { CardWidgetComponent } from '../../shared/components/card-widget/card-widget.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar';
-
-// 1. IMPORTAR EL COMPONENTE COMPARTIDO DEL MAPA DE VISITANTES
 import { VisitorParkingMapComponent } from '../../shared/components/visitor-parking-map/visitor-parking-map';
 
 type EstadoVisita = 'aprobado' | 'pendiente' | 'rechazado';
@@ -52,13 +49,11 @@ interface Cobro {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     PanelLateralComponent,
     CierreTurnoComponent,
     CardWidgetComponent,
     StatusBadgeComponent,
     SidebarComponent,
-    // 2. AGREGARLO EN LOS IMPORTS DEL DECORADOR
     VisitorParkingMapComponent
   ],
   templateUrl: './guardia.html',
@@ -79,9 +74,6 @@ export class GuardiaComponent {
     avatarUrl: ''
   };
 
-  // Objeto temporal para la edición en el modal
-  guardiaEditando = { ...this.guardia };
-
   // Elementos de navegación para el Sidebar compartido
   readonly navItems = [
     { label: 'Dashboard', route: '/guardia', icon: 'dashboard' },
@@ -100,7 +92,6 @@ export class GuardiaComponent {
   readonly ultimaSync = signal('10:45 AM');
   readonly busqueda = signal('');
   readonly busquedaInvalida = signal(false);
-  readonly modalActualizarAbierto = signal(false);
   readonly modalCierreAbierto = signal(false);
 
   readonly alertas = signal<AlertaCritica[]>([]);
@@ -151,25 +142,6 @@ export class GuardiaComponent {
   confirmarCierreSesion(): void {
     this.modalCierreAbierto.set(false);
     this.router.navigate(['/auth']);
-  }
-
-  actualizarDatos(): void {
-    this.guardiaEditando = { ...this.guardia };
-    this.modalActualizarAbierto.set(true);
-  }
-
-  cerrarModalActualizar(): void {
-    this.modalActualizarAbierto.set(false);
-  }
-
-  guardarCambios(): void {
-    this.guardia.nombres = this.guardiaEditando.nombres;
-    this.guardia.apellidos = this.guardiaEditando.apellidos;
-    this.guardia.nombre = `${this.guardiaEditando.nombres} ${this.guardiaEditando.apellidos}`;
-    this.guardia.telefono = this.guardiaEditando.telefono;
-    this.guardia.email = this.guardiaEditando.email;
-
-    this.modalActualizarAbierto.set(false);
   }
 
   /* ---------- Manual de barreras ---------- */

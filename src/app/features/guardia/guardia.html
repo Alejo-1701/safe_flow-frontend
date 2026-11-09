@@ -1,13 +1,10 @@
 <div class="guardia-shell">
 
-  <!-- Menú lateral unificado con la variante de guardia optimizada -->
+  <!-- Sidebar compartido (mismo componente que usa el admin) -->
   <app-sidebar
-    variant="guardia"
     basePath="/guardia"
     [navItems]="navItems"
     [currentUser]="{ name: guardia.nombre, role: guardia.cargo }"
-    [showUpdateData]="true"
-    (updateDataClick)="actualizarDatos()"
     (logoutClick)="cerrarSesion()">
   </app-sidebar>
 
@@ -62,9 +59,7 @@
           </div>
         </app-card-widget>
 
-        <!-- ======================================================== -->
-        <!-- MAPA DE PARQUEADERO DE VISITANTES (MODO OPERATIVO GUARDIA) -->
-        <!-- ======================================================== -->
+        <!-- Mapa de parqueadero de visitantes (modo operativo guardia) -->
         <section class="panel">
           <div class="panel-head">
             <h3>Mapa de Parqueaderos de Visitantes</h3>
@@ -204,71 +199,6 @@
       </section>
     </main>
   </div>
-
-  <!-- Modal de Actualizar Datos del Guardia (Editables) -->
-  @if (modalActualizarAbierto()) {
-    <div class="modal-backdrop" (click)="cerrarModalActualizar()">
-      <div class="modal-container" (click)="$event.stopPropagation()">
-
-        <div class="modal-header">
-          <div class="modal-title-wrap">
-            <span class="material-symbols-outlined modal-icon">edit</span>
-            <div>
-              <h3>Actualizar Datos del Guardia</h3>
-              <p>Información básica y de contacto en turno</p>
-            </div>
-          </div>
-          <button type="button" class="close-btn" (click)="cerrarModalActualizar()">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <div class="guard-badge-card">
-            <div class="guard-avatar-sm">CR</div>
-            <span class="guard-name-badge">{{ guardia.nombre }}</span>
-            <span class="status-turn-pill">EN TURNO</span>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Nombres</label>
-              <input type="text" [(ngModel)]="guardiaEditando.nombres" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Apellidos</label>
-              <input type="text" [(ngModel)]="guardiaEditando.apellidos" class="form-input" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Teléfono Celular</label>
-            <div class="input-with-icon">
-              <span class="material-symbols-outlined">phone</span>
-              <input type="text" [(ngModel)]="guardiaEditando.telefono" class="form-input" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Correo Electrónico</label>
-            <div class="input-with-icon">
-              <span class="material-symbols-outlined">mail</span>
-              <input type="email" [(ngModel)]="guardiaEditando.email" class="form-input" />
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="cerrarModalActualizar()">Cancelar</button>
-          <button type="button" class="btn-save" (click)="guardarCambios()">
-            <span class="material-symbols-outlined">check</span>
-            Guardar Cambios
-          </button>
-        </div>
-
-      </div>
-    </div>
-  }
 
   <!-- Modal de Confirmación de Cierre de Sesión -->
   @if (modalCierreAbierto()) {
