@@ -10,32 +10,7 @@
  * código fuente del componente compartido.
  */
 
-/* Logo + nombre de la marca a la izquierda de la barra. */
-app-navbar ::ng-deep .left-section {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-app-navbar ::ng-deep .left-section::before {
-  content: '';
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  background-image: url('/assets/images/logo.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-app-navbar ::ng-deep .left-section::after {
-  content: 'Nombre del conjunto Residencial';
-  color: var(--text-primary);
-  font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
+/* La barra ya muestra el logo y nombre de la marca desde el componente compartido. */
 
 /* Botones de la barra: "Actualizar Datos" (blanco) y "Cerrar Sesión" (rojo),
    ambos con apariencia de botón (borde + fondo en hover) e icono. */
