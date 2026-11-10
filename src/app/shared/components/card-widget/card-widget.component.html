@@ -1,19 +1,23 @@
-<div class="card">
-  <div class="card-header">
-    <div class="card-title-group">
-      <i *ngIf="icon" [class]="icon"></i>
-      <h3>{{ title }}</h3>
+<div class="card-widget-container">
+  <!-- Encabezado: Fondo oscuro solo si hay título o icono -->
+  <div class="card-widget-header" [class.has-header]="title || icon">
+    <div class="header-left" *ngIf="title || icon">
+      <i *ngIf="icon" [class]="icon + ' header-icon-top'"></i>
+      <h3 class="card-title">{{ title }}</h3>
     </div>
-    <span *ngIf="badgeText" [class]="'badge ' + badgeType">{{ badgeText }}</span>
+    <ng-content select="[header-badge]"></ng-content>
   </div>
   
-  <p *ngIf="subtitle" class="subtitle">{{ subtitle }}</p>
-
-  <div class="card-body">
+  <div class="card-widget-body">
     <ng-content></ng-content>
   </div>
 
   <div class="card-footer" *ngIf="actionLabel">
-    <button (click)="onActionClick()">{{ actionLabel }}</button>
+    <button 
+      class="card-widget-action" 
+      [class.card-widget-action--outline]="actionStyle === 'outline'"
+      (click)="onActionClick()">
+      {{ actionLabel }}
+    </button>
   </div>
 </div>

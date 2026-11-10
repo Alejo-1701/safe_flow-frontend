@@ -1,43 +1,14 @@
 <div class="history-shell">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">
-        <span class="material-symbols-outlined">local_parking</span>
-      </div>
 
-      <div class="brand-copy">
-        <strong>SafeFlow</strong>
-        <span>Parking System</span>
-      </div>
-    </div>
-
-    <nav class="side-nav" aria-label="Navegación principal">
-      <button type="button" class="nav-item" (click)="navegarA('Dashboard')">
-        <span class="material-symbols-outlined">dashboard</span>
-        <span>Dashboard</span>
-      </button>
-
-      <button type="button" class="nav-item" (click)="navegarA('Recaudos')">
-        <span class="material-symbols-outlined">payments</span>
-        <span>Recaudos</span>
-      </button>
-
-      <button
-        type="button"
-        class="nav-item active"
-        aria-current="page"
-        (click)="navegarA('Visitantes')"
-      >
-        <span class="material-symbols-outlined">groups</span>
-        <span>Visitantes</span>
-      </button>
-    </nav>
-
-    <button type="button" class="logout-button" (click)="cerrarSesion()">
-      <span class="material-symbols-outlined">logout</span>
-      <span>Cerrar sesión</span>
-    </button>
-  </aside>
+  <!-- Componente unificado de sidebar -->
+  <app-sidebar
+    variant="guardia"
+    basePath="/guardia"
+    [navItems]="navItems"
+    [currentUser]="{ name: guardia.nombre, role: guardia.cargo }"
+    [showUpdateData]="false"
+    (logoutClick)="cerrarSesion()">
+  </app-sidebar>
 
   <main class="content">
     <header class="page-header">
@@ -60,7 +31,6 @@
       <div class="filter-inputs">
         <label class="search-field">
           <span class="material-symbols-outlined">search</span>
-
           <input
             type="search"
             placeholder="Buscar por placa, nombre o documento..."
@@ -72,7 +42,6 @@
 
         <label class="date-field">
           <span class="material-symbols-outlined">calendar_today</span>
-
           <input
             type="date"
             [value]="fechaSeleccionada()"
@@ -224,7 +193,6 @@
                   <span [class.denied]="registro.salida === 'Denegado'">
                     {{ registro.entrada }}
                   </span>
-
                   <small [class.denied]="registro.salida === 'Denegado'">
                     {{ registro.salida }}
                   </small>
@@ -239,7 +207,6 @@
                     <span class="avatar" [ngClass]="registro.avatarColor">
                       {{ registro.iniciales }}
                     </span>
-
                     <span class="visitor-name">
                       {{ registro.visitante }}
                     </span>
@@ -260,12 +227,7 @@
                     [class.rejected]="registro.estado === 'Rechazado'"
                   >
                     <span class="status-dot"></span>
-
-                    {{
-                      registro.estado === 'En Predio'
-                        ? 'Ingresado'
-                        : registro.estado
-                    }}
+                    {{ registro.estado === 'En Predio' ? 'Ingresado' : registro.estado }}
                   </span>
                 </td>
 
@@ -296,8 +258,7 @@
 
       <footer class="table-footer">
         <span class="pagination-info">
-          Mostrando {{ desde() }}-{{ hasta() }} de
-          {{ registrosFiltrados().length }} registros
+          Mostrando {{ desde() }}-{{ hasta() }} de {{ registrosFiltrados().length }} registros
         </span>
 
         <nav class="pagination" aria-label="Paginación">
@@ -315,8 +276,7 @@
             @if (
               $index + 1 === 1 ||
               $index + 1 === totalPaginas() ||
-              ($index + 1 >= pagina() - 1 &&
-               $index + 1 <= pagina() + 1)
+              ($index + 1 >= pagina() - 1 && $index + 1 <= pagina() + 1)
             ) {
               <button
                 type="button"
@@ -350,6 +310,49 @@
       </footer>
     </section>
   </main>
+
+  <!-- Modal de Confirmación de Cierre de Sesión -->
+  @if (modalCierreAbierto()) {
+    <div class="modal-backdrop" (click)="cerrarModalCierre()">
+      <div class="modal-container modal-logout-container" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="material-symbols-outlined modal-icon logout-icon">logout</span>
+            <div>
+              <h3>Confirmar Cierre de Sesión</h3>
+              <p>Estás a punto de salir del terminal SafeFlow. Se guardará el registro de tu turno actual con {{ guardia.nombre }}. ¿Deseas continuar?</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="cerrarModalCierre()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="logout-info-card">
+            <div class="info-row">
+              <span class="info-label">Usuario:</span>
+              <span class="info-value user-val">
+                <span class="dot-green"></span> {{ guardia.nombre }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Turno:</span>
+              <span class="info-value badge-turn">Turno 01 (Activo)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="cerrarModalCierre()">Permanecer en turno</button>
+          <button type="button" class="btn-danger-confirm" (click)="confirmarCierreSesion()">
+            <span class="material-symbols-outlined">logout</span>
+            Sí, Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
 @if (registroDetalle(); as detalle) {

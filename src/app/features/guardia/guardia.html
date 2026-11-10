@@ -1,191 +1,247 @@
+<div class="guardia-shell">
 
-<!-- Navbar compartido -->
-<app-navbar
-  [userName]="guardia.nombre"
-  [userRole]="guardia.cargo"
-  [showSearch]="false"
-  [avatarUrl]="guardia.avatarUrl || undefined"
-  (logoutClick)="cerrarSesion()"
-  (profileClick)="actualizarDatos()">
-</app-navbar>
+  <!-- Sidebar compartido (mismo componente que usa el admin) -->
+  <app-sidebar
+    basePath="/guardia"
+    [navItems]="navItems"
+    [currentUser]="{ name: guardia.nombre, role: guardia.cargo }"
+    (logoutClick)="cerrarSesion()">
+  </app-sidebar>
 
-<main class="layout">
+  <div class="guardia-body">
+    <main class="layout">
 
-  <!-- ============ Columna izquierda ============ -->
+      <!-- ============ Columna izquierda ============ -->
+      <app-panel-lateral
+        [alertas]="alertas"
+        [porAutorizar]="porAutorizar"
+        (abrirBarrera)="abrirBarrera($event)"
+        (permitirPaso)="permitirPaso($event)"
+        (llamar)="llamar($event)"
+        (denegar)="denegar($event)"
+        (verHistorial)="verHistorialVisitantes()">
+      </app-panel-lateral>
 
-  <app-panel-lateral
-    [alertas]="alertas"
-    [porAutorizar]="porAutorizar"
-    (abrirBarrera)="abrirBarrera($event)"
-    (permitirPaso)="permitirPaso($event)"
-    (llamar)="llamar($event)"
-    (denegar)="denegar($event)"
-    (verHistorial)="verHistorialVisitantes()">
-  </app-panel-lateral>
+      <!-- ============ Columna principal ============ -->
+      <section class="main-col">
 
-  <!-- ============ Columna principal ============ -->
-  <section class="main-col">
+        <span class="sync-pill">
+          <span class="dot" aria-hidden="true"></span>
+          Sincronizado: {{ ultimaSync() }}
+        </span>
 
-    <span class="sync-pill">
-      <span class="dot" aria-hidden="true"></span>
-      Sincronizado: {{ ultimaSync() }}
-    </span>
+        <!-- Módulo de acceso rápido -->
+        <app-card-widget class="quick" title="Módulo de Acceso Rápido">
+          <div class="quick-row">
 
-    <!-- Módulo de acceso rápido -->
-    <app-card-widget class="quick" title="Módulo de Acceso Rápido">
-      <div class="quick-row">
+            <div class="search" [class.invalid]="busquedaInvalida()">
+              <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
 
-        <div class="search" [class.invalid]="busquedaInvalida()">
-          <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
+              <input
+                type="text"
+                placeholder="Buscar Placa (ej. KLM-987) o Documento..."
+                aria-label="Buscar placa o documento"
+                [value]="busqueda()"
+                (input)="onBuscar($event)"
+              />
+            </div>
 
-          <input
-            type="text"
-            placeholder="Buscar Placa (ej. KLM-987) o Documento..."
-            aria-label="Buscar placa o documento"
-            [value]="busqueda()"
-            (input)="onBuscar($event)"
-          />
+            <button type="button" class="cta cta-primary" (click)="registrarEntrada()">
+              <span class="material-symbols-outlined" aria-hidden="true">login</span>
+              Registrar Entrada
+            </button>
+
+            <button type="button" class="cta cta-outline" (click)="registrarSalida()">
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+              Registrar Salida
+            </button>
+
+          </div>
+        </app-card-widget>
+
+        <!-- Mapa de parqueadero de visitantes (modo operativo guardia) -->
+        <section class="panel">
+          <div class="panel-head">
+            <h3>Mapa de Parqueaderos de Visitantes</h3>
+          </div>
+          <div style="padding: 0.5rem 0;">
+            <app-visitor-parking-map mode="guardia"></app-visitor-parking-map>
+          </div>
+        </section>
+
+        <!-- Monitor de visitantes -->
+        <section class="panel">
+          <div class="panel-head">
+            <h3>Monitor de Visitantes</h3>
+
+            <button type="button" class="link-btn" (click)="actualizarLista()">
+              <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+              Actualizar lista
+            </button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Apartamento</th>
+                  <th>Nombre Visitante</th>
+                  <th>Hora Ingreso</th>
+                  <th>Estado</th>
+                  <th>Tiempo</th>
+                  <th>Valor</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (v of visitantes(); track v.id) {
+                  <tr>
+                    <td class="placa">{{ v.placa }}</td>
+                    <td>{{ v.apartamento }}</td>
+                    <td>{{ v.nombre }}</td>
+                    <td>{{ v.horaIngreso }}</td>
+
+                    <td>
+                      <span class="table-badge">
+                        <app-status-badge
+                          [statusType]="tipoBadge(v.estado)"
+                          [showDot]="false">
+                          {{ etiquetaEstado(v.estado) }}
+                        </app-status-badge>
+                      </span>
+                    </td>
+
+                    <td>{{ v.tiempo }}</td>
+                    <td class="valor valor-blue">{{ formatearValor(v.valor) }}</td>
+
+                    <td>
+                      <div class="row-actions">
+                        <button
+                          type="button"
+                          class="icon-btn"
+                          aria-label="Registrar cobro"
+                          (click)="cobrar(v)">
+                          <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="icon-btn muted"
+                          aria-label="Más acciones"
+                          (click)="masAcciones(v)">
+                          <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="8" class="empty-cell">
+                      No hay vehículos registrados todavía.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Finalización de turno -->
+        <app-cierre-turno (arqueo)="realizarArqueo()" />
+
+        <!-- Historial de cobros -->
+        <section class="panel">
+          <div class="panel-head">
+            <h3 class="with-icon">
+              <span class="material-symbols-outlined accent" aria-hidden="true">receipt_long</span>
+              Historial de Cobros
+            </h3>
+
+            <button type="button" class="link-btn muted" (click)="verTodosCobros()">
+              Ver todos
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+            </button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="cobros">
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Tiempo</th>
+                  <th>Valor</th>
+                  <th class="end">Hora de pago</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (c of cobros(); track $index) {
+                  <tr>
+                    <td class="placa">{{ c.placa }}</td>
+                    <td>{{ c.tiempo }}</td>
+                    <td class="valor valor-green">{{ formatearValor(c.valor) }}</td>
+                    <td class="end">{{ c.horaPago }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="empty-cell">
+                      Aún no se han registrado cobros.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal de Confirmación de Cierre de Sesión -->
+  @if (modalCierreAbierto()) {
+    <div class="modal-backdrop" (click)="cerrarModalCierre()">
+      <div class="modal-container modal-logout-container" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="material-symbols-outlined modal-icon logout-icon">logout</span>
+            <div>
+              <h3>Confirmar Cierre de Sesión</h3>
+              <p>Estás a punto de salir del terminal SafeFlow. Se guardará el registro de tu turno actual con {{ guardia.nombre }}. ¿Deseas continuar?</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="cerrarModalCierre()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
         </div>
 
-        <button type="button" class="cta cta-primary" (click)="registrarEntrada()">
-          <span class="material-symbols-outlined" aria-hidden="true">login</span>
-          Registrar Entrada
-        </button>
+        <div class="modal-body">
+          <div class="logout-info-card">
+            <div class="info-row">
+              <span class="info-label">Usuario:</span>
+              <span class="info-value user-val">
+                <span class="dot-green"></span> {{ guardia.nombre }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Turno:</span>
+              <span class="info-value badge-turn">Turno 01 (Activo)</span>
+            </div>
+          </div>
+        </div>
 
-        <button type="button" class="cta cta-outline" (click)="registrarSalida()">
-          <span class="material-symbols-outlined" aria-hidden="true">logout</span>
-          Registrar Salida
-        </button>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="cerrarModalCierre()">Permanecer en turno</button>
+          <button type="button" class="btn-danger-confirm" (click)="confirmarCierreSesion()">
+            <span class="material-symbols-outlined">logout</span>
+            Sí, Cerrar Sesión
+          </button>
+        </div>
 
       </div>
-    </app-card-widget>
-
-    <!-- Monitor de visitantes -->
-    <section class="panel">
-      <div class="panel-head">
-        <h3>Monitor de Visitantes</h3>
-
-        <button type="button" class="link-btn" (click)="actualizarLista()">
-          <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
-          Actualizar lista
-        </button>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Placa</th>
-              <th>Apartamento</th>
-              <th>Nombre Visitante</th>
-              <th>Hora Ingreso</th>
-              <th>Estado</th>
-              <th>Tiempo</th>
-              <th>Valor</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            @for (v of visitantes(); track v.id) {
-              <tr>
-                <td class="placa">{{ v.placa }}</td>
-                <td>{{ v.apartamento }}</td>
-                <td>{{ v.nombre }}</td>
-                <td>{{ v.horaIngreso }}</td>
-
-                <td>
-                  <span class="table-badge">
-                    <app-status-badge
-                      [statusType]="tipoBadge(v.estado)"
-                      [showDot]="false">
-                      {{ etiquetaEstado(v.estado) }}
-                    </app-status-badge>
-                  </span>
-                </td>
-
-                <td>{{ v.tiempo }}</td>
-                <td class="valor valor-blue">{{ formatearValor(v.valor) }}</td>
-
-                <td>
-                  <div class="row-actions">
-                    <button
-                      type="button"
-                      class="icon-btn"
-                      aria-label="Registrar cobro"
-                      (click)="cobrar(v)">
-                      <span class="material-symbols-outlined" aria-hidden="true">payments</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      class="icon-btn muted"
-                      aria-label="Más acciones"
-                      (click)="masAcciones(v)">
-                      <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="8" class="empty-cell">
-                  No hay vehículos registrados todavía.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Finalización de turno -->
-    <app-cierre-turno (arqueo)="realizarArqueo()" />
-
-    <!-- Historial de cobros -->
-    <section class="panel">
-      <div class="panel-head">
-        <h3 class="with-icon">
-          <span class="material-symbols-outlined accent" aria-hidden="true">receipt_long</span>
-          Historial de Cobros
-        </h3>
-
-        <button type="button" class="link-btn muted" (click)="verTodosCobros()">
-          Ver todos
-          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-        </button>
-      </div>
-
-      <div class="table-wrap">
-        <table class="cobros">
-          <thead>
-            <tr>
-              <th>Placa</th>
-              <th>Tiempo</th>
-              <th>Valor</th>
-              <th class="end">Hora de pago</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            @for (c of cobros(); track $index) {
-              <tr>
-                <td class="placa">{{ c.placa }}</td>
-                <td>{{ c.tiempo }}</td>
-                <td class="valor valor-green">{{ formatearValor(c.valor) }}</td>
-                <td class="end">{{ c.horaPago }}</td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="4" class="empty-cell">
-                  Aún no se han registrado cobros.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-  </section>
-</main>
+    </div>
+  }
+</div>

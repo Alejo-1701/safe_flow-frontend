@@ -5,28 +5,42 @@
 .navbar {
   background-color: var(--bg-card, #1e293b);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: var(--text-primary, #e2e8f0);
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.right-section {
+.left-section {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-/* La barra reparte izquierda / código / acciones; el código queda centrado.
-   En móvil baja a una fila propia para no apretar los botones. */
-.navbar {
-  gap: 1rem;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
+.brand-logo {
+  width: 32px;
+  height: 32px;
+}
+
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #e2e8f0);
+}
+
+/* El código de verificación queda centrado entre secciones y en móvil baja a su propia fila. */
 @media (max-width: 720px) {
   .navbar {
-    flex-wrap: wrap;
+    gap: 0.6rem;
   }
 
   app-verification-code {
@@ -35,73 +49,57 @@
   }
 }
 
-/* ---------------- Código de verificación de visitantes ----------------
-   Ocupa el centro de la barra. Solo se renderiza con
-   [showVerificationCode]="true", que hoy enciende únicamente el portal del
-   residente. */
-
-.code-section {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.3rem 0.3rem 0.3rem 0.9rem;
-  border: 1px solid var(--color-accent-border);
-  border-radius: 10px;
-  background: var(--color-accent-soft);
-}
-
-.code-value {
-  color: var(--text-primary);
-  font-size: 1.35rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.22em;
-  line-height: 1;
-}
-
-/* El botón también muestra el tiempo restante: el código no se puede cambiar
-   a mano, solo rota al agotarse la ventana. */
-.code-copy {
-  display: flex;
+.hamburger {
+  display: none;
   flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--color-accent-border);
-  border-radius: 7px;
-  background: transparent;
-  color: var(--color-accent);
+  gap: 4px;
+  background: none;
+  border: none;
   cursor: pointer;
-  line-height: 1.1;
-}
+  padding: 5px;
 
-.code-copy:hover {
-  background: var(--color-accent);
-  color: var(--on-accent);
-}
-
-.code-copy-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.code-timer {
-  font-size: 0.65rem;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.75;
-}
-
-@media (max-width: 720px) {
-  .navbar {
-    flex-wrap: wrap;
-    gap: 0.6rem;
+  .hamburger-bar {
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-primary, #e2e8f0);
+    border-radius: 2px;
   }
 
-  .code-section {
-    order: 3;
-    flex: 1 1 100%;
-    justify-content: center;
+  @media (max-width: 768px) {
+    display: flex;
+  }
+}
+
+/* Estilos de Escritorio */
+@media (min-width: 769px) {
+  .right-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+/* Estilos de Móvil */
+@media (max-width: 768px) {
+  .right-section {
+    display: none;
+    /* Oculto por defecto */
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 100%;
+    background-color: var(--bg-card, #1e293b);
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    align-items: center;
+    gap: 1rem;
+
+    &.active {
+      display: flex;
+      /* Se muestra solo con la clase active */
+    }
   }
 }
 
@@ -109,26 +107,34 @@ button {
   background-color: transparent;
   color: var(--color-accent, #38bdf8);
   border: 1px solid var(--color-accent, #38bdf8);
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+  font-size: 0.8rem;
   transition: all 0.2s;
+  white-space: nowrap;
 
   &:hover {
     background-color: var(--color-accent, #38bdf8);
-    color: var(--bg-card, #1e293b);
+    color: var(--bg-card, #0f172a);
   }
 }
 
 .user-profile {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 8px;
   transition: background-color 0.2s;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.25rem;
+  }
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -136,8 +142,8 @@ button {
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -145,13 +151,15 @@ button {
 .user-info {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .user-name {
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .user-role {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   opacity: 0.7;
 }

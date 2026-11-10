@@ -73,3 +73,20 @@ body {
     -webkit-font-smoothing: antialiased;
     font-feature-settings: 'liga';
 }
+/* Corrección global para asegurar que el menú móvil del Sidebar flote correctamente en cualquier vista */
+@media (max-width: 1024px) {
+  /* Si el sidebar tiene la clase mobile-open activa, forzamos la capa superior global */
+  app-sidebar {
+    position: relative;
+    z-index: 99999;
+    
+    aside.mobile-open {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 260px !important;
+      height: 100vh !important;
+      z-index: 100000 !important;
+    }
+  }
+}

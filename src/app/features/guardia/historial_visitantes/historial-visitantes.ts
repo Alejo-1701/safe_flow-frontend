@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { SidebarComponent } from '@shared/components/sidebar/sidebar';
 import { DetalleModalComponent } from './detalle-modal';
 
 export interface RegistroVisitante {
@@ -21,11 +23,37 @@ export interface RegistroVisitante {
 @Component({
   selector: 'app-historial-visitantes',
   standalone: true,
-  imports: [CommonModule, DetalleModalComponent],
+  imports: [CommonModule, FormsModule, SidebarComponent, DetalleModalComponent],
   templateUrl: './historial-visitantes.html',
   styleUrls: ['./historial-visitantes.scss']
 })
 export class HistorialVisitantesComponent {
+  private readonly router = inject(Router);
+
+  /* ---------- Datos del guardia y navegación para el Sidebar compartido ---------- */
+  readonly guardia = {
+    nombre: 'Carlos Rodríguez',
+    nombres: 'Carlos Andrés',
+    apellidos: 'Rodríguez Peña',
+    telefono: '+57 312 458 9201',
+    email: 'carlos.rodriguez@safeflow.co',
+    cargo: 'Guarda de seguridad',
+    turno: 'Turno A',
+    avatarUrl: ''
+  };
+
+  guardiaEditando = { ...this.guardia };
+
+  readonly navItems = [
+    { label: 'Dashboard', route: '/guardia', icon: 'dashboard' },
+    { label: 'Recaudos', route: '/guardia/arqueo', icon: 'payments' },
+    { label: 'Visitantes', route: '/guardia/historial-visitantes', icon: 'groups' }
+  ];
+
+  /* ---------- Modales y Estados ---------- */
+  readonly modalActualizarAbierto = signal(false);
+  readonly modalCierreAbierto = signal(false);
+
   readonly busqueda = signal('');
   readonly fechaSeleccionada = signal('');
   readonly tipoSeleccionado = signal('Todos');
@@ -266,8 +294,6 @@ export class HistorialVisitantesComponent {
 
   readonly registroDetalle = signal<RegistroVisitante | null>(null);
 
-  constructor(private readonly router: Router) {}
-
   cambiarBusqueda(valor: string): void {
     this.busqueda.set(valor);
     this.pagina.set(1);
@@ -353,17 +379,35 @@ export class HistorialVisitantesComponent {
     URL.revokeObjectURL(url);
   }
 
-  cerrarSesion(): void {
-    this.router.navigate(['/auth']);
+  actualizarDatos(): void {
+    this.guardiaEditando = { ...this.guardia };
+    this.modalActualizarAbierto.set(true);
   }
 
-  navegarA(seccion: string): void {
-    if (seccion === 'Dashboard') {
-      this.router.navigate(['/guardia']);
-    } else if (seccion === 'Visitantes') {
-      this.router.navigate(['/guardia/historial-visitantes']);
-    } else if (seccion === 'Recaudos') {
-      console.info('La ruta de Recaudos está pendiente de configurar.');
-    }
+  cerrarModalActualizar(): void {
+    this.modalActualizarAbierto.set(false);
+  }
+
+  guardarCambios(): void {
+    this.guardia.nombres = this.guardiaEditando.nombres;
+    this.guardia.apellidos = this.guardiaEditando.apellidos;
+    this.guardia.nombre = `${this.guardiaEditando.nombres} ${this.guardiaEditando.apellidos}`;
+    this.guardia.telefono = this.guardiaEditando.telefono;
+    this.guardia.email = this.guardiaEditando.email;
+
+    this.modalActualizarAbierto.set(false);
+  }
+
+  cerrarSesion(): void {
+    this.modalCierreAbierto.set(true);
+  }
+
+  cerrarModalCierre(): void {
+    this.modalCierreAbierto.set(false);
+  }
+
+  confirmarCierreSesion(): void {
+    this.modalCierreAbierto.set(false);
+    this.router.navigate(['/auth']);
   }
 }

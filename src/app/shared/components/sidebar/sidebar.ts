@@ -24,17 +24,22 @@ export interface UserProfile {
 })
 export class SidebarComponent {
   @Input() basePath: string = '/admin';
+  @Input() variant?: string; // Soporta variant="guardia" de forma opcional
 
   @Input() currentUser: UserProfile = {
     name: 'Admin Juan',
     role: 'Super Admin'
   };
 
-  // Soporta tanto [customNavItems] como [navItems] opcionales
   @Input() customNavItems?: NavItem[];
   @Input() navItems?: NavItem[];
 
-  // Nuevo: Output para permitir que cada módulo controle su propia salida sin afectar a los demás
+  // Opcionales específicos para tu pantalla (por defecto desactivados para otros módulos)
+  @Input() showUpdateData: boolean = false;
+  @Output() updateDataClick = new EventEmitter<void>();
+  @Output() logoutClick = new EventEmitter<void>();
+
+  // Output legacy por si otros módulos usan onLogout
   @Output() onLogout = new EventEmitter<void>();
 
   defaultNavItems: NavItem[] = [
@@ -106,12 +111,18 @@ export class SidebarComponent {
     this.isMobileMenuOpen = false;
   }
 
+  triggerUpdateData(): void {
+    if (this.updateDataClick.observed) {
+      this.updateDataClick.emit();
+    }
+  }
+
   logout(): void {
-    if (this.onLogout.observed) {
-      // Si el componente padre (tu módulo) está escuchando el evento, lo emite
+    if (this.logoutClick.observed) {
+      this.logoutClick.emit();
+    } else if (this.onLogout.observed) {
       this.onLogout.emit();
     } else {
-      // Comportamiento por defecto seguro para tus compañeros
       console.log('Cerrando sesión predeterminada...');
       this.router.navigate(['/auth']);
     }
