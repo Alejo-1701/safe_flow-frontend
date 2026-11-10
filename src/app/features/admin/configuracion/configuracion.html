@@ -193,7 +193,7 @@
                   <button
                     type="button"
                     [ngClass]="user.activo ? 'btn-text-danger' : 'btn-text-success'"
-                    (click)="toggleUserStatus(user)">
+                    (click)="pedirConfirmacionEstadoUser(user)">
                     {{ user.activo ? 'Inhabilitar' : 'Habilitar' }}
                   </button>
                 </td>
@@ -269,7 +269,7 @@
 
     <!-- Barra Inferior de Acciones Globales -->
     <footer class="settings-actions-bar">
-      <button type="button" class="btn-cancel" (click)="cancelChanges()">
+      <button type="button" class="btn-cancel" (click)="pedirConfirmacionCancelar()">
         Cancelar Cambios
       </button>
 
@@ -341,3 +341,61 @@
     </footer>
   </div>
 </div>
+
+<!-- ========================================================= -->
+<!-- Modal 2: Confirmación de Cancelación Cambios              -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isConfirmCancelOpen" (click)="closeConfirmCancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Descartar Cambios</h2>
+      <button type="button" class="btn-close" (click)="closeConfirmCancel()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+    <div class="modal-body">
+      <p style="color: #e2e8f0; font-size: 0.95rem; margin: 0;">¿Desea descartar los cambios no guardados y restaurar los valores iniciales?</p>
+    </div>
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeConfirmCancel()">Permanecer</button>
+      <button type="button" class="btn-submit" style="background-color: #ef4444; color: #fff;" (click)="ejecutarCancelarCambios()">Sí, Descartar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- Modal 3: Confirmación de Habilitar / Inhabilitar Usuario  -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isConfirmUserStatusOpen && userToToggle" (click)="closeConfirmUserStatus()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>{{ userToToggle.activo ? 'Inhabilitar Usuario' : 'Habilitar Usuario' }}</h2>
+      <button type="button" class="btn-close" (click)="closeConfirmUserStatus()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+    <div class="modal-body">
+      <p style="color: #e2e8f0; font-size: 0.95rem; margin: 0;">
+        ¿Está seguro que desea {{ userToToggle.activo ? 'inhabilitar' : 'habilitar' }} al usuario <strong>{{ userToToggle.nombre }}</strong>?
+      </p>
+    </div>
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeConfirmUserStatus()">Cancelar</button>
+      <button type="button" class="btn-submit" [style.background-color]="userToToggle.activo ? '#ef4444' : '#22c55e'" style="color: #fff;" (click)="ejecutarCambioEstadoUser()">
+        Sí, {{ userToToggle.activo ? 'Inhabilitar' : 'Habilitar' }}
+      </button>
+    </footer>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- Modal 4: Componente Global de Mensajes (Éxito / Error)    -->
+<!-- ========================================================= -->
+<app-modal
+  *ngIf="isSuccessModalOpen"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  [type]="modalType"
+  buttonText="Aceptar"
+  (close)="closeSuccessModal()">
+</app-modal>

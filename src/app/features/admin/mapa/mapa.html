@@ -11,10 +11,16 @@
       </div>
 
       <div class="header-actions">
-        <!-- Buscador general -->
+        <!-- Buscador general limitado a 6 caracteres -->
         <div class="search-box">
           <span class="material-symbols-outlined search-icon">search</span>
-          <input type="text" placeholder="Buscar placa..." [(ngModel)]="searchQuery" />
+          <input
+            type="text"
+            placeholder="Buscar placa (máx. 6 carac.)..."
+            [value]="searchQuery"
+            (input)="onSearchInput($event)"
+            maxlength="6"
+          />
         </div>
 
         <!-- Botón que redirige a Solicitudes -->
@@ -28,7 +34,7 @@
     <!-- Tarjetas de Estadísticas Reactivas -->
     <section class="stats-grid-map">
       <app-stat-card
-        title="OCUPACIÓN CARROS"
+        title="% DE OCUPACIÓN"
         [value]="occupiedCarsCount + '/100'"
         trendType="neutral"
         icon="material-symbols-outlined icon-blue icon-car">

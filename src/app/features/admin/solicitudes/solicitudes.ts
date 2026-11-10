@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
+import { Modal } from '@shared/components/modal/modal';
 import { ParkingService, SolicitudItem, ParkingSlot } from '@shared/services/parking.service';
 
 @Component({
   selector: 'app-solicitudes',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, SidebarComponent, Modal],
   templateUrl: './solicitudes.html',
   styleUrls: ['./solicitudes.scss']
 })
@@ -30,6 +31,13 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   isAsignarModalOpen: boolean = false;
   isPerfilModalOpen: boolean = false;
+  isConfirmRechazoOpen: boolean = false;
+  isSuccessModalOpen: boolean = false;
+
+  modalTitle: string = '¡Operación Exitosa!';
+  modalMessage: string = '';
+  modalType: 'success' | 'danger' = 'success';
+
   isActionMenuOpenId: number | null = null;
   selectedSolicitud: SolicitudItem | null = null;
   selectedEspacioCelda: string = '';
@@ -92,7 +100,10 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   openAsignarModal(solicitud: SolicitudItem | null = this.siguienteEnTurno): void {
     if (!solicitud) {
-      alert('No hay solicitudes pendientes.');
+      this.modalTitle = 'Atención';
+      this.modalMessage = 'No hay solicitudes pendientes en este momento.';
+      this.modalType = 'danger';
+      this.isSuccessModalOpen = true;
       return;
     }
 
@@ -113,17 +124,26 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   confirmarAsignacion(): void {
     if (!this.selectedSolicitud || !this.selectedEspacioCelda) {
-      alert('Debe seleccionar un espacio disponible.');
+      this.modalTitle = 'Atención';
+      this.modalMessage = 'Debe seleccionar un espacio disponible para continuar.';
+      this.modalType = 'danger';
+      this.isSuccessModalOpen = true;
       return;
     }
 
     const exito = this.parkingService.asignarEspacio(this.selectedSolicitud.id, this.selectedEspacioCelda);
 
     if (exito) {
-      alert(`¡Asignación exitosa al espacio #${this.selectedEspacioCelda}! Sincronizado con el Mapa.`);
       this.closeAsignarModal();
+      this.modalTitle = '¡Asignación Exitosa!';
+      this.modalMessage = `Espacio #${this.selectedEspacioCelda} asignado correctamente. Sincronizado con el Mapa.`;
+      this.modalType = 'success';
+      this.isSuccessModalOpen = true;
     } else {
-      alert('Error: El espacio seleccionado ya no está disponible.');
+      this.modalTitle = 'Error de Asignación';
+      this.modalMessage = 'El espacio seleccionado ya no se encuentra disponible.';
+      this.modalType = 'danger';
+      this.isSuccessModalOpen = true;
     }
   }
 
@@ -140,15 +160,36 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
   }
 
   contactarResidente(solicitud: SolicitudItem): void {
-    alert(`Abriendo canal de comunicación con ${solicitud.residenteNombre} al teléfono ${solicitud.telefono}...`);
+    this.modalTitle = 'Canal de Comunicación';
+    this.modalMessage = `Abriendo canal de contacto con ${solicitud.residenteNombre} al teléfono ${solicitud.telefono}...`;
+    this.modalType = 'success';
+    this.isSuccessModalOpen = true;
     this.closeActionMenu();
   }
 
-  rechazarSolicitud(solicitud: SolicitudItem): void {
-    if (confirm(`¿Está seguro de rechazar la solicitud de parqueadero para ${solicitud.residenteNombre}?`)) {
-      solicitud.estado = 'APROBADA';
-      alert('Solicitud rechazada y archivada.');
-    }
+  pedirConfirmacionRechazo(solicitud: SolicitudItem): void {
+    this.selectedSolicitud = solicitud;
+    this.isConfirmRechazoOpen = true;
     this.closeActionMenu();
+  }
+
+  closeConfirmRechazo(): void {
+    this.isConfirmRechazoOpen = false;
+    this.selectedSolicitud = null;
+  }
+
+  ejecutarRechazo(): void {
+    if (this.selectedSolicitud) {
+      this.selectedSolicitud.estado = 'APROBADA'; // Marca como finalizada/archivada en la lista
+      this.closeConfirmRechazo();
+      this.modalTitle = 'Solicitud Rechazada';
+      this.modalMessage = 'La solicitud ha sido rechazada y archivada correctamente.';
+      this.modalType = 'success';
+      this.isSuccessModalOpen = true;
+    }
+  }
+
+  closeSuccessModal(): void {
+    this.isSuccessModalOpen = false;
   }
 }

@@ -41,7 +41,7 @@ export class MapaComponent implements OnInit, OnDestroy {
 
   constructor(
     private parkingService: ParkingService,
-    private router: Router // Inyectamos el Router para redireccionar
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -64,6 +64,14 @@ export class MapaComponent implements OnInit, OnDestroy {
   // --- Redirección a Solicitudes ---
   goToSolicitudes(): void {
     this.router.navigate(['/admin/solicitudes']);
+  }
+
+  // --- Control estricto de búsqueda de placa (máximo 6 caracteres) ---
+  onSearchInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const cleanValue = inputElement.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 6);
+    this.searchQuery = cleanValue;
+    inputElement.value = cleanValue;
   }
 
   // --- Getters Reactivos para las Vistas (Paginación) ---
@@ -107,10 +115,8 @@ export class MapaComponent implements OnInit, OnDestroy {
 
   onSpaceClick(space: ParkingSlot): void {
     if (space.estado === 'libre') {
-      // Si la celda está libre, redirigimos a solicitudes para asignar
       this.goToSolicitudes();
     } else {
-      // Si está ocupada/asignada, mostramos el modal de detalle
       this.selectedSpace = space;
       this.isDetailModalOpen = true;
     }

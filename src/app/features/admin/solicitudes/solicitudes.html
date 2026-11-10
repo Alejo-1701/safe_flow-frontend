@@ -130,7 +130,7 @@
                   <button type="button" (click)="contactarResidente(item)">
                     <span class="material-symbols-outlined">chat</span> Contactar
                   </button>
-                  <button type="button" class="danger" (click)="rechazarSolicitud(item)">
+                  <button type="button" class="danger" (click)="pedirConfirmacionRechazo(item)">
                     <span class="material-symbols-outlined">cancel</span> Rechazar
                   </button>
                 </div>
@@ -263,3 +263,38 @@
     </footer>
   </div>
 </div>
+
+<!-- ========================================================= -->
+<!-- Modal 3: Confirmación de Rechazo                          -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isConfirmRechazoOpen && selectedSolicitud" (click)="closeConfirmRechazo()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Confirmar Rechazo de Solicitud</h2>
+      <button type="button" class="btn-close" (click)="closeConfirmRechazo()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+    <div class="modal-body">
+      <p style="color: #e2e8f0; font-size: 0.95rem; margin: 0;">
+        ¿Está seguro de rechazar la solicitud de parqueadero para <strong>{{ selectedSolicitud.residenteNombre }}</strong>? Esta acción archivará el registro.
+      </p>
+    </div>
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeConfirmRechazo()">Cancelar</button>
+      <button type="button" class="btn-submit" style="background-color: #ef4444; color: #fff;" (click)="ejecutarRechazo()">Sí, Rechazar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- Modal 4: Componente Global de Mensajes (Éxito / Error)      -->
+<!-- ========================================================= -->
+<app-modal
+  *ngIf="isSuccessModalOpen"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  [type]="modalType"
+  buttonText="Aceptar"
+  (close)="closeSuccessModal()">
+</app-modal>

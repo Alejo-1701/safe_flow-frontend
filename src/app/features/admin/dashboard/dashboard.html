@@ -106,7 +106,7 @@
 </div>
 
 <!-- ========================================================= -->
-<!-- 1. Modal Nativa de Historial Amplio                       -->
+<!-- 1. Modal Nativa de Historial Amplio                        -->
 <!-- ========================================================= -->
 <div class="modal-backdrop" *ngIf="isHistoryModalOpen" (click)="closeHistoryModal()">
   <div class="modal-container modal-large" (click)="$event.stopPropagation()">
@@ -229,15 +229,24 @@
 </div>
 
 <!-- ========================================================= -->
-<!-- 3. Componente Modal de Confirmación de Éxito              -->
+<!-- 3. Componentes Modales de Confirmación / Error Dinámicos  -->
 <!-- ========================================================= -->
 <app-modal
   *ngIf="isSuccessModalOpen"
-  title="¡Registro Exitoso!"
-  message="El residente ha sido registrado y habilitado en el sistema correctamente."
+  [title]="successTitle"
+  [message]="successMessage"
   type="success"
   buttonText="Aceptar"
   (close)="closeSuccessModal()">
+</app-modal>
+
+<app-modal
+  *ngIf="isErrorModalOpen"
+  title="Atención"
+  [message]="errorMessage"
+  type="danger"
+  buttonText="Entendido"
+  (close)="closeErrorModal()">
 </app-modal>
 
 <!-- ========================================================= -->

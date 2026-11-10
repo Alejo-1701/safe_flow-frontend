@@ -59,6 +59,11 @@ export class DashboardComponent {
   searchTerm: string = '';
   isRegisterModalOpen: boolean = false;
   isSuccessModalOpen: boolean = false;
+  isErrorModalOpen: boolean = false;
+  errorMessage: string = '';
+  successTitle: string = '¡Operación Exitosa!';
+  successMessage: string = 'La acción se ha completado correctamente.';
+
   isHistoryModalOpen: boolean = false;
   isUserDetailModalOpen: boolean = false;
   selectedUser: UserAccessItem | null = null;
@@ -156,12 +161,21 @@ export class DashboardComponent {
 
   updateResident(): void {
     if (this.selectedUser) {
+      if (!this.selectedUser.residenteNombre || !this.selectedUser.residenteEmail || !this.selectedUser.documento) {
+        this.errorMessage = 'Por favor complete los campos obligatorios del residente.';
+        this.isErrorModalOpen = true;
+        return;
+      }
+
       const index = this.usersList.findIndex(u => u.documento === this.selectedUser?.documento);
       if (index !== -1) {
         this.usersList[index] = { ...this.selectedUser };
       }
       this.closeUserDetail();
-      alert('Información del residente actualizada correctamente.');
+
+      this.successTitle = '¡Actualización Exitosa!';
+      this.successMessage = 'La información del residente ha sido modificada correctamente.';
+      this.isSuccessModalOpen = true;
     }
   }
 
@@ -184,7 +198,8 @@ export class DashboardComponent {
 
   submitRegisterResident(): void {
     if (!this.newResident.numDocumento || !this.newResident.primerNombre || !this.newResident.primerApellido || !this.newResident.email || !this.newResident.torre || !this.newResident.numeroApto) {
-      alert('Por favor complete todos los campos obligatorios.');
+      this.errorMessage = 'Por favor complete todos los campos obligatorios del formulario.';
+      this.isErrorModalOpen = true;
       return;
     }
 
@@ -203,11 +218,17 @@ export class DashboardComponent {
     });
 
     this.closeRegisterModal();
+    this.successTitle = '¡Registro Exitoso!';
+    this.successMessage = 'El residente ha sido registrado y habilitado en el sistema correctamente.';
     this.isSuccessModalOpen = true;
   }
 
   closeSuccessModal(): void {
     this.isSuccessModalOpen = false;
+  }
+
+  closeErrorModal(): void {
+    this.isErrorModalOpen = false;
   }
 
   exportData(): void {

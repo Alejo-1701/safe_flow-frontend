@@ -203,7 +203,7 @@
         <div class="observations-list">
           <div class="obs-item" *ngFor="let obs of selectedIncidencia.observaciones; let i = index">
             <span>{{ obs }}</span>
-            <button type="button" class="btn-del-obs" title="Eliminar observación" (click)="eliminarObservacion(i)">
+            <button type="button" class="btn-del-obs" title="Eliminar observación" (click)="pedirConfirmacionEliminarObs(i)">
               <span class="material-symbols-outlined">delete</span>
             </button>
           </div>
@@ -263,3 +263,36 @@
     </footer>
   </div>
 </div>
+
+<!-- ========================================================= -->
+<!-- 3. Modal de Confirmación para Eliminar Observación        -->
+<!-- ========================================================= -->
+<div class="modal-backdrop" *ngIf="isConfirmDelObsOpen" (click)="closeConfirmDelObs()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Confirmar Eliminación</h2>
+      <button type="button" class="btn-close" (click)="closeConfirmDelObs()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+    <div class="modal-body">
+      <p style="color: #e2e8f0; font-size: 0.95rem; margin: 0;">¿Desea eliminar esta observación del registro?</p>
+    </div>
+    <footer class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeConfirmDelObs()">Cancelar</button>
+      <button type="button" class="btn-submit" style="background-color: #ef4444; color: #fff;" (click)="ejecutarEliminarObs()">Sí, Eliminar</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 4. Componente Global de Mensajes (Éxito / Error)          -->
+<!-- ========================================================= -->
+<app-modal
+  *ngIf="isSuccessModalOpen"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  [type]="modalType"
+  buttonText="Aceptar"
+  (close)="closeSuccessModal()">
+</app-modal>

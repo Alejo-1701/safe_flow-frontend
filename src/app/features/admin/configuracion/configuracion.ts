@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
+import { Modal } from '@shared/components/modal/modal';
 
 export interface TariffItem {
   tipoVehiculo: string;
@@ -26,7 +27,8 @@ export interface PersonalUser {
   imports: [
     CommonModule,
     FormsModule,
-    SidebarComponent
+    SidebarComponent,
+    Modal
   ],
   templateUrl: './configuracion.html',
   styleUrls: ['./configuracion.scss']
@@ -61,7 +63,7 @@ export class ConfiguracionComponent {
     'Generar Alerta Crítica'
   ];
 
-  // --- 3. Accesos y Personal (Vigilantes y Admins) ---
+  // --- 3. Accesos y Personal ---
   usuariosPersonal: PersonalUser[] = [
     {
       id: 1,
@@ -83,8 +85,18 @@ export class ConfiguracionComponent {
     }
   ];
 
-  // Control de Modal "Nuevo Usuario / Vigilante"
+  // Modales
   isNewUserModalOpen: boolean = false;
+  isConfirmCancelOpen: boolean = false;
+  isConfirmUserStatusOpen: boolean = false;
+  isSuccessModalOpen: boolean = false;
+
+  modalTitle: string = '¡Operación Exitosa!';
+  modalMessage: string = '';
+  modalType: 'success' | 'danger' = 'success';
+
+  userToToggle: PersonalUser | null = null;
+
   nuevoUsuarioForm = {
     nombre: '',
     cedula: '',
@@ -99,34 +111,37 @@ export class ConfiguracionComponent {
   reporteOcupacionFrecuencia: string = 'Semanal';
 
   // ==========================================
-  // MÉTODOS Y ACCIONES FUNCIONALES
+  // MÉTODOS Y ACCIONES FUNCIONALES CON MODALES
   // ==========================================
 
   toggleTariffEdit(): void {
     if (this.isEditingTariffs) {
-      // Validaciones lógicas de cobros
       for (let t of this.tarifas) {
         if (t.tarifaMinuto <= 0 || t.tiempoGracia < 0) {
-          alert(`Error en tarifa de ${t.tipoVehiculo}: Los valores económicos deben ser mayores a 0.`);
+          this.modalTitle = 'Atención';
+          this.modalMessage = `Error en tarifa de ${t.tipoVehiculo}: Los valores económicos deben ser mayores a 0.`;
+          this.modalType = 'danger';
+          this.isSuccessModalOpen = true;
           return;
         }
       }
-      alert('Parámetros económicos actualizados correctamente.');
+      this.modalTitle = '¡Actualización Exitosa!';
+      this.modalMessage = 'Parámetros económicos actualizados correctamente.';
+      this.modalType = 'success';
+      this.isSuccessModalOpen = true;
     }
     this.isEditingTariffs = !this.isEditingTariffs;
   }
 
   togglePushAlert(): void {
     this.alertasPushAdmin = !this.alertasPushAdmin;
-    console.log(`Alertas Push Admin cambiadas a: ${this.alertasPushAdmin}`);
   }
 
   toggleEmailAlert(): void {
     this.alertasEmailPropietario = !this.alertasEmailPropietario;
-    console.log(`Alertas Email Propietarios cambiadas a: ${this.alertasEmailPropietario}`);
   }
 
-  // --- Gestión de Personal (Vigilantes) ---
+  // --- Gestión de Personal ---
   openNewUserModal(): void {
     this.nuevoUsuarioForm = {
       nombre: '',
@@ -144,11 +159,13 @@ export class ConfiguracionComponent {
 
   registrarNuevoUsuario(): void {
     if (!this.nuevoUsuarioForm.nombre.trim() || !this.nuevoUsuarioForm.cedula.trim() || !this.nuevoUsuarioForm.password.trim()) {
-      alert('Por favor complete todos los campos obligatorios (Nombre, Cédula y Contraseña).');
+      this.modalTitle = 'Atención';
+      this.modalMessage = 'Por favor complete todos los campos obligatorios (Nombre, Cédula y Contraseña).';
+      this.modalType = 'danger';
+      this.isSuccessModalOpen = true;
       return;
     }
 
-    // Generar iniciales automáticamente
     const partes = this.nuevoUsuarioForm.nombre.trim().split(' ');
     const iniciales = partes.length >= 2
       ? (partes[0][0] + partes[1][0]).toUpperCase()
@@ -165,53 +182,77 @@ export class ConfiguracionComponent {
     };
 
     this.usuariosPersonal.push(nuevoRegistro);
-    alert(`¡Usuario ${nuevoRegistro.nombre} (${nuevoRegistro.rol}) registrado con éxito en la base de datos!`);
     this.closeNewUserModal();
+
+    this.modalTitle = '¡Usuario Registrado!';
+    this.modalMessage = `¡Usuario ${nuevoRegistro.nombre} (${nuevoRegistro.rol}) registrado con éxito en la base de datos!`;
+    this.modalType = 'success';
+    this.isSuccessModalOpen = true;
   }
 
-  toggleUserStatus(user: PersonalUser): void {
-    user.activo = !user.activo;
-    const estadoStr = user.activo ? 'habilitado' : 'inhabilitado';
-    alert(`El usuario ${user.nombre} ha sido ${estadoStr} correctamente.`);
+  pedirConfirmacionEstadoUser(user: PersonalUser): void {
+    this.userToToggle = user;
+    this.isConfirmUserStatusOpen = true;
   }
 
-  // --- Botones Globales ---
-  cancelChanges(): void {
-    if (confirm('¿Desea descartar los cambios no guardados y restaurar los valores iniciales?')) {
-      this.isEditingTariffs = false;
-      this.tarifas = [
-        { tipoVehiculo: 'Carros', tarifaMinuto: 100, tiempoGracia: 15 },
-        { tipoVehiculo: 'Motos', tarifaMinuto: 50, tiempoGracia: 10 }
-      ];
-      this.datosLegales = {
-        razonSocial: 'ParkResidencial S.A.S',
-        nit: '900.123.456-7',
-        resolucionDian: 'Res. 187600012345 del 2023/01/15'
-      };
-      this.alertasPushAdmin = true;
-      this.alertasEmailPropietario = false;
-      this.umbralesMalUso = { tiempoHoras: 48, accionAutomatica: 'Notificar Guarda' };
-      alert('Se han descartado los cambios.');
+  closeConfirmUserStatus(): void {
+    this.isConfirmUserStatusOpen = false;
+    this.userToToggle = null;
+  }
+
+  ejecutarCambioEstadoUser(): void {
+    if (this.userToToggle) {
+      this.userToToggle.activo = !this.userToToggle.activo;
+      const estadoStr = this.userToToggle.activo ? 'habilitado' : 'inhabilitado';
+      const nombre = this.userToToggle.nombre;
+      this.closeConfirmUserStatus();
+
+      this.modalTitle = 'Estado Actualizado';
+      this.modalMessage = `El usuario ${nombre} ha sido ${estadoStr} correctamente.`;
+      this.modalType = 'success';
+      this.isSuccessModalOpen = true;
     }
   }
 
-  saveGlobalConfiguration(): void {
-    const configGlobal = {
-      empresa: this.datosLegales,
-      tarifasCobro: this.tarifas,
-      alertasNotificaciones: {
-        push: this.alertasPushAdmin,
-        email: this.alertasEmailPropietario,
-        umbrales: this.umbralesMalUso
-      },
-      personalAutorizado: this.usuariosPersonal,
-      reportes: {
-        ingresos: this.reporteIngresosFrecuencia,
-        ocupacion: this.reporteOcupacionFrecuencia
-      }
-    };
+  // --- Botones Globales ---
+  pedirConfirmacionCancelar(): void {
+    this.isConfirmCancelOpen = true;
+  }
 
-    console.log('Guardando configuración global:', configGlobal);
-    alert('¡Configuración global guardada y aplicada en el sistema exitosamente!');
+  closeConfirmCancel(): void {
+    this.isConfirmCancelOpen = false;
+  }
+
+  ejecutarCancelarCambios(): void {
+    this.isEditingTariffs = false;
+    this.tarifas = [
+      { tipoVehiculo: 'Carros', tarifaMinuto: 100, tiempoGracia: 15 },
+      { tipoVehiculo: 'Motos', tarifaMinuto: 50, tiempoGracia: 10 }
+    ];
+    this.datosLegales = {
+      razonSocial: 'ParkResidencial S.A.S',
+      nit: '900.123.456-7',
+      resolucionDian: 'Res. 187600012345 del 2023/01/15'
+    };
+    this.alertasPushAdmin = true;
+    this.alertasEmailPropietario = false;
+    this.umbralesMalUso = { tiempoHoras: 48, accionAutomatica: 'Notificar Guarda' };
+    this.closeConfirmCancel();
+
+    this.modalTitle = 'Cambios Descartados';
+    this.modalMessage = 'Se han descartado los cambios y restaurado los valores iniciales.';
+    this.modalType = 'success';
+    this.isSuccessModalOpen = true;
+  }
+
+  saveGlobalConfiguration(): void {
+    this.modalTitle = '¡Configuración Guardada!';
+    this.modalMessage = '¡Configuración global guardada y aplicada en el sistema exitosamente!';
+    this.modalType = 'success';
+    this.isSuccessModalOpen = true;
+  }
+
+  closeSuccessModal(): void {
+    this.isSuccessModalOpen = false;
   }
 }

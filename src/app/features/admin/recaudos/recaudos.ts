@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
 import { StatCardComponent } from '@shared/components/stat-card/stat-card';
+import { Modal } from '@shared/components/modal/modal';
 
 export interface RecaudoItem {
   id: number;
@@ -26,7 +27,8 @@ export interface RecaudoItem {
     CommonModule,
     FormsModule,
     SidebarComponent,
-    StatCardComponent
+    StatCardComponent,
+    Modal
   ],
   templateUrl: './recaudos.html',
   styleUrls: ['./recaudos.scss']
@@ -43,6 +45,7 @@ export class RecaudosComponent implements OnInit {
   // Modales
   isArqueoModalOpen: boolean = false;
   arqueoConciliado: boolean = false;
+  isSuccessModalOpen: boolean = false;
 
   // Lista maestra de recaudos (simulando Base de Datos)
   masterRecaudos: RecaudoItem[] = [
@@ -152,8 +155,12 @@ export class RecaudosComponent implements OnInit {
 
   conciliarArqueo(): void {
     this.arqueoConciliado = true;
-    alert('Arqueo de caja conciliado y confirmado con éxito por el administrador.');
     this.closeArqueoModal();
+    this.isSuccessModalOpen = true; // Sustituye el alert por el modal de éxito
+  }
+
+  closeSuccessModal(): void {
+    this.isSuccessModalOpen = false;
   }
 
   exportarArqueoExcel(): void {

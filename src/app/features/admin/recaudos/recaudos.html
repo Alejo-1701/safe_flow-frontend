@@ -203,3 +203,15 @@
     </footer>
   </div>
 </div>
+
+<!-- ========================================================= -->
+<!-- Modal de Éxito de Conciliación (Sustituye al alert)       -->
+<!-- ========================================================= -->
+<app-modal
+  *ngIf="isSuccessModalOpen"
+  title="¡Conciliación Exitosa!"
+  message="Arqueo de caja conciliado y confirmado con éxito por el administrador."
+  type="success"
+  buttonText="Aceptar"
+  (close)="closeSuccessModal()">
+</app-modal>

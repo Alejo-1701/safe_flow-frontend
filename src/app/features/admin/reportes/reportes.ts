@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { SidebarComponent } from '@shared/components/sidebar/sidebar';
+import { Modal } from '@shared/components/modal/modal';
 
 export interface IncidenciaItem {
   id: string;
@@ -21,7 +22,8 @@ export interface IncidenciaItem {
   imports: [
     CommonModule,
     FormsModule,
-    SidebarComponent
+    SidebarComponent,
+    Modal
   ],
   templateUrl: './reportes.html',
   styleUrls: ['./reportes.scss']
@@ -33,15 +35,22 @@ export class ReportesComponent implements OnInit {
 
   // Paginación real
   currentPage: number = 1;
-  pageSize: number = 4; // Número de registros por página
+  pageSize: number = 4;
 
-  // Control de Modales y Menús desplegables
+  // Control de Modales
   isGestionModalOpen: boolean = false;
   isCitacionModalOpen: boolean = false;
+  isConfirmDelObsOpen: boolean = false;
+  isSuccessModalOpen: boolean = false;
   isActionMenuOpenId: string | null = null;
+
+  modalTitle: string = '¡Operación Exitosa!';
+  modalMessage: string = '';
+  modalType: 'success' | 'danger' = 'success';
 
   selectedIncidencia: IncidenciaItem | null = null;
   nuevaObservacionText: string = '';
+  obsIndexToDelete: number | null = null;
 
   // Formulario para citación por correo
   citacionForm = {
@@ -107,7 +116,6 @@ export class ReportesComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  // --- Métricas Calculadas del Dashboard Superior ---
   get totalReportesCount(): number {
     return this.masterIncidencias.length;
   }
@@ -120,7 +128,6 @@ export class ReportesComponent implements OnInit {
     return this.masterIncidencias.filter(i => i.estado === 'Resuelto').length;
   }
 
-  // --- Filtrado Dinámico ---
   get filteredIncidencias(): IncidenciaItem[] {
     return this.masterIncidencias.filter(item => {
       const matchPrioridad = this.filtroPrioridad === 'TODAS' || item.prioridad === this.filtroPrioridad;
@@ -128,7 +135,6 @@ export class ReportesComponent implements OnInit {
     });
   }
 
-  // --- Paginación Real ---
   get totalPages(): number {
     return Math.ceil(this.filteredIncidencias.length / this.pageSize) || 1;
   }
@@ -147,7 +153,7 @@ export class ReportesComponent implements OnInit {
   }
 
   aplicarFiltros(): void {
-    this.currentPage = 1; // Reiniciamos a la página 1 al filtrar
+    this.currentPage = 1;
   }
 
   limpiarFiltros(): void {
@@ -156,7 +162,6 @@ export class ReportesComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  // --- Menú de Acciones (Gestionar) ---
   toggleActionMenu(id: string, event: Event): void {
     event.stopPropagation();
     this.isActionMenuOpenId = this.isActionMenuOpenId === id ? null : id;
@@ -166,7 +171,6 @@ export class ReportesComponent implements OnInit {
     this.isActionMenuOpenId = null;
   }
 
-  // --- Modal de Gestión Integral ---
   openGestionModal(incidencia: IncidenciaItem): void {
     this.selectedIncidencia = incidencia;
     this.nuevaObservacionText = '';
@@ -183,28 +187,48 @@ export class ReportesComponent implements OnInit {
     if (!this.nuevaObservacionText.trim() || !this.selectedIncidencia) return;
     this.selectedIncidencia.observaciones.push(this.nuevaObservacionText.trim());
     this.nuevaObservacionText = '';
-    alert('Observación agregada exitosamente a la bitácora.');
+    this.modalTitle = 'Bitácora Actualizada';
+    this.modalMessage = 'Observación agregada exitosamente a la bitácora.';
+    this.modalType = 'success';
+    this.isSuccessModalOpen = true;
   }
 
-  eliminarObservacion(index: number): void {
-    if (this.selectedIncidencia && confirm('¿Desea eliminar esta observación del registro?')) {
-      this.selectedIncidencia.observaciones.splice(index, 1);
+  pedirConfirmacionEliminarObs(index: number): void {
+    this.obsIndexToDelete = index;
+    this.isConfirmDelObsOpen = true;
+  }
+
+  closeConfirmDelObs(): void {
+    this.isConfirmDelObsOpen = false;
+    this.obsIndexToDelete = null;
+  }
+
+  ejecutarEliminarObs(): void {
+    if (this.selectedIncidencia && this.obsIndexToDelete !== null) {
+      this.selectedIncidencia.observaciones.splice(this.obsIndexToDelete, 1);
+      this.closeConfirmDelObs();
+      this.modalTitle = 'Observación Eliminada';
+      this.modalMessage = 'La observación ha sido removida del registro.';
+      this.modalType = 'success';
+      this.isSuccessModalOpen = true;
     }
   }
 
   cambiarEstado(nuevoEstado: 'Pendiente' | 'En Proceso' | 'Resuelto'): void {
     if (this.selectedIncidencia) {
       this.selectedIncidencia.estado = nuevoEstado;
-      alert(`Estado de la incidencia actualizado a: ${nuevoEstado}`);
+      this.modalTitle = 'Estado Actualizado';
+      this.modalMessage = `Estado de la incidencia actualizado a: ${nuevoEstado}`;
+      this.modalType = 'success';
+      this.isSuccessModalOpen = true;
       this.closeActionMenu();
     }
   }
 
-  // --- Citación a Administración por Correo ---
   openCitacionModal(incidencia: IncidenciaItem): void {
     this.selectedIncidencia = incidencia;
     this.citacionForm = {
-      asunto: `Citación Formal por Incidencia ${incidencia.id} - Safe Flow`,
+      asunto: `Citación Formal por Incidencia ${incidencia.id} - SafeFlow`,
       fechaCita: '',
       horaCita: '',
       mensaje: `Estimado/a ${incidencia.remitente} (${incidencia.torreApto}), se le convoca a la administración para dar solución al reporte presentado.`
@@ -219,27 +243,37 @@ export class ReportesComponent implements OnInit {
 
   enviarCitacionCorreo(): void {
     if (!this.citacionForm.fechaCita || !this.citacionForm.horaCita) {
-      alert('Por favor complete la fecha y hora de la citación.');
+      this.modalTitle = 'Atención';
+      this.modalMessage = 'Por favor complete la fecha y hora de la citación.';
+      this.modalType = 'danger';
+      this.isSuccessModalOpen = true;
       return;
     }
 
-    alert(`¡Citación enviada por correo a ${this.selectedIncidencia?.remitente} exitosamente!`);
     if (this.selectedIncidencia) {
       this.selectedIncidencia.observaciones.push(`Citación por correo programada para el ${this.citacionForm.fechaCita} a las ${this.citacionForm.horaCita}.`);
     }
     this.closeCitacionModal();
+    this.modalTitle = 'Citación Enviada';
+    this.modalMessage = `¡Citación enviada por correo a ${this.selectedIncidencia?.remitente} exitosamente!`;
+    this.modalType = 'success';
+    this.isSuccessModalOpen = true;
   }
 
-  // --- Contactar Residente ---
   contactarPorTelefono(incidencia: IncidenciaItem): void {
-    alert(`Iniciando comunicación telefónica con ${incidencia.remitente} (${incidencia.torreApto})...`);
+    this.modalTitle = 'Comunicación Telefónica';
+    this.modalMessage = `Iniciando comunicación telefónica con ${incidencia.remitente} (${incidencia.torreApto})...`;
+    this.modalType = 'success';
+    this.isSuccessModalOpen = true;
     this.closeActionMenu();
   }
 
-  // --- Exportar Reportes a Archivo CSV ---
   exportarExcel(): void {
     if (this.masterIncidencias.length === 0) {
-      alert('No hay registros para exportar.');
+      this.modalTitle = 'Atención';
+      this.modalMessage = 'No hay registros disponibles para exportar.';
+      this.modalType = 'danger';
+      this.isSuccessModalOpen = true;
       return;
     }
 
@@ -256,5 +290,9 @@ export class ReportesComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  closeSuccessModal(): void {
+    this.isSuccessModalOpen = false;
   }
 }
