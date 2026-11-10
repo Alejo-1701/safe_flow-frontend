@@ -17,8 +17,12 @@
   box-sizing: border-box;
 
   app-sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
     flex-shrink: 0;
     display: block;
+    height: 100vh;
     z-index: 100;
   }
 
@@ -238,5 +242,11 @@
 @media (max-width: 1024px) {
   .guardia-shell {
     flex-direction: column;
+
+    app-sidebar {
+      position: relative;
+      height: auto;
+      align-self: stretch;
+    }
   }
 }
