@@ -62,7 +62,8 @@ export class DashboardComponent {
   isErrorModalOpen: boolean = false;
   errorMessage: string = '';
   successTitle: string = '¡Operación Exitosa!';
-  successMessage: string = 'La acción se ha completado correctamente.';
+  successMessage: string = ' La acción se ha completado correctamente.';
+  modalType: 'success' | 'error' = 'success';
 
   isHistoryModalOpen: boolean = false;
   isUserDetailModalOpen: boolean = false;
@@ -163,6 +164,7 @@ export class DashboardComponent {
     if (this.selectedUser) {
       if (!this.selectedUser.residenteNombre || !this.selectedUser.residenteEmail || !this.selectedUser.documento) {
         this.errorMessage = 'Por favor complete los campos obligatorios del residente.';
+        this.modalType = 'error';
         this.isErrorModalOpen = true;
         return;
       }
@@ -199,6 +201,7 @@ export class DashboardComponent {
   submitRegisterResident(): void {
     if (!this.newResident.numDocumento || !this.newResident.primerNombre || !this.newResident.primerApellido || !this.newResident.email || !this.newResident.torre || !this.newResident.numeroApto) {
       this.errorMessage = 'Por favor complete todos los campos obligatorios del formulario.';
+      this.modalType = 'error';
       this.isErrorModalOpen = true;
       return;
     }
@@ -206,6 +209,7 @@ export class DashboardComponent {
     const nombreCompleto = `${this.newResident.primerNombre} ${this.newResident.primerApellido}`;
     const iniciales = `${this.newResident.primerNombre.charAt(0)}${this.newResident.primerApellido.charAt(0)}`.toUpperCase();
 
+    // Añade el nuevo residente a la tabla de Gestión de Usuarios y Accesos
     this.usersList.unshift({
       unidad: `${this.newResident.torre} - ${this.newResident.numeroApto}`,
       estado: 'ACTIVO',

@@ -106,7 +106,7 @@
 </div>
 
 <!-- ========================================================= -->
-<!-- 1. Modal Nativa de Historial Amplio                        -->
+<!-- 1. Modal Nativa de Historial Amplio -->
 <!-- ========================================================= -->
 <div class="modal-backdrop" *ngIf="isHistoryModalOpen" (click)="closeHistoryModal()">
   <div class="modal-container modal-large" (click)="$event.stopPropagation()">
@@ -149,7 +149,7 @@
 </div>
 
 <!-- ========================================================= -->
-<!-- 2. Modal Nativa de Formulario (Registro)                  -->
+<!-- 2. Modal Nativa de Formulario (Registro) -->
 <!-- ========================================================= -->
 <div class="modal-backdrop" *ngIf="isRegisterModalOpen" (click)="closeRegisterModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
@@ -229,7 +229,7 @@
 </div>
 
 <!-- ========================================================= -->
-<!-- 3. Componentes Modales de Confirmación / Error Dinámicos  -->
+<!-- 3. Componentes Modales de Confirmación / Error Dinámicos -->
 <!-- ========================================================= -->
 <app-modal
   *ngIf="isSuccessModalOpen"
@@ -244,13 +244,13 @@
   *ngIf="isErrorModalOpen"
   title="Atención"
   [message]="errorMessage"
-  type="danger"
+  type="error"
   buttonText="Entendido"
   (close)="closeErrorModal()">
 </app-modal>
 
 <!-- ========================================================= -->
-<!-- 4. Modal Nativa de Detalles / Edición de Residente        -->
+<!-- 4. Modal Nativa de Detalles / Edición de Residente -->
 <!-- ========================================================= -->
 <div class="modal-backdrop" *ngIf="isUserDetailModalOpen && selectedUser" (click)="closeUserDetail()">
   <div class="modal-container" (click)="$event.stopPropagation()">

@@ -29,15 +29,12 @@ export interface IncidenciaItem {
   styleUrls: ['./reportes.scss']
 })
 export class ReportesComponent implements OnInit {
-  // Filtros de búsqueda
-  filtroPrioridad: string = 'TODAS';
+  filtroPrioridad: string = 'TODOS';
   filtroCategoria: string = 'TODAS';
 
-  // Paginación real
   currentPage: number = 1;
   pageSize: number = 4;
 
-  // Control de Modales
   isGestionModalOpen: boolean = false;
   isCitacionModalOpen: boolean = false;
   isConfirmDelObsOpen: boolean = false;
@@ -46,13 +43,12 @@ export class ReportesComponent implements OnInit {
 
   modalTitle: string = '¡Operación Exitosa!';
   modalMessage: string = '';
-  modalType: 'success' | 'danger' = 'success';
+  modalType: 'success' | 'error' = 'success';
 
   selectedIncidencia: IncidenciaItem | null = null;
   nuevaObservacionText: string = '';
   obsIndexToDelete: number | null = null;
 
-  // Formulario para citación por correo
   citacionForm = {
     asunto: '',
     fechaCita: '',
@@ -60,7 +56,6 @@ export class ReportesComponent implements OnInit {
     mensaje: ''
   };
 
-  // Base de datos maestra con múltiples registros reales
   masterIncidencias: IncidenciaItem[] = [
     {
       id: '#INC-4921',
@@ -245,7 +240,7 @@ export class ReportesComponent implements OnInit {
     if (!this.citacionForm.fechaCita || !this.citacionForm.horaCita) {
       this.modalTitle = 'Atención';
       this.modalMessage = 'Por favor complete la fecha y hora de la citación.';
-      this.modalType = 'danger';
+      this.modalType = 'error';
       this.isSuccessModalOpen = true;
       return;
     }
@@ -272,7 +267,7 @@ export class ReportesComponent implements OnInit {
     if (this.masterIncidencias.length === 0) {
       this.modalTitle = 'Atención';
       this.modalMessage = 'No hay registros disponibles para exportar.';
-      this.modalType = 'danger';
+      this.modalType = 'error';
       this.isSuccessModalOpen = true;
       return;
     }

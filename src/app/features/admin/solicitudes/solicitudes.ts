@@ -36,7 +36,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   modalTitle: string = '¡Operación Exitosa!';
   modalMessage: string = '';
-  modalType: 'success' | 'danger' = 'success';
+  modalType: 'success' | 'error' = 'success';
 
   isActionMenuOpenId: number | null = null;
   selectedSolicitud: SolicitudItem | null = null;
@@ -102,7 +102,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     if (!solicitud) {
       this.modalTitle = 'Atención';
       this.modalMessage = 'No hay solicitudes pendientes en este momento.';
-      this.modalType = 'danger';
+      this.modalType = 'error';
       this.isSuccessModalOpen = true;
       return;
     }
@@ -126,7 +126,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     if (!this.selectedSolicitud || !this.selectedEspacioCelda) {
       this.modalTitle = 'Atención';
       this.modalMessage = 'Debe seleccionar un espacio disponible para continuar.';
-      this.modalType = 'danger';
+      this.modalType = 'error';
       this.isSuccessModalOpen = true;
       return;
     }
@@ -142,7 +142,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
     } else {
       this.modalTitle = 'Error de Asignación';
       this.modalMessage = 'El espacio seleccionado ya no se encuentra disponible.';
-      this.modalType = 'danger';
+      this.modalType = 'error';
       this.isSuccessModalOpen = true;
     }
   }
@@ -180,7 +180,7 @@ export class SolicitudesComponent implements OnInit, OnDestroy {
 
   ejecutarRechazo(): void {
     if (this.selectedSolicitud) {
-      this.selectedSolicitud.estado = 'APROBADA'; // Marca como finalizada/archivada en la lista
+      this.selectedSolicitud.estado = 'APROBADA';
       this.closeConfirmRechazo();
       this.modalTitle = 'Solicitud Rechazada';
       this.modalMessage = 'La solicitud ha sido rechazada y archivada correctamente.';

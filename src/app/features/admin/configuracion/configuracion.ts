@@ -34,7 +34,6 @@ export interface PersonalUser {
   styleUrls: ['./configuracion.scss']
 })
 export class ConfiguracionComponent {
-  // --- 1. Parámetros Económicos y Legales ---
   isEditingTariffs: boolean = false;
 
   tarifas: TariffItem[] = [
@@ -48,7 +47,6 @@ export class ConfiguracionComponent {
     resolucionDian: 'Res. 187600012345 del 2023/01/15'
   };
 
-  // --- 2. Notificaciones & Alertas ---
   alertasPushAdmin: boolean = true;
   alertasEmailPropietario: boolean = false;
 
@@ -63,7 +61,6 @@ export class ConfiguracionComponent {
     'Generar Alerta Crítica'
   ];
 
-  // --- 3. Accesos y Personal ---
   usuariosPersonal: PersonalUser[] = [
     {
       id: 1,
@@ -85,7 +82,6 @@ export class ConfiguracionComponent {
     }
   ];
 
-  // Modales
   isNewUserModalOpen: boolean = false;
   isConfirmCancelOpen: boolean = false;
   isConfirmUserStatusOpen: boolean = false;
@@ -93,7 +89,7 @@ export class ConfiguracionComponent {
 
   modalTitle: string = '¡Operación Exitosa!';
   modalMessage: string = '';
-  modalType: 'success' | 'danger' = 'success';
+  modalType: 'success' | 'error' = 'success';
 
   userToToggle: PersonalUser | null = null;
 
@@ -105,14 +101,9 @@ export class ConfiguracionComponent {
     password: ''
   };
 
-  // --- 4. Auditoría y Reportes Automáticos ---
   frecuenciasReporte = ['Diario', 'Semanal', 'Mensual'];
   reporteIngresosFrecuencia: string = 'Diario';
   reporteOcupacionFrecuencia: string = 'Semanal';
-
-  // ==========================================
-  // MÉTODOS Y ACCIONES FUNCIONALES CON MODALES
-  // ==========================================
 
   toggleTariffEdit(): void {
     if (this.isEditingTariffs) {
@@ -120,7 +111,7 @@ export class ConfiguracionComponent {
         if (t.tarifaMinuto <= 0 || t.tiempoGracia < 0) {
           this.modalTitle = 'Atención';
           this.modalMessage = `Error en tarifa de ${t.tipoVehiculo}: Los valores económicos deben ser mayores a 0.`;
-          this.modalType = 'danger';
+          this.modalType = 'error';
           this.isSuccessModalOpen = true;
           return;
         }
@@ -141,7 +132,6 @@ export class ConfiguracionComponent {
     this.alertasEmailPropietario = !this.alertasEmailPropietario;
   }
 
-  // --- Gestión de Personal ---
   openNewUserModal(): void {
     this.nuevoUsuarioForm = {
       nombre: '',
@@ -161,7 +151,7 @@ export class ConfiguracionComponent {
     if (!this.nuevoUsuarioForm.nombre.trim() || !this.nuevoUsuarioForm.cedula.trim() || !this.nuevoUsuarioForm.password.trim()) {
       this.modalTitle = 'Atención';
       this.modalMessage = 'Por favor complete todos los campos obligatorios (Nombre, Cédula y Contraseña).';
-      this.modalType = 'danger';
+      this.modalType = 'error';
       this.isSuccessModalOpen = true;
       return;
     }
@@ -214,7 +204,6 @@ export class ConfiguracionComponent {
     }
   }
 
-  // --- Botones Globales ---
   pedirConfirmacionCancelar(): void {
     this.isConfirmCancelOpen = true;
   }
