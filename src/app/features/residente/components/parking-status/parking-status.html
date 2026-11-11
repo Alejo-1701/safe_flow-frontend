@@ -37,4 +37,14 @@
   <app-vehicle-exit-banner
     (exitRequested)="onExitVehicle()">
   </app-vehicle-exit-banner>
+
+  @if (feedbackModal(); as feedback) {
+    <app-modal
+      [title]="feedback.title"
+      [type]="feedback.type"
+      buttonText="Cerrar"
+      (close)="cerrarFeedback()">
+      <p>{{ feedback.message }}</p>
+    </app-modal>
+  }
 </app-card-widget>

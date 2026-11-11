@@ -13,6 +13,7 @@ import { NuevaSolicitudComponent } from '../../components/nueva-solicitud/nueva-
 import { ModalPerfilComponent } from '../../components/modal-perfil/modal-perfil';
 import { ModalRegistroVehiculoComponent } from '../../components/modal-registro-vehiculo/modal-registro-vehiculo';
 import { VisitorMapModalComponent } from '../../components/visitor-map-modal/visitor-map-modal';
+import { Modal } from '../../../../shared/components/modal/modal';
 
 @Component({
   selector: 'app-portal-residente',
@@ -30,7 +31,8 @@ import { VisitorMapModalComponent } from '../../components/visitor-map-modal/vis
     NuevaSolicitudComponent,
     ModalPerfilComponent,
     ModalRegistroVehiculoComponent,
-    VisitorMapModalComponent
+    VisitorMapModalComponent,
+    Modal
   ],
   templateUrl: './portal-residente.html',
   styleUrl: './portal-residente.scss',
@@ -61,12 +63,48 @@ export class PortalResidente {
    */
   readonly mapaAbierto = signal(false);
 
-  /** Router de los accesos rápidos: hoy solo "Mapa" tiene destino real. */
+  /** Modal de mensajes de éxito/error para acciones del portal. */
+  feedbackModal = signal<{ title: string; message: string; type: 'success' | 'error' } | null>(null);
+
+  /** Router de los accesos rápidos. */
   onQuickAccess(target: QuickAccessTarget): void {
     if (target === 'mapa') {
       this.abrirMapa();
+      return;
     }
-    // TODO: navegar a "Documentos" y "Reglamento" cuando existan sus vistas.
+
+    if (target === 'documentos' || target === 'reglamento') {
+      this.feedbackModal.set({
+        title: 'Contenido no disponible',
+        message: 'Este contenido no se encuentra disponible por el momento.',
+        type: 'error'
+      });
+    }
+  }
+
+  /** Cierra el modal de mensajes. */
+  cerrarFeedback(): void {
+    this.feedbackModal.set(null);
+  }
+
+  /** Resultado de aprobar al visitante en portería. */
+  onApproveVisitor(): void {
+    // TODO: confirmar el ingreso del visitante contra el servicio.
+    this.feedbackModal.set({
+      title: 'Visitante aprobado',
+      message: 'La solicitud del visitante fue aprobada correctamente.',
+      type: 'success'
+    });
+  }
+
+  /** Resultado de rechazar al visitante en portería. */
+  onRejectVisitor(): void {
+    // TODO: rechazar el ingreso del visitante contra el servicio.
+    this.feedbackModal.set({
+      title: 'Visitante rechazado',
+      message: 'La solicitud del visitante fue rechazada correctamente.',
+      type: 'error'
+    });
   }
 
   /** Abre el modal del mapa desde el acceso rápido "Mapa". */

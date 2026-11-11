@@ -24,7 +24,8 @@ export class PreauthorizeGuestComponent {
       label: 'Placa del Vehículo (Opcional)',
       type: 'text',
       placeholder: 'XXX-000',
-      required: false
+      required: false,
+      maxLength: 6
     },
     {
       key: 'entryDate',

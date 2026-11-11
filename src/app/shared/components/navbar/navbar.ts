@@ -31,6 +31,9 @@ export class NavbarComponent implements OnChanges {
   // Lógica para el menú hamburguesa
   isMenuOpen: boolean = false;
 
+  /** Controla la visibilidad del modal de confirmación de cierre de sesión. */
+  showLogoutConfirm = false;
+
   @Output() logoutClick = new EventEmitter<void>();
   @Output() profileClick = new EventEmitter<void>();
 
@@ -44,8 +47,20 @@ export class NavbarComponent implements OnChanges {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
+  /** Abre la confirmación antes de cerrar sesión. */
   onLogout(): void {
     this.isMenuOpen = false; // Cierra el menú al accionar
+    this.showLogoutConfirm = true;
+  }
+
+  /** Cancela el cierre de sesión. */
+  cancelLogout(): void {
+    this.showLogoutConfirm = false;
+  }
+
+  /** Confirma el cierre de sesión y redirige al acceso. */
+  confirmLogout(): void {
+    this.showLogoutConfirm = false;
     this.logoutClick.emit();
     this.router.navigate(['/auth']);
   }

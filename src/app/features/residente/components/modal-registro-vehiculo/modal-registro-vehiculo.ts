@@ -39,7 +39,8 @@ export class ModalRegistroVehiculoComponent {
       key: 'plate',
       label: 'Número de Placa',
       type: 'text',
-      placeholder: 'ABC-1234'
+      placeholder: 'ABC-1234',
+      maxLength: 6
     },
     {
       key: 'type',

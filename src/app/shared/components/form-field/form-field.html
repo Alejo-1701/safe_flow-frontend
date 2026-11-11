@@ -25,6 +25,7 @@
             [formControlName]="field.key"
             [placeholder]="field.placeholder || ''"
             [readonly]="field.readonly === true"
+            [attr.maxlength]="field.maxLength ?? null"
             [class.uppercase-input]="field.uppercase !== false"
             (input)="onInputUppercase($event, field)"
             class="form-field-control"
