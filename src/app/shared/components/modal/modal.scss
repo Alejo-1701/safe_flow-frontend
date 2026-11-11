@@ -36,6 +36,16 @@
   margin-bottom: 1rem;
 }
 
+.icon-error {
+  font-size: 3rem;
+  color: #ef4444;
+  margin-bottom: 1rem;
+}
+
+.modal-content.error h2 {
+  color: #ef4444;
+}
+
 button {
   background: var(--color-primary, #38bdf8);
   color: #0f172a;
@@ -45,5 +55,15 @@ button {
   cursor: pointer;
   margin-top: 1.5rem;
   font-weight: bold;
+
+  &.error {
+    background: #ef4444;
+    color: #fff;
+  }
+
+  &.success {
+    background: #22c55e;
+    color: #0f172a;
+  }
 }
 

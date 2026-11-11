@@ -1,12 +1,15 @@
 <div class="modal-overlay" (click)="onClose()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content" [ngClass]="type" (click)="$event.stopPropagation()">
         <div *ngIf="type === 'success'" class="icon-success">
             <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div *ngIf="type === 'error'" class="icon-error">
+            <i class="fa-solid fa-circle-xmark"></i>
         </div>
         <h2>{{ title }}</h2>
         <div class="modal-body">
             <ng-content></ng-content>
         </div>
-        <button *ngIf="buttonText" (click)="onClose()">{{ buttonText }}</button>
+        <button *ngIf="buttonText" [ngClass]="type" (click)="onClose()">{{ buttonText }}</button>
     </div>
 </div>

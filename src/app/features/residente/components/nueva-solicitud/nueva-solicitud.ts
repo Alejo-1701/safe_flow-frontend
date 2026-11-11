@@ -10,6 +10,7 @@ export interface CampoSolicitud {
   placeholder?: string;
   options?: { label: string; value: string }[];
   required?: boolean;
+  maxLength?: number;
 }
 
 /**
@@ -44,7 +45,7 @@ export class NuevaSolicitudComponent {
    * ("Seleccione una opción"); no se puede cambiar sin tocar el compartido.
    */
   readonly campos: CampoSolicitud[] = [
-    { key: 'placa', label: 'Placa del Vehículo', type: 'text', placeholder: 'Ej: ABC-123', required: true },
+    { key: 'placa', label: 'Placa del Vehículo', type: 'text', placeholder: 'Ej: ABC-123', required: true, maxLength: 6 },
     { key: 'marcaModelo', label: 'Marca/Modelo', type: 'text', placeholder: 'Ej: Mazda 3 / 2024', required: true },
     {
       key: 'tipoVehiculo',

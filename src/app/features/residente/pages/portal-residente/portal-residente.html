@@ -17,7 +17,10 @@
 
   <main class="portal-content">
     <!-- Notificación superior: visitante en portería -->
-    <app-visitor-alert></app-visitor-alert>
+    <app-visitor-alert
+      (approve)="onApproveVisitor()"
+      (reject)="onRejectVisitor()">
+    </app-visitor-alert>
 
     <div class="portal-grid">
       <!-- Columna principal -->
@@ -71,4 +74,14 @@
     [open]="mapaAbierto()"
     (cerrado)="cerrarMapa()">
   </app-visitor-map-modal>
+
+  @if (feedbackModal(); as feedback) {
+    <app-modal
+      [title]="feedback.title"
+      [type]="feedback.type"
+      buttonText="Cerrar"
+      (close)="cerrarFeedback()">
+      <p>{{ feedback.message }}</p>
+    </app-modal>
+  }
 </div>

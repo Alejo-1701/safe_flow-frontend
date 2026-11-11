@@ -20,6 +20,8 @@ export interface FieldConfig {
   readonly?: boolean;
   /** Aplica mayúsculas automáticas al escribir (true por defecto). */
   uppercase?: boolean;
+  /** Límite máximo de caracteres permitido en el campo. */
+  maxLength?: number;
 }
 
 @Component({
@@ -81,19 +83,24 @@ export class FormFieldComponent implements OnChanges {
 
   /**
    * Transforma el texto ingresado a mayúsculas en tiempo real (salvo que el
-   * campo lo desactive con `uppercase: false`) sin disparar eventos innecesarios.
+   * campo lo desactive con `uppercase: false`) y aplica el límite de longitud
+   * sin disparar eventos innecesarios.
    */
   onInputUppercase(event: Event, field: FieldConfig): void {
-    if (field.uppercase === false) {
-      return;
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    if (field.uppercase !== false) {
+      value = value.toUpperCase();
     }
 
-    const input = event.target as HTMLInputElement;
-    const upperValue = input.value.toUpperCase();
-    const control = this.form.get(field.key);
+    if (field.maxLength != null && value.length > field.maxLength) {
+      value = value.slice(0, field.maxLength);
+    }
 
-    if (control) {
-      control.setValue(upperValue, { emitEvent: false });
+    const control = this.form.get(field.key);
+    if (control && value !== input.value) {
+      control.setValue(value, { emitEvent: false });
     }
   }
 

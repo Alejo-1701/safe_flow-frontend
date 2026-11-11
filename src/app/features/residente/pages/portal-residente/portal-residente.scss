@@ -328,6 +328,11 @@ app-navbar ::ng-deep .user-profile:has(img)::before {
     min-height: 168px;
   }
 
+  /* Accesos Rápidos necesita más espacio para mostrar todos sus accesos sin recortes. */
+  .portal-col--side > app-quick-access {
+    max-height: none;
+  }
+
   .portal-col {
     min-height: 0;
     overflow-y: auto;
